@@ -27,7 +27,7 @@ T.B.D.
 All notable changes to this project will be documented in [CHANGELOG.md](CHANGELOG.md).
 
 ## Acknowledgements
-The community that is [https://indieweb.org/](IndieWeb)!
+The community that is [IndieWeb](https://indieweb.org/)!
 
 ## License
 Copyright © `2019` `Christopher James Willcock`
