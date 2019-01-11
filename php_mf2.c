@@ -24,7 +24,7 @@
 #include "mf2_str_defs.h"
 #include "php_mf2parse.h"
 
-mf2_str_globals str_globals_mf2;
+#include "php_mf2.h"
 
 static const zend_module_dep mf2_deps[] = {
 	ZEND_MOD_END
@@ -33,6 +33,8 @@ static const zend_module_dep mf2_deps[] = {
 static const zend_function_entry mf2_functions[] = {
 	PHP_FE_END
 };
+
+mf2_str_globals str_globals_mf2;
 
 /**
  * Initialize the extension once, when it is first loaded by a PHP instance.

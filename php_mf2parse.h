@@ -14,8 +14,6 @@
 #ifndef PHP_MF2PARSE_H
 #define PHP_MF2PARSE_H
 
-extern zend_class_entry *mf2parse_ce;
-
 PHP_MINIT_FUNCTION( mf2parse );
 
 #endif /* PHP_MF2PARSE_H */

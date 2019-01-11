@@ -15,6 +15,6 @@
 #define MF2_STR_DEFS_H
 
 #define MF2_STR_DEFS \
-	X(MF2Parse) \
+	X(items) \
 
 #endif /* MF2_STR_DEFS_H */
