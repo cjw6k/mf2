@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Usage notes and Examples in [README.md](README.md)
+- Test MF2Parse constructor
 - The MF2Parse object
 - MF2_STR convenience method, registers strings used in various places on module startup, and frees these strings on shutdown.
 - TEST: MF2Parse class exists

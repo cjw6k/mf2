@@ -19,6 +19,10 @@
 
 #if HAVE_MF2
 
+#include "zend_exceptions.h"
+
+#include "ext/standard/url.h"
+
 #include "php_mf2.h"
 
 #include "php_mf2parse.h"
@@ -26,13 +30,13 @@
 static zend_class_entry *mf2parse_ce;
 static zend_object_handlers mf2parse_object_handlers;
 
-static const zend_function_entry mf2parse_functions[] = {
-	PHP_FE_END
-};
-
 typedef struct _mf2parse_object {
+	php_url *php_base_url;
+	zval base_url;
 	zend_object zo;
 } mf2parse_object;
+
+#define Z_MF2PARSEOBJ_P( zv_object ) php_mf2parse_fetch_object( Z_OBJ_P( ( zv_object ) ) )
 
 /**
  * Convert a standard zend_object reference to an MF2Parse object reference.
@@ -125,9 +129,85 @@ void mf2parse_free_object_handler( zend_object *object )
 	mf2parse_object *mf2parse = php_mf2parse_fetch_object( object );
 
 	/* free memory used for custom properties */
+	if ( mf2parse->php_base_url ) {
+		php_url_free( mf2parse->php_base_url );
+	}
 
+	zval_dtor( &mf2parse->base_url );
+	
 	zend_object_std_dtor( &mf2parse->zo );
 }
+
+ZEND_BEGIN_ARG_INFO_EX( arginfo_mf2parse_construct, 0, 0, 1 )
+	ZEND_ARG_TYPE_INFO( 0, data, IS_STRING, 0 )
+	ZEND_ARG_TYPE_INFO( 0, base_url, IS_STRING, 1 )
+	ZEND_ARG_TYPE_INFO( 0, data_is_url, _IS_BOOL, 1 )
+	ZEND_ARG_TYPE_INFO( 0, options, IS_LONG, 1 )
+ZEND_END_ARG_INFO()
+
+/**
+ * @since 0.1.0
+ */
+PHP_METHOD( MF2Parse, __construct )
+{
+	char *data, *base_url = NULL;
+	int num_args = ZEND_NUM_ARGS();
+	size_t data_length, base_url_length;
+	zend_long options = 0;
+	zend_bool data_is_url = 0, options_is_null, data_is_url_is_null;
+	zval *this;
+
+	if ( num_args == 0 ) {
+		zend_throw_exception( zend_ce_exception, "Data parameter is required", 0 );
+		return;
+	}
+
+	ZEND_PARSE_PARAMETERS_START( 1, 4 )
+		Z_PARAM_STRING_EX( data, data_length, 0, 0 )
+		Z_PARAM_OPTIONAL
+		Z_PARAM_STRING_EX( base_url, base_url_length, 1, 0 )
+		Z_PARAM_BOOL_EX( data_is_url, data_is_url_is_null, 1, 0 )
+		Z_PARAM_LONG_EX( options, options_is_null, 1, 0 )
+	ZEND_PARSE_PARAMETERS_END();
+
+	if ( ZEND_SIZE_T_INT_OVFL( data_length ) ) {
+		zend_throw_exception( zend_ce_exception, "Data is too long", 0 );
+		return;
+	}
+
+	if ( base_url != NULL ) {
+		if ( ZEND_SIZE_T_INT_OVFL( base_url_length ) ) {
+			zend_throw_exception( zend_ce_exception, "Base URL is too long", 0 );
+			return;
+		}
+	}
+
+	if ( ZEND_LONG_EXCEEDS_INT( options ) ) {
+		zend_throw_exception( zend_ce_exception, "Invalid options", 0 );
+		return;
+	}
+
+	this = getThis();
+	mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( this );	
+	
+	if ( base_url != NULL ) {
+		mf2parse->php_base_url = php_url_parse_ex( base_url, base_url_length );
+		if ( mf2parse->php_base_url == NULL ) {
+			zend_throw_exception( zend_ce_exception, "Invalid base URL", 0 );
+			return;
+		}
+		if ( mf2parse->php_base_url->scheme == NULL ) {
+			zend_throw_exception( zend_ce_exception, "Base URL must be absolute", 0 );
+			return;
+		}
+		ZVAL_STRINGL( &mf2parse->base_url, base_url, base_url_length );
+	}	
+}
+
+static const zend_function_entry mf2parse_functions[] = {
+	PHP_ME( MF2Parse, __construct, arginfo_mf2parse_construct, ZEND_ACC_PUBLIC )
+	PHP_FE_END
+};
 
 /**
  * Initialize the MF2Parse class entry once, when the extension is first loaded
