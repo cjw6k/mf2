@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- The MF2Parse object
+- MF2_STR convenience method, registers strings used in various places on module startup, and frees these strings on shutdown.
+- TEST: MF2Parse class exists
 - TEST: phpinfo() includes mf2 status
 - TEST: mf2 extension is loaded
 - Minimal PHP extension config

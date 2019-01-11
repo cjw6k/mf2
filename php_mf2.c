@@ -19,6 +19,11 @@
 
 #if HAVE_MF2
 
+#include "ext/standard/info.h"
+
+#include "mf2_str_defs.h"
+#include "php_mf2parse.h"
+
 #include "php_mf2.h"
 
 static const zend_module_dep mf2_deps[] = {
@@ -29,13 +34,22 @@ static const zend_function_entry mf2_functions[] = {
 	PHP_FE_END
 };
 
+mf2_str_globals str_globals_mf2;
+
 /**
  * Initialize the extension once, when it is first loaded by a PHP instance.
  *
  * @since 0.1.0
  */
-PHP_MINIT_FUNCTION( mf2 )
+static PHP_MINIT_FUNCTION( mf2 )
 {
+#define X(str) \
+	MF2_STR(str_ ## str) = zend_new_interned_string(zend_string_init(#str, sizeof(#str) - 1, 1));
+	MF2_STR_DEFS
+#undef X
+
+	PHP_MINIT( mf2parse )( INIT_FUNC_ARGS_PASSTHRU );
+
 	return SUCCESS;
 }
 
@@ -44,8 +58,12 @@ PHP_MINIT_FUNCTION( mf2 )
  *
  * @since 0.1.0
  */
-PHP_MSHUTDOWN_FUNCTION( mf2 )
+static PHP_MSHUTDOWN_FUNCTION( mf2 )
 {
+#define X(str) zend_string_release(MF2_STR(str_ ## str));
+	MF2_STR_DEFS
+#undef X
+
 	return SUCCESS;
 }
 
@@ -54,10 +72,10 @@ PHP_MSHUTDOWN_FUNCTION( mf2 )
  *
  * @since 0.1.0
  */
-PHP_MINFO_FUNCTION( mf2 )
+static PHP_MINFO_FUNCTION( mf2 )
 {
 	php_info_print_table_start();
-	php_info_print_table_header(2, "Microformats2 support", "enabled");
+	php_info_print_table_header( 2, "Microformats2 support", "enabled" );
 	php_info_print_table_end();
 }
 
