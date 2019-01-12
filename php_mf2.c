@@ -21,20 +21,17 @@
 
 #include "ext/standard/info.h"
 
-#include "mf2_str_defs.h"
-#include "php_mf2parse.h"
+#include "mf2.h"
 
 #include "php_mf2.h"
 
-static const zend_module_dep mf2_deps[] = {
+static const zend_module_dep php_mf2_deps[] = {
 	ZEND_MOD_END
 };
 
-static const zend_function_entry mf2_functions[] = {
+static const zend_function_entry php_mf2_functions[] = {
 	PHP_FE_END
 };
-
-mf2_str_globals str_globals_mf2;
 
 /**
  * Initialize the extension once, when it is first loaded by a PHP instance.
@@ -79,11 +76,11 @@ static PHP_MINFO_FUNCTION( mf2 )
 	php_info_print_table_end();
 }
 
-zend_module_entry mf2_module_entry = {
+zend_module_entry php_mf2_module_entry = {
 	STANDARD_MODULE_HEADER_EX, NULL,
-	mf2_deps,
+	php_mf2_deps,
 	"mf2",
-	mf2_functions,
+	php_mf2_functions,
 	PHP_MINIT( mf2 ),
 	PHP_MSHUTDOWN( mf2 ),
 	NULL,

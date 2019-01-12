@@ -11,17 +11,16 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_MF2PARSE_H
-#define PHP_MF2PARSE_H
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-#include "ext/standard/url.h"
+#include "php.h"
 
-typedef struct _php_mf2parse_object {
-	php_url *php_base_url;
-	zval base_url;
-	zend_object zo;
-} php_mf2parse_object;
+#if HAVE_MF2
 
-PHP_MINIT_FUNCTION( mf2parse );
+#include "mf2.h"
 
-#endif /* PHP_MF2PARSE_H */
+mf2_str_globals str_globals_mf2;
+
+#endif /* HAVE_MF2 */

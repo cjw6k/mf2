@@ -11,17 +11,19 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_MF2PARSE_H
-#define PHP_MF2PARSE_H
+#ifndef MF2_H
+#define MF2_H
 
-#include "ext/standard/url.h"
+#include "mf2_str_defs.h"
 
-typedef struct _php_mf2parse_object {
-	php_url *php_base_url;
-	zval base_url;
-	zend_object zo;
-} php_mf2parse_object;
+typedef struct _mf2_str_globals {
+#define X(str) zend_string *str_ ## str;
+	MF2_STR_DEFS
+#undef X
+} mf2_str_globals;
 
-PHP_MINIT_FUNCTION( mf2parse );
+mf2_str_globals str_globals_mf2;
 
-#endif /* PHP_MF2PARSE_H */
+#define MF2_STR(str) str_globals_mf2.str
+
+#endif /* MF2_H */

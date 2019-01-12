@@ -14,33 +14,13 @@
 #ifndef PHP_MF2_H
 #define PHP_MF2_H
 
-#if HAVE_MF2
-
 #ifdef ZTS
 #include "TSRM.h"
 #endif
 
 #define PHP_MF2_VERSION "0.1.0"
 
-extern zend_module_entry mf2_module_entry;
-#define mf2_module_ptr &mf2_module_entry
-
-#include "mf2_str_defs.h"
-
-typedef struct _mf2_str_globals {
-#define X(str) zend_string *str_ ## str;
-	MF2_STR_DEFS
-#undef X
-} mf2_str_globals;
-
-extern mf2_str_globals str_globals_mf2;
-
-#define MF2_STR(str) str_globals_mf2.str
-
-#else
-#define mf2_module_ptr NULL
-#endif /* HAVE_MF2 */
-
-#define phpext_mf2_ptr mf2_module_ptr
+extern zend_module_entry php_mf2_module_entry;
+#define phpext_mf2_ptr &php_mf2_module_entry
 
 #endif /* PHP_MF2 */

@@ -82,6 +82,36 @@ T.B.D.
 ## Tests
 T.B.D.
 
+## Internal Structure and Organization
+### File and function naming
+mf2 is spread across several translation units, where `.c` and `.h` files typically occur together with matching names, e.g.: `mf2.c` and `mf2.h`, implying that they together compose one unit of compilation.
+
+A PHP extension generally may contain functionality in three areas:
+1. functions exposed to userland PHP.
+2. functions that are registered with, called by and hook directly into the engine.
+2. functions which are called from other functions within the extension, but never from the engine or from userland.
+
+Note: Some extensions may further sub-divide (3), but this does not apply in the mf2 extension. 
+
+With the above three segments as a guideline, mf2 spreads the functionality supporting each module (e.g. the MF2Parse class) across up-to three translation units. The segment that a given translation unit belongs to is indicated by a prefix on the filename.
+1. any functions that are exposed to userland PHP are defined in translation units with a uphp\_ prefix.
+2. any functions that hook into PHP directly for registration of callbacks, etc. are defined in translation units with a php\_ prefix.
+3. any functions which support the other functions, and are not directly called by the engine or by userland, have no prefix.
+
+#### Example
+The following files are together, the full definition of the MF2Parse object:
+```
+mf2parse.c \________ Support functions (the stuff) ___
+mf2parse.h /                                          \
+php_mf2parse.c \____ Engine hooks (housekeeping) ______\ __ $parse = new MF2Parse();
+php_mf2parse.h /                                       /
+uphp_mf2parse.c \___ Userland functions (API) _______ /
+uphp_mf2parse.h /
+```
+
+Additionally, to verbosely indicate the purpose of (2), all functions therein are prefixed with `php_`.
+
+
 ## Contributing
 T.B.D.
 

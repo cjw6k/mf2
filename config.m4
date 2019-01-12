@@ -8,6 +8,6 @@ PHP_ARG_ENABLE(mf2, whether to enable mf2 support,
 if test "$PHP_MF2" != "no"; then
 
 	AC_DEFINE(HAVE_MF2, 1, [Whether you have mf2])
-	PHP_NEW_EXTENSION(mf2, php_mf2.c php_mf2parse.c, $ext_shared)
+	PHP_NEW_EXTENSION(mf2, mf2.c php_mf2.c php_mf2parse.c mf2parse.c uphp_mf2parse.c, $ext_shared)
 
 fi
