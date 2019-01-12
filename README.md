@@ -8,19 +8,15 @@ T.B.D.
 ## Usage
 mf2 provides a parse via the class `MF2Parse`. 
 
+```php
+public MF2Parse::__construct ( string $data [, string $base_url = null [, bool $data_is_url = FALSE [, int $options = 0 ]]] )
+```
+
 * To parse microformats from HTML, use `$parse = new MF2Parse($html, $url)`, where `$url` is the URL from which the `$html` was loaded, if any. This parameter is required for correct relative URL parsing and must not be left out unless parsing HTML which contains no relative URLs.
 * To fetch HTML from a URL and parse microformats, use `new MF2Parse( $url, null, true )`
 * To load HTML from a file and parse microformats, use `new MF2Parse( $file, $url, true )`, where `$file` is the full local path and filename, and `$url` is the URL from which the `$file` was loaded, if any.
  
 ## Examples
-__MF2Parse Class Constructor__
-
-```php
-public MF2Parse::__construct ( string $data [, string $base_url = null [, bool $data_is_url = FALSE [, int $options = 0 ]]] )
-```
-
-mf2 declares the class `MF2Parse` which requires one argument in its constructor: the `data` to parse.
-
 ```php
 $parse = MF2Parse( '<main class="h-feed"><article class="h-entry"> … </article> … </main>' );
 ```
