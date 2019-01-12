@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: MF2Parse may not be cloned
 - Usage notes and Examples in [README.md](README.md)
 - Test MF2Parse constructor
 - The MF2Parse object
