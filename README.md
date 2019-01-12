@@ -119,19 +119,19 @@ A PHP extension generally may contain functionality in three areas:
 Note: Some extensions may further sub-divide (3), but this does not apply in the mf2 extension. 
 
 With the above three segments as a guideline, mf2 spreads the functionality supporting each module (e.g. the MF2Parse class) across up-to three translation units. The segment that a given translation unit belongs to is indicated by a prefix on the filename.
-1. any functions that are exposed to userland PHP are defined in translation units with a uphp\_ prefix.
+1. any functions that are exposed to userland PHP are defined in translation units with a user\_ prefix.
 2. any functions that hook into PHP directly for registration of callbacks, etc. are defined in translation units with a php\_ prefix.
 3. any functions which support the other functions, and are not directly called by the engine or by userland, have no prefix.
 
 #### Example
 The following files are together, the full definition of the MF2Parse object:
 ```
-mf2parse.c \________ Support functions (the stuff) ___
+mf2parse.c \________ Support functions (the stuff) __ 
 mf2parse.h /                                          \
-php_mf2parse.c \____ Engine hooks (housekeeping) ______\ __ $parse = new MF2Parse();
+php_mf2parse.c \____ Engine hooks (housekeeping) _____ \ __ $parse = new MF2Parse();
 php_mf2parse.h /                                       /
-uphp_mf2parse.c \___ Userland functions (API) _______ /
-uphp_mf2parse.h /
+user_mf2parse.c \___ Userland functions (API) _______ /
+user_mf2parse.h /
 ```
 
 Additionally, to verbosely indicate the purpose of (2), all functions therein are prefixed with `php_`.
