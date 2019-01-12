@@ -20,7 +20,7 @@
 #if HAVE_MF2
 
 #include "mf2parse.h"
-#include "uphp_mf2parse.h"
+#include "user_mf2parse.h"
 
 #include "php_mf2parse.h"
 

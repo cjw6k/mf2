@@ -22,7 +22,7 @@
 #include "ext/standard/info.h"
 
 #include "mf2.h"
-#include "uphp_mf2.h"
+#include "user_mf2.h"
 #include "php_mf2parse.h"
 
 #include "php_mf2.h"
