@@ -1,5 +1,7 @@
 --TEST--
 mf2: parse data from a string and return an MF2Parse instance
+--SKIPIF--
+<?php if (!extension_loaded("mf2")) print "skip"; ?> 
 --FILE--
 <?php
 
