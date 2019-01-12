@@ -22,15 +22,13 @@
 #include "ext/standard/info.h"
 
 #include "mf2.h"
+#include "uphp_mf2.h"
+#include "php_mf2parse.h"
 
 #include "php_mf2.h"
 
 static const zend_module_dep php_mf2_deps[] = {
 	ZEND_MOD_END
-};
-
-static const zend_function_entry php_mf2_functions[] = {
-	PHP_FE_END
 };
 
 /**
@@ -75,6 +73,24 @@ static PHP_MINFO_FUNCTION( mf2 )
 	php_info_print_table_header( 2, "Microformats2 support", "enabled" );
 	php_info_print_table_end();
 }
+
+ZEND_BEGIN_ARG_INFO_EX( arginfo_mf2_fetch, 0, 0, 1 )
+	ZEND_ARG_TYPE_INFO( 0, uri, IS_STRING, 0 )
+	ZEND_ARG_TYPE_INFO( 0, base_url, IS_STRING, 1 )
+	ZEND_ARG_TYPE_INFO( 0, options, IS_LONG, 1 )
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX( arginfo_mf2_parse, 0, 0, 1 )
+	ZEND_ARG_TYPE_INFO( 0, data, IS_STRING, 0 )
+	ZEND_ARG_TYPE_INFO( 0, base_url, IS_STRING, 1 )
+	ZEND_ARG_TYPE_INFO( 0, options, IS_LONG, 1 )
+ZEND_END_ARG_INFO()
+
+static const zend_function_entry php_mf2_functions[] = {
+	PHP_FE(mf2_fetch, arginfo_mf2_fetch)
+	PHP_FE(mf2_parse, arginfo_mf2_parse)
+	PHP_FE_END
+};
 
 zend_module_entry php_mf2_module_entry = {
 	STANDARD_MODULE_HEADER_EX, NULL,

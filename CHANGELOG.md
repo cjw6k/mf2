@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf2_parse returns MF2Parse object
+- mf2_parse convenience function
+- TEST: mf2_fetch returns MF2Parse object
+- mf2_fetch convenience function
 - TEST: MF2Parse may not be cloned
 - Usage notes and Examples in [README.md](README.md)
 - Test MF2Parse constructor

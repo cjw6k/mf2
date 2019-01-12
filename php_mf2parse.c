@@ -19,11 +19,12 @@
 
 #if HAVE_MF2
 
+#include "mf2parse.h"
 #include "uphp_mf2parse.h"
 
 #include "php_mf2parse.h"
 
-static zend_class_entry *php_mf2parse_ce;
+zend_class_entry *php_mf2parse_ce;
 static zend_object_handlers php_mf2parse_object_handlers;
 
 /**
