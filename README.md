@@ -6,17 +6,42 @@ mf2 is an extension for PHP providing microformats2 parsing.
 T.B.D.
 
 ## Usage
-mf2 provides a parse via the class `MF2Parse`. 
+* To parse microformats from HTML, use `$parse = mf2_parse($html, $url)`, where `$url` is the URL from which the `$html` was loaded, if any. This parameter is required for correct relative URL parsing and must not be left out unless parsing HTML which contains no relative URLs.
+* To fetch HTML from a URL and parse microformats, use `mf2_fetch( $url )`
+* To fetch HTML from a file and parse microformats, use `mf2_fetch( $file, $url )`, where `$file` is the full local path and filename, and `$url` is the URL from which the `$file` was loaded, if any.
 
+### Fetch and Parse Microformats from a URI or Local File
 ```php
-public MF2Parse::__construct ( string $data [, string $base_url = null [, bool $data_is_url = FALSE [, int $options = 0 ]]] )
+mf2_fetch ( string $uri [, string $base_url = null [, int $options = 0 ]] )
 ```
 
-* To parse microformats from HTML, use `$parse = new MF2Parse($html, $url)`, where `$url` is the URL from which the `$html` was loaded, if any. This parameter is required for correct relative URL parsing and must not be left out unless parsing HTML which contains no relative URLs.
-* To fetch HTML from a URL and parse microformats, use `new MF2Parse( $url, null, true )`
-* To load HTML from a file and parse microformats, use `new MF2Parse( $file, $url, true )`, where `$file` is the full local path and filename, and `$url` is the URL from which the `$file` was loaded, if any.
- 
-## Examples
+<dl>
+    <dt>$uri</dt><dd>The Uniform Resource Identifier from which to load. May be a URL or local file.</dd>
+    <dt>$base_url</dt><dd>The base URL to use when resolving relative links.</dd>
+    <dt>$options</dt><dd>Options which control the HTML parsing context.</dd>
+</dl>
+
+### Parse Microformats from a String
+```php
+mf2_parse ( string $data [, string $base_url = null [, int $options = 0 ]] )
+```
+
+<dl>
+    <dt>$data</dt><dd>The data from which to parse microformats.</dd>
+    <dt>$base_url</dt><dd>The base URL to use when resolving relative links.</dd>
+    <dt>$options</dt><dd>Options which control the HTML parsing context.</dd>
+</dl>
+
+## Advanced Usage
+mf2 provides a parse via the `MF2Parse` class. 
+
+```php
+public MF2Parse::__construct ( string $data [, string $base_url = null [, bool $data_is_url = false [, int $options = 0 ]]] )
+```
+
+Each of `mf2_fetch` and `mf2_parse` return an object of this class and each uses the same functions internally to produce the parse -equivalent to instantiating the MF2Parse directly with the correct options. You may extend and customize this class to suit your needs. 
+
+### Examples
 ```php
 $parse = MF2Parse( '<main class="h-feed"><article class="h-entry"> … </article> … </main>' );
 ```
