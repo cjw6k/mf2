@@ -1,5 +1,7 @@
 --TEST--
 mf2: MF2Parse is not cloneable
+--SKIPIF--
+<?php if (!extension_loaded("mf2")) print "skip"; ?> 
 --FILE--
 <?php
 

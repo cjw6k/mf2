@@ -1,5 +1,7 @@
 --TEST--
 mf2: MF2Parse has a __construct method
+--SKIPIF--
+<?php if (!extension_loaded("mf2")) print "skip"; ?> 
 --FILE--
 <?php
 
