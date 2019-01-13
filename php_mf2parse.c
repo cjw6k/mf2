@@ -19,6 +19,7 @@
 
 #if HAVE_MF2
 
+#include "mf2.h"
 #include "mf2parse.h"
 #include "user_mf2parse.h"
 
@@ -166,6 +167,77 @@ HashTable *php_mf2parse_get_debug_info_handler( zval *object, int *is_temp )
 	return mf2parse_get_properties_ht( object, 1 );
 }
 
+/**
+ * Indicates if the instance has the requested member property.
+ *
+ * @since 0.1.0
+ *
+ * @param  zval * object       The subject MF2Parse instance.
+ * @param  zval * member       The requested member to check.
+ * @param  int has_set_exists  0 Check whether the property exists and and is
+ *                               not NULL (used by isset).
+ *                             1 Check where the property exists and is truthy
+ *                             2 Check whether the property exists, even if it
+ *                               is NULL
+ * @param  int cache_slot      (TODO: No idea what this does).
+ *
+ * @return  int  0 The requested member does not exist in the subject.
+ *               1 The requested member does exist in the subject.
+ */
+int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_exists, void **cache_slot )
+{
+	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	int result;
+	zval tmp_member;
+
+	result = 0;
+
+	ZVAL_UNDEF( &tmp_member );
+	if ( UNEXPECTED( Z_TYPE_P( member ) != IS_STRING ) ) {
+		ZVAL_STR( &tmp_member, zval_get_string( member ) );
+		member = &tmp_member;
+		cache_slot = NULL;
+	}	
+	
+	switch( has_set_exists ) {
+		case 1:
+			if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_items ) ) ) {
+				result = zend_hash_num_elements( mf2parse->items ) > 0 ? 1 : 0;
+			} else if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_rels ) ) ) {
+				result = zend_hash_num_elements( mf2parse->rels ) > 0 ? 1 : 0;
+			} else if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_rel_urls ) ) ) {
+				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
+			} else {
+				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
+			}
+		break;
+		
+		case 0:
+		case 2:
+			// These properties are never null.
+			// Break skipped on purpose.
+		default:
+			if(
+				zend_string_equals( Z_STR_P( member ), MF2_STR( str_items ) )
+				||
+				zend_string_equals( Z_STR_P( member ), MF2_STR( str_rels ) )
+				||
+				zend_string_equals( Z_STR_P( member ), MF2_STR( str_rel_urls ) )
+			){
+				result = 1;
+			} else {
+				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
+			}		
+		break;
+	}	
+	
+	if ( member == &tmp_member ) {
+		zval_dtor( member );
+	}
+
+	return result;
+}
+ 
 ZEND_BEGIN_ARG_INFO_EX( arginfo_mf2parse_construct, 0, 0, 1 )
 	ZEND_ARG_TYPE_INFO( 0, data, IS_STRING, 0 )
 	ZEND_ARG_TYPE_INFO( 0, base_url, IS_STRING, 1 )
@@ -201,6 +273,7 @@ PHP_MINIT_FUNCTION( mf2parse )
 	php_mf2parse_object_handlers.clone_obj      = NULL;
 	php_mf2parse_object_handlers.get_properties = php_mf2parse_get_properties_handler;
 	php_mf2parse_object_handlers.get_debug_info = php_mf2parse_get_debug_info_handler;
+	php_mf2parse_object_handlers.has_property   = php_mf2parse_has_property_handler;
 	
 	php_mf2parse_object_handlers.offset = XtOffsetOf( php_mf2parse_object, zo );
 

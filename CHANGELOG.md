@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: MF2Parse property access
 - TEST: MF2Parse empty file
 - TEST: MF2Parse empty code string
 - Initialize/destroy/free items, rels and relurls
