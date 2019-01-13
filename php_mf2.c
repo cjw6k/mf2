@@ -28,6 +28,7 @@
 #include "php_mf2.h"
 
 static const zend_module_dep php_mf2_deps[] = {
+	ZEND_MOD_REQUIRED( "libxml" )
 	ZEND_MOD_END
 };
 

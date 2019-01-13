@@ -14,6 +14,7 @@
 #ifndef PHP_MF2PARSE_H
 #define PHP_MF2PARSE_H
 
+#include "ext/libxml/php_libxml.h"
 #include "ext/standard/url.h"
 
 typedef struct _php_mf2parse_object {
@@ -21,6 +22,7 @@ typedef struct _php_mf2parse_object {
 	zval base_url;
 	zend_ulong options;
 	HashTable *items, *rels, *rel_urls, *properties;
+	xmlDocPtr document;
 	zend_object zo;
 } php_mf2parse_object;
 

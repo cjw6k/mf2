@@ -19,5 +19,15 @@
 	X(rels) \
 	X(relurls) \
 	X(rel_urls) \
+	X(a) \
+	X(link) \
+	X(area) \
+	X(rel) \
+	X(href) \
+	X(text) \
+	X(hreflang) \
+	X(media) \
+	X(title) \
+	X(type) \
 
 #endif /* MF2_STR_DEFS_H */

@@ -14,4 +14,4 @@ try{
 
 ?>
 --EXPECT--
-Error: Trying to clone an uncloneable object of class Mf2Parse
+Error: Trying to clone an uncloneable object of class MF2Parse

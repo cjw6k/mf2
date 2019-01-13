@@ -19,6 +19,8 @@
 
 #if HAVE_MF2
 
+#include <libxml/HTMLparser.h>
+
 #include "zend_exceptions.h"
 
 #include "mf2parse.h"

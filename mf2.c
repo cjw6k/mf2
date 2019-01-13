@@ -19,8 +19,82 @@
 
 #if HAVE_MF2
 
+#include "zend_smart_str.h"
+
 #include "mf2.h"
 
 mf2_str_globals str_globals_mf2;
+
+/**
+ * Checks for the presence of a value inside an array.
+ *
+ * This code borrows very much from the standard PHP implementation in array.c.
+ *
+ * @see ext/standard/array.c
+ *
+ * @since 0.1.0
+ *
+ * @param  zval * haystack  The array of values to search within.
+ * @param  zval * needle    The value for which to search the array.
+ *
+ * @return  zend_bool  0 If needle is in haystack.
+ *                     1 If needle is not in haystack.
+ */
+zend_bool mf2_in_array( zval *haystack, zval *needle )
+{
+	zval *entry;
+
+	ZVAL_DEREF( needle );
+
+	if ( Z_TYPE_P( needle ) == IS_LONG ) {
+
+		ZEND_HASH_FOREACH_VAL( Z_ARRVAL_P( haystack ), entry ) {
+			if ( fast_equal_check_long ( needle, entry ) ) {
+				return 1;
+			}
+		} ZEND_HASH_FOREACH_END();
+
+	} else if ( Z_TYPE_P( needle ) == IS_STRING ) {
+
+		ZEND_HASH_FOREACH_VAL( Z_ARRVAL_P( haystack ), entry ) {
+			if ( fast_equal_check_string ( needle, entry ) ) {
+				return 1;
+			}
+		} ZEND_HASH_FOREACH_END();
+
+	} else {
+
+		ZEND_HASH_FOREACH_VAL( Z_ARRVAL_P( haystack ), entry ) {
+			if ( fast_equal_check_function( needle, entry ) ) {
+				return 1;
+			}
+		} ZEND_HASH_FOREACH_END();
+
+	}
+
+	return 0;
+}
+
+/**
+ * Case insensitive string comparison for hash buckets.
+ *
+ * This callback is used by the zend_hash_sort function to sort values stored
+ * within HashTables into alphabetical order. It relies on the non-portable
+ * strcasecmp function.
+ *
+ * @since 0.1.0
+ *
+ * @param  const void * ida  A pointer to a hash bucket.
+ * @param  const void * idb  A pointer to a hash bucket.
+ *
+ * @return  int  Indicating which string is earlier in the order.
+ */
+int mf2_strcasecmp( const void *ida, const void *idb )
+{
+	Bucket *first = ( Bucket * ) ida;
+	Bucket *second = ( Bucket * ) idb;
+
+	return strcasecmp( Z_STRVAL( first->val ), Z_STRVAL( second->val ) );
+}
 
 #endif /* HAVE_MF2 */

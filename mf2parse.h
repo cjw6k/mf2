@@ -21,4 +21,8 @@ php_mf2parse_object *mf2parse_fetch_object( zend_object *object );
 
 HashTable *mf2parse_get_properties_ht( zval *object, int is_temp );
 
+void mf2parse_new( zval *object, char *data, size_t data_length, zend_bool data_is_uri );
+#define mf2parse_new_from_uri( object, uri, uri_length ) mf2parse_new( object, uri, uri_length, 1 )
+#define mf2parse_new_from_data( object, data, data_length ) mf2parse_new( object, data, data_length, 0 )
+
 #endif /* MF2_PARSE_H */

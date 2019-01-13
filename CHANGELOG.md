@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- MF2Parse, parses rel-urls
+- MF2Parse, parses rels
+- TEST: simple rel parsing
+- Using HTMLParser from libxml with default options: HTML_PARSE_RECOVER | HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING
+- Added dependency on libxml extension for PHP
 - TEST: MF2Parse encoded as JSON matches microformats2-json canonical output
 - MF2Parse implements jsonSerializeable interface
 - TEST: MF2Parse alternative access for rel-urls

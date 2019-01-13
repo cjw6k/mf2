@@ -137,6 +137,11 @@ void php_mf2parse_free_object_handler( zend_object *object )
 
 	zval_dtor( &mf2parse->base_url );
 
+	if ( mf2parse->document ) {
+		xmlFreeDoc( mf2parse->document );
+		xmlCleanupParser();
+	}
+
 	zend_object_std_dtor( &mf2parse->zo );
 }
 

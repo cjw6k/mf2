@@ -26,4 +26,7 @@ mf2_str_globals str_globals_mf2;
 
 #define MF2_STR(str) str_globals_mf2.str
 
+zend_bool mf2_in_array( zval *haystack, zval *needle );
+int mf2_strcasecmp( const void *ida, const void *idb );
+
 #endif /* MF2_H */
