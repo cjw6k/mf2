@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Space characters are trimmed from href attributes
+- TEST: MF2Parse trim html space characters from href attributes
 - TEST: mf-test-suite/v2/rel/xfn-elsewhere
 - TEST: mf-test-suite/v2/rel/xfn-all
 - TEST: mf-test-suite/v2/rel/varying-text-duplicate-rels

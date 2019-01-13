@@ -107,6 +107,8 @@ static void mf2parse_add_rel( zval *object, char *rel, char *href, xmlNodePtr xm
 
 	ZVAL_STRING( &zv_rel, rel );
 	ZVAL_STRING( &zv_href, href );
+	
+	mf2_trim_html_space_chars( &zv_href, Z_STRVAL(zv_href) );
 
 	// Rels
 	if ( ( rels_ptr = zend_hash_find( mf2parse->rels, Z_STR( zv_rel ) ) ) != NULL ) {

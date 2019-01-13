@@ -28,5 +28,6 @@ mf2_str_globals str_globals_mf2;
 
 zend_bool mf2_in_array( zval *haystack, zval *needle );
 int mf2_strcasecmp( const void *ida, const void *idb );
+void mf2_trim_html_space_chars( zval *trimmed_string, char *string );
 
 #endif /* MF2_H */

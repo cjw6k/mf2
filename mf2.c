@@ -20,6 +20,7 @@
 #if HAVE_MF2
 
 #include "zend_smart_str.h"
+#include "ext/standard/php_string.h"
 
 #include "mf2.h"
 
@@ -95,6 +96,36 @@ int mf2_strcasecmp( const void *ida, const void *idb )
 	Bucket *second = ( Bucket * ) idb;
 
 	return strcasecmp( Z_STRVAL( first->val ), Z_STRVAL( second->val ) );
+}
+
+/**
+ * Remove white space from the beginning and end of a c-string.
+ *
+ * The HTML5 specification defines space characters:
+ *
+ *   "The space characters, for the purposes of this specification, 
+ *    are U+0020 SPACE, U+0009 CHARACTER TABULATION (tab), 
+ *    U+000A LINE FEED (LF), U+000C FORM FEED (FF), and 
+ *    U+000D CARRIAGE RETURN (CR)."
+ *
+ * @link https://www.w3.org/TR/html52/infrastructure.html#common-parser-idioms
+ *
+ * @since 0.1.0
+ *
+ * @param  zval * trimmed_string  The resultant trimmed string.
+ * @param  char * string          The string to trim. 
+ */
+void mf2_trim_html_space_chars( zval *trimmed_string, char *string )
+{	
+	smart_str smart_data_str = {0};	
+	
+	smart_str_appends( &smart_data_str, string );
+	smart_str_0( &smart_data_str );
+
+	zval_dtor( trimmed_string );
+	ZVAL_STR( trimmed_string, php_trim( smart_data_str.s, " \t\r\f\n", 5, 3 ) );
+	
+	smart_str_free( &smart_data_str );	
 }
 
 #endif /* HAVE_MF2 */
