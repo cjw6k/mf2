@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v2/rel/xfn-elsewhere
+- TEST: mf-test-suite/v2/rel/xfn-all
+- TEST: mf-test-suite/v2/rel/varying-text-duplicate-rels
+- TEST: mf-test-suite/v2/rel/rel-urls
+- TEST: mf-test-suite/v2/rel/nofollow
+- TEST: mf-test-suite/v2/rel/license
+- Tests derived from the [microformats-test-suite](https://github.com/microformats/tests)
 - MF2Parse has read property handler
 - TEST: property access 2, with non-empty properties for rels & rel-urls
 - MF2Parse, parses rel-urls
