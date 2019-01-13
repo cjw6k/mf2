@@ -207,6 +207,10 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 				result = zend_hash_num_elements( mf2parse->rels ) > 0 ? 1 : 0;
 			} else if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_rel_urls ) ) ) {
 				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
+			} else if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_relurls ) ) ) {
+				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
+			} else if ( 0 == strcmp( Z_STRVAL_P( member ), "rel-urls" ) ) { // TODO: make that a zend_string
+				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
 			} else {
 				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
 			}
@@ -223,6 +227,10 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 				zend_string_equals( Z_STR_P( member ), MF2_STR( str_rels ) )
 				||
 				zend_string_equals( Z_STR_P( member ), MF2_STR( str_rel_urls ) )
+				||
+				zend_string_equals( Z_STR_P( member ), MF2_STR( str_relurls ) )
+				||
+				0 == strcmp( Z_STRVAL_P( member ), "rel-urls" )
 			){
 				result = 1;
 			} else {

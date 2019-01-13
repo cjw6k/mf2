@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: MF2Parse alternative access for rel-urls
+- MF2Parse rel_urls property may be accessed as relurls, rel_urls or given $key = 'rel-urls', as $key
 - TEST: MF2Parse property access
 - TEST: MF2Parse empty file
 - TEST: MF2Parse empty code string
