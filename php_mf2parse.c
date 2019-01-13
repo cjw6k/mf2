@@ -255,6 +255,53 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 	return result;
 }
 
+/**
+ * @since 0.1.0
+ */
+zval *php_mf2parse_read_property_handler( zval *object, zval *zv_member, int type, void **cache_slot, zval *zv_return )
+{
+	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	zval *zv_result, zv_safe_member;
+
+	zv_result = &EG( uninitialized_zval );
+
+	ZVAL_UNDEF( &zv_safe_member );
+	if ( UNEXPECTED( Z_TYPE_P( zv_member ) != IS_STRING ) ) {
+		ZVAL_STR( &zv_safe_member, zval_get_string( zv_member ) );
+		zv_member = &zv_safe_member;
+		cache_slot = NULL;
+	}
+
+	if ( zend_string_equals( Z_STR_P( zv_member ), MF2_STR( str_items ) ) ) {
+		ZVAL_ARR( zv_return, mf2parse->items );
+	} else if ( zend_string_equals( Z_STR_P( zv_member ), MF2_STR( str_rels ) ) ) {
+		ZVAL_ARR( zv_return, mf2parse->rels );
+	} else if (
+		zend_string_equals( Z_STR_P( zv_member ), MF2_STR( str_rel_urls ) )
+		||
+		zend_string_equals( Z_STR_P( zv_member ), MF2_STR( str_relurls ) )
+		||
+		0 == strcmp( "rel-urls", ZSTR_VAL( Z_STR_P( zv_member ) ) )
+	){
+		ZVAL_ARR( zv_return, mf2parse->rel_urls );
+	} else {
+		zv_result = zend_get_std_object_handlers()->read_property( object, zv_member, type, cache_slot, zv_return );
+		if ( zv_member == &zv_safe_member ) {
+			zval_dtor( zv_member );
+		}
+
+		return zv_result;
+	}
+
+	zval_copy_ctor( zv_return );
+
+	if ( zv_member == &zv_safe_member ) {
+		zval_dtor( zv_member );
+	}
+
+	return zv_return;
+}
+
 #if HAVE_JSON
 ZEND_BEGIN_ARG_INFO( arginfo_mf2parse_jsonSerialize, 0 )
 ZEND_END_ARG_INFO()
@@ -303,6 +350,7 @@ PHP_MINIT_FUNCTION( mf2parse )
 	php_mf2parse_object_handlers.get_properties = php_mf2parse_get_properties_handler;
 	php_mf2parse_object_handlers.get_debug_info = php_mf2parse_get_debug_info_handler;
 	php_mf2parse_object_handlers.has_property   = php_mf2parse_has_property_handler;
+	php_mf2parse_object_handlers.read_property  = php_mf2parse_read_property_handler;
 
 	php_mf2parse_object_handlers.offset = XtOffsetOf( php_mf2parse_object, zo );
 

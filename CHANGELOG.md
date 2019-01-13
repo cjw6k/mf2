@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- MF2Parse has read property handler
+- TEST: property access 2, with non-empty properties for rels & rel-urls
 - MF2Parse, parses rel-urls
 - MF2Parse, parses rels
 - TEST: simple rel parsing
