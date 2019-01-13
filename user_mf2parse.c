@@ -21,6 +21,7 @@
 
 #include "zend_exceptions.h"
 
+#include "mf2.h"
 #include "mf2parse.h"
 
 #include "user_mf2parse.h"
@@ -83,5 +84,42 @@ PHP_METHOD( MF2Parse, __construct )
 		ZVAL_STRINGL( &mf2parse->base_url, base_url, base_url_length );
 	}	
 }
+
+#if HAVE_JSON
+/**
+ * @since 0.1.0
+ */
+PHP_METHOD( MF2Parse, jsonSerialize )
+{
+	php_mf2parse_object *mf2parse;
+	zend_string *zs_relurls;
+	zval *this, items, rels, rel_urls;
+
+	this = getThis();
+	mf2parse = Z_MF2PARSEOBJ_P( this );
+
+	ZVAL_ARR( &items, mf2parse->items );
+	ZVAL_ARR( &rels, mf2parse->rels );
+	ZVAL_ARR( &rel_urls, mf2parse->rel_urls );
+
+	zval_copy_ctor( &items );
+	zval_copy_ctor( &rels );
+	zval_copy_ctor( &rel_urls );
+
+	// Microformats2 parsing spec calls for empty hashes
+	convert_to_object( &rels );
+	convert_to_object( &rel_urls );
+
+	array_init( return_value );
+	zend_hash_add_new( Z_ARRVAL_P( return_value ), MF2_STR( str_items ), &items );
+	zend_hash_add_new( Z_ARRVAL_P( return_value ), MF2_STR( str_rels ), &rels );
+
+	// Microformats2 parsing spec calls for dashed key: rel-urls
+	zs_relurls = zend_string_init( "rel-urls", 8, 0 ); // TODO: internalize this zend_string
+	zend_hash_add_new( Z_ARRVAL_P( return_value ), zs_relurls, &rel_urls );
+	zend_string_release( zs_relurls );
+}
+
+#endif /* HAVE_JSON */
 
 #endif /* HAVE_MF2 */

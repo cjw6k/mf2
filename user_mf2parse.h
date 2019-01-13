@@ -16,4 +16,8 @@
 
 PHP_METHOD( MF2Parse, __construct );
 
+#if HAVE_JSON
+PHP_METHOD( MF2Parse, jsonSerialize );
+#endif
+
 #endif /* UPHP_MF2_PARSE_H */

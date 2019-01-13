@@ -19,6 +19,10 @@
 
 #if HAVE_MF2
 
+#if HAVE_JSON
+#include "ext/json/php_json_parser.h"
+#endif
+
 #include "mf2.h"
 #include "mf2parse.h"
 #include "user_mf2parse.h"
@@ -245,7 +249,12 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 
 	return result;
 }
- 
+
+#if HAVE_JSON
+ZEND_BEGIN_ARG_INFO( arginfo_mf2parse_jsonSerialize, 0 )
+ZEND_END_ARG_INFO()
+#endif
+
 ZEND_BEGIN_ARG_INFO_EX( arginfo_mf2parse_construct, 0, 0, 1 )
 	ZEND_ARG_TYPE_INFO( 0, data, IS_STRING, 0 )
 	ZEND_ARG_TYPE_INFO( 0, base_url, IS_STRING, 1 )
@@ -255,6 +264,9 @@ ZEND_END_ARG_INFO()
 
 static const zend_function_entry php_mf2parse_functions[] = {
 	PHP_ME( MF2Parse, __construct, arginfo_mf2parse_construct, ZEND_ACC_PUBLIC )
+#if HAVE_JSON
+	PHP_ME( MF2Parse, jsonSerialize, arginfo_mf2parse_jsonSerialize, ZEND_ACC_PUBLIC )
+#endif
 	PHP_FE_END
 };
 
@@ -273,6 +285,10 @@ PHP_MINIT_FUNCTION( mf2parse )
 	INIT_CLASS_ENTRY( temp_ce, "Mf2Parse", php_mf2parse_functions );
 	php_mf2parse_ce = zend_register_internal_class( &temp_ce );
 
+#if HAVE_JSON
+	zend_class_implements( php_mf2parse_ce, 1, php_json_serializable_ce );
+#endif	
+	
 	php_mf2parse_ce->create_object = php_mf2parse_create_object_handler;
 	memcpy( &php_mf2parse_object_handlers, zend_get_std_object_handlers(), sizeof( php_mf2parse_object_handlers ) );
 

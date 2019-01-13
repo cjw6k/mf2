@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: MF2Parse encoded as JSON matches microformats2-json canonical output
+- MF2Parse implements jsonSerializeable interface
 - TEST: MF2Parse alternative access for rel-urls
 - MF2Parse rel_urls property may be accessed as relurls, rel_urls or given $key = 'rel-urls', as $key
 - TEST: MF2Parse property access
