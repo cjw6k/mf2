@@ -152,4 +152,4 @@ Copyright © `2019` `Christopher James Willcock`
  
 mf2 is free software; you can redistribute it and/or modify it under the terms of the MIT License. See the [LICENSE.md](LICENSE.md) file for license rights and limitations (MIT).
 
-Bundled within this software, inside the folder `./tests/microformats-test-suite/` are found tests authored by various individuals and released to the public domain (with much gratitude from this author). See the [tests/microformats-test-suite/LICENSE](LICENSE) file for usage rights and limitations which apply to their inclusion and use.
+Bundled within this software, inside the folder `./tests/microformats-test-suite/` are found tests authored by various individuals and released to the public domain (with much gratitude from this author). See the [LICENSE](tests/microformats-test-suite/LICENSE) file for usage rights and limitations which apply to their inclusion and use.
