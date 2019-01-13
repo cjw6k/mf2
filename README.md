@@ -36,7 +36,7 @@ mf2_parse ( string $data [, string $base_url = null [, int $options = 0 ]] )
 mf2 provides a parse via the `MF2Parse` class. 
 
 ```php
-public MF2Parse::__construct ( string $data [, string $base_url = null [, bool $data_is_url = false [, int $options = 0 ]]] )
+public MF2Parse::__construct ( string $data [, string $base_url = null [, bool $data_is_uri = false [, int $options = 0 ]]] )
 ```
 
 Each of `mf2_fetch` and `mf2_parse` return an object of this class and each uses the same functions internally to produce the parse -equivalent to instantiating the MF2Parse directly with the correct options. You may extend and customize this class to suit your needs. 

@@ -59,7 +59,7 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 	zend_hash_init( mf2parse->rels, 64, NULL, ZVAL_PTR_DTOR, 0 );
 	ALLOC_HASHTABLE( mf2parse->rel_urls );
 	zend_hash_init( mf2parse->rel_urls, 128, NULL, ZVAL_PTR_DTOR, 0 );
-	
+
 	ALLOC_HASHTABLE( mf2parse->properties );
 	zend_hash_init( mf2parse->properties, 8, NULL, ZVAL_PTR_DTOR, 0 );
 
@@ -92,7 +92,7 @@ void php_mf2parse_dtor_object_handler( zend_object *object )
 	zend_hash_destroy( mf2parse->rels );
 	zend_hash_destroy( mf2parse->rel_urls );
 	zend_hash_destroy( mf2parse->properties );
-	
+
 	zend_objects_destroy_object( object );
 }
 
@@ -108,7 +108,7 @@ void php_mf2parse_dtor_object_handler( zend_object *object )
  * @since 0.1.0
  *
  * @param  zend_object * object  The embedded standard object of the MF2Parse
- *                               object to be freed. 
+ *                               object to be freed.
  */
 void php_mf2parse_free_object_handler( zend_object *object )
 {
@@ -118,25 +118,25 @@ void php_mf2parse_free_object_handler( zend_object *object )
 	if ( mf2parse->items ) {
 		FREE_HASHTABLE( mf2parse->items );
 	}
-	
+
 	if ( mf2parse->rels ) {
 		FREE_HASHTABLE( mf2parse->rels );
 	}
-	
+
 	if ( mf2parse->rel_urls ) {
 		FREE_HASHTABLE( mf2parse->rel_urls );
 	}
 
 	if ( mf2parse->properties ) {
 		FREE_HASHTABLE( mf2parse->properties );
-	}	
-	
+	}
+
 	if ( mf2parse->php_base_url ) {
 		php_url_free( mf2parse->php_base_url );
 	}
 
 	zval_dtor( &mf2parse->base_url );
-	
+
 	zend_object_std_dtor( &mf2parse->zo );
 }
 
@@ -147,7 +147,7 @@ void php_mf2parse_free_object_handler( zend_object *object )
  *
  * @param  zval * object  The subject instance.
  *
- * @return  HashTable *  The properties of the object. 
+ * @return  HashTable *  The properties of the object.
  */
 HashTable *php_mf2parse_get_properties_handler( zval *object )
 {
@@ -163,7 +163,7 @@ HashTable *php_mf2parse_get_properties_handler( zval *object )
  * @param  int * is_temp  Indicates if the return value should be a copy or a
  *                        reference to the memory.
  *
- * @return  HashTable *  The properties of the object. 
+ * @return  HashTable *  The properties of the object.
  */
 HashTable *php_mf2parse_get_debug_info_handler( zval *object, int *is_temp )
 {
@@ -201,8 +201,8 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 		ZVAL_STR( &tmp_member, zval_get_string( member ) );
 		member = &tmp_member;
 		cache_slot = NULL;
-	}	
-	
+	}
+
 	switch( has_set_exists ) {
 		case 1:
 			if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_items ) ) ) {
@@ -219,7 +219,7 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
 			}
 		break;
-		
+
 		case 0:
 		case 2:
 			// These properties are never null.
@@ -239,10 +239,10 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 				result = 1;
 			} else {
 				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
-			}		
+			}
 		break;
-	}	
-	
+	}
+
 	if ( member == &tmp_member ) {
 		zval_dtor( member );
 	}
@@ -258,7 +258,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX( arginfo_mf2parse_construct, 0, 0, 1 )
 	ZEND_ARG_TYPE_INFO( 0, data, IS_STRING, 0 )
 	ZEND_ARG_TYPE_INFO( 0, base_url, IS_STRING, 1 )
-	ZEND_ARG_TYPE_INFO( 0, data_is_url, _IS_BOOL, 1 )
+	ZEND_ARG_TYPE_INFO( 0, data_is_uri, _IS_BOOL, 1 )
 	ZEND_ARG_TYPE_INFO( 0, options, IS_LONG, 1 )
 ZEND_END_ARG_INFO()
 
@@ -282,13 +282,13 @@ PHP_MINIT_FUNCTION( mf2parse )
 	zval zv_null;
 	ZVAL_NULL( &zv_null );
 
-	INIT_CLASS_ENTRY( temp_ce, "Mf2Parse", php_mf2parse_functions );
+	INIT_CLASS_ENTRY( temp_ce, "MF2Parse", php_mf2parse_functions );
 	php_mf2parse_ce = zend_register_internal_class( &temp_ce );
 
 #if HAVE_JSON
 	zend_class_implements( php_mf2parse_ce, 1, php_json_serializable_ce );
-#endif	
-	
+#endif
+
 	php_mf2parse_ce->create_object = php_mf2parse_create_object_handler;
 	memcpy( &php_mf2parse_object_handlers, zend_get_std_object_handlers(), sizeof( php_mf2parse_object_handlers ) );
 
@@ -298,7 +298,7 @@ PHP_MINIT_FUNCTION( mf2parse )
 	php_mf2parse_object_handlers.get_properties = php_mf2parse_get_properties_handler;
 	php_mf2parse_object_handlers.get_debug_info = php_mf2parse_get_debug_info_handler;
 	php_mf2parse_object_handlers.has_property   = php_mf2parse_has_property_handler;
-	
+
 	php_mf2parse_object_handlers.offset = XtOffsetOf( php_mf2parse_object, zo );
 
 	return SUCCESS;

@@ -9,7 +9,7 @@ var_dump(new MF2Parse('<html></html>'));
 
 ?>
 --EXPECT--
-object(Mf2Parse)#1 (3) {
+object(MF2Parse)#1 (3) {
   ["items"]=>
   array(0) {
   }

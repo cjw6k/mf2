@@ -26,7 +26,7 @@
 
 /**
  * Convert a standard zend_object reference to an MF2Parse object reference.
- * 
+ *
  * A standard zend_object is embedded within each MF2Parse object. Many API
  * functions expect a zend_object parameter, making this function helpful to
  * reference the containing MF2Parse object of the standard zend_object passed
@@ -55,7 +55,7 @@ php_mf2parse_object *mf2parse_fetch_object( zend_object *object )
  * @param  int * is_temp  Indicates if the return value should be a copy or a
  *                        reference to the memory.
  *
- * @return  HashTable *  The properties of the object. 
+ * @return  HashTable *  The properties of the object.
  */
 HashTable *mf2parse_get_properties_ht( zval *object, int is_temp )
 {

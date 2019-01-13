@@ -12,7 +12,7 @@ var_dump($parse);
 ?>
 --EXPECT--
 bool(true)
-object(Mf2Parse)#1 (3) {
+object(MF2Parse)#1 (3) {
   ["items"]=>
   array(0) {
   }

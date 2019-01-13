@@ -37,7 +37,7 @@ $parse = new MF2Parse('<html></html>');
 var_dump($parse instanceof MF2Parse);
 
 // Check that null can be passed to any nullable param
-// string $data, ?string base_url, ?bool $data_is_url, ?int $options
+// string $data, ?string base_url, ?bool $data_is_uri, ?int $options
 $parse = new MF2Parse('<html></html>', null, null, null);
 var_dump($parse instanceof MF2Parse);
 
@@ -72,22 +72,27 @@ try{
 $parse = new MF2Parse('<html></html>', 'http://example.com/');
 var_dump($parse instanceof MF2Parse);
 
-// Arrays are not a data_is_url (bool)
+// Arrays are not a data_is_uri (bool)
 try{
 	$parse = new MF2Parse('<html></html>', null, array());
 } catch (TypeError $e){
 	echo get_class($e), ': ', $e->getMessage(), "\n";
 }
 
-// Objects are not a data_is_url (bool)
+// Objects are not a data_is_uri (bool)
 try{
 	$parse = new MF2Parse('<html></html>', null, new stdClass());
 } catch (TypeError $e){
 	echo get_class($e), ': ', $e->getMessage(), "\n";
 }
 
-$parse = new MF2Parse('/tmp/index.html', 'http://example.com/', true);
+libxml_use_internal_errors();
+$filename = tempnam("/tmp", "phpt");
+
+$parse = new MF2Parse($filename, 'http://example.com/', true);
 var_dump($parse instanceof MF2Parse);
+
+unlink($filename);
 
 $parse = new MF2Parse('http://microformats.org', null, true);
 var_dump($parse instanceof MF2Parse);
@@ -95,17 +100,17 @@ var_dump($parse instanceof MF2Parse);
 ?>
 --EXPECT--
 Exception: Data parameter is required
-TypeError: Argument 1 passed to Mf2Parse::__construct() must be of the type string, null given
-TypeError: Argument 1 passed to Mf2Parse::__construct() must be of the type string, array given
-TypeError: Argument 1 passed to Mf2Parse::__construct() must be of the type string, object given
+TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string, null given
+TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string, array given
+TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string, object given
 bool(true)
 bool(true)
-TypeError: Argument 2 passed to Mf2Parse::__construct() must be of the type string, array given
-TypeError: Argument 2 passed to Mf2Parse::__construct() must be of the type string, object given
+TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string, array given
+TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string, object given
 Exception: Invalid base URL
 Exception: Base URL must be absolute
 bool(true)
-TypeError: Argument 3 passed to Mf2Parse::__construct() must be of the type boolean, array given
-TypeError: Argument 3 passed to Mf2Parse::__construct() must be of the type boolean, object given
+TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type boolean, array given
+TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type boolean, object given
 bool(true)
 bool(true)
