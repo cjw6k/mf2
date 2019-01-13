@@ -19,6 +19,7 @@
 typedef struct _php_mf2parse_object {
 	php_url *php_base_url;
 	zval base_url;
+	HashTable *items, *rels, *rel_urls, *properties;
 	zend_object zo;
 } php_mf2parse_object;
 

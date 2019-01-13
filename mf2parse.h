@@ -19,4 +19,6 @@
 php_mf2parse_object *mf2parse_fetch_object( zend_object *object );
 #define Z_MF2PARSEOBJ_P( zv_object ) mf2parse_fetch_object( Z_OBJ_P( ( zv_object ) ) )
 
+HashTable *mf2parse_get_properties_ht( zval *object, int is_temp );
+
 #endif /* MF2_PARSE_H */

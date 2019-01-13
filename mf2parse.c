@@ -19,6 +19,9 @@
 
 #if HAVE_MF2
 
+#include "mf2.h"
+#include "php_mf2parse.h"
+
 #include "mf2parse.h"
 
 /**
@@ -40,6 +43,52 @@
 php_mf2parse_object *mf2parse_fetch_object( zend_object *object )
 {
 	return ( php_mf2parse_object * ) ( ( char * ) ( object ) - XtOffsetOf( php_mf2parse_object, zo ) );
+}
+
+/**
+ * Exposes the internal properties of the MF2Parse which correspond to the
+ * microformats JSON format.
+ *
+ * @since 0.1.0
+ *
+ * @param  zval * object  The subject MF2Parse instance.
+ * @param  int * is_temp  Indicates if the return value should be a copy or a
+ *                        reference to the memory.
+ *
+ * @return  HashTable *  The properties of the object. 
+ */
+HashTable *mf2parse_get_properties_ht( zval *object, int is_temp )
+{
+	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	HashTable *ht;
+	zval items, rels, rel_urls;
+
+	if ( is_temp ) {
+		ALLOC_HASHTABLE( ht );
+		zend_hash_init( ht, 0, NULL, ZVAL_PTR_DTOR, 0 );
+	} else if ( mf2parse->properties ) {
+		zend_hash_clean( mf2parse->properties );
+		ht = mf2parse->properties;
+	} else {
+		php_printf("it actually reached this\n");
+	}
+
+	// Add the items
+	ZVAL_ARR( &items, mf2parse->items );
+	zval_copy_ctor( &items );
+	zend_hash_add( ht, MF2_STR( str_items ), &items );
+
+	// Add the rels
+	ZVAL_ARR( &rels, mf2parse->rels );
+	zval_copy_ctor( &rels );
+	zend_hash_add( ht, MF2_STR( str_rels ), &rels );
+
+	// Add the rel_urls
+	ZVAL_ARR( &rel_urls, mf2parse->rel_urls );
+	zval_copy_ctor( &rel_urls );
+	zend_hash_add( ht, MF2_STR( str_rel_urls), &rel_urls );
+
+	return ht;
 }
 
 #endif /* HAVE_MF2 */

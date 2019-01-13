@@ -16,5 +16,7 @@
 
 #define MF2_STR_DEFS \
 	X(items) \
+	X(rels) \
+	X(rel_urls) \
 
 #endif /* MF2_STR_DEFS_H */
