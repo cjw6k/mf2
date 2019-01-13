@@ -96,7 +96,7 @@ For immediate use, the integer values of these option flags may be or'd together
 $parse = new MF2Parse( 'http://microformats.org', null, true, 1 | 32 | 64 );
 ```
 
-The above `$options` could have been provided as the integer `97` to indicate the same configuration, namely `HTML_PARSE_RECOVER | HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING`.
+The above `$options` could have been provided as the integer `97` to indicate the same configuration, namely `HTML_PARSE_RECOVER | HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING`. __These are the default options, if no options are specified.__
 
 ## Security
 T.B.D.
