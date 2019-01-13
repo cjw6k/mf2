@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: MF2Parse empty file
+- TEST: MF2Parse empty code string
+- Initialize/destroy/free items, rels and relurls
+- TEST: MF2Parse debug info includes required microformats elements (items, rels, relurls)
 - TEST: mf2_parse returns MF2Parse object
 - mf2_parse convenience function
 - TEST: mf2_fetch returns MF2Parse object
