@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: MF2Parse returns an empty parse when the requested local file does not exist
+- TEST: MF2Parse returns an empty parse when the requested URL does not exist
 - TEST: MF2Parse respects allow_url_fopen restrictions
 - TEST: MF2Parse respects open_basedir restrictions
 - Base URL supplied by function/method call, combined with <base> in document, used for resolving URIs in parse
