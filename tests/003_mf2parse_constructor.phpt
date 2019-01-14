@@ -86,7 +86,6 @@ try{
 	echo get_class($e), ': ', $e->getMessage(), "\n";
 }
 
-libxml_use_internal_errors();
 $filename = tempnam("/tmp", "phpt");
 
 $parse = new MF2Parse($filename, 'http://example.com/', true);
