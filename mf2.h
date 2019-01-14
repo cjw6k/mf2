@@ -16,6 +16,8 @@
 
 #include "mf2_str_defs.h"
 
+#include "ext/standard/url.h"
+
 typedef struct _mf2_str_globals {
 #define X(str) zend_string *str_ ## str;
 	MF2_STR_DEFS
@@ -29,5 +31,6 @@ mf2_str_globals str_globals_mf2;
 zend_bool mf2_in_array( zval *haystack, zval *needle );
 int mf2_strcasecmp( const void *ida, const void *idb );
 void mf2_trim_html_space_chars( zval *trimmed_string, char *string );
+zend_bool mf2_is_relative_url( php_url *url_parts );
 
 #endif /* MF2_H */

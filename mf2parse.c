@@ -21,6 +21,7 @@
 
 #include <libxml/parserInternals.h>
 #include <libxml/HTMLparser.h>
+#include <libxml/xpath.h>
 
 #include "ext/libxml/php_libxml.h"
 
@@ -99,6 +100,175 @@ HashTable *mf2parse_get_properties_ht( zval *object, int is_temp )
 /**
  * @since 0.1.0
  */
+static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_value, php_url *relative_url_parts )
+{
+	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	smart_str smart_uri_str = {0};
+
+	static char *scheme_separator       = "://";
+	static char *user_or_host_separator = ":";
+	static char *user_pass_separator    = "@";
+	static char *path_separator         = "/";
+	static char *query_separator        = "?";
+	static char *fragment_separator     = "#";
+
+	if ( !mf2parse->php_base_url || !mf2parse->php_base_url->scheme ) {
+		php_error_docref( NULL, E_WARNING, "Absolute base URL is not set, but is required to resolve a relative HTML <base>" );
+		return 0;
+	}
+
+	smart_str_appends( &smart_uri_str, !relative_url_parts->scheme ? mf2parse->php_base_url->scheme : relative_url_parts->scheme );
+	smart_str_appends(&smart_uri_str, scheme_separator);
+	
+	if ( !relative_url_parts->host ) {
+		zend_bool has_user_or_pass = 0;
+		
+		if ( mf2parse->php_base_url->user ) {
+			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->user );
+			has_user_or_pass = 1;
+		}
+		
+		if ( mf2parse->php_base_url->pass ) {
+			smart_str_appends( &smart_uri_str, user_or_host_separator );
+			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->pass );
+			has_user_or_pass = 1;
+		}
+		
+		if ( has_user_or_pass ) {
+			smart_str_appends( &smart_uri_str, user_pass_separator );
+		}
+		
+		smart_str_appends( &smart_uri_str, mf2parse->php_base_url->host );
+		
+		if ( mf2parse->php_base_url->port ) {
+			smart_str_appends( &smart_uri_str, user_or_host_separator );
+			smart_str_append_long( &smart_uri_str, mf2parse->php_base_url->port );
+		}
+	}
+	
+	if ( relative_url_parts->path ) {
+		if ( *relative_url_parts->path != *path_separator ) {
+			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->path );
+			smart_str_appends( &smart_uri_str, relative_url_parts->path );
+		} else {
+			smart_str_appends( &smart_uri_str, relative_url_parts->path );
+		}
+		
+		if ( relative_url_parts->query ) {
+			smart_str_appends( &smart_uri_str, query_separator );
+			smart_str_appends( &smart_uri_str, relative_url_parts->query );
+		}
+		
+		if ( relative_url_parts->fragment ) {
+			smart_str_appends( &smart_uri_str, fragment_separator );
+			smart_str_appends( &smart_uri_str, relative_url_parts->fragment );
+		}
+	} else {
+		if ( mf2parse->php_base_url->path ) {
+			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->path );
+		} else {
+			smart_str_appends( &smart_uri_str, path_separator );
+		}
+		
+		if ( relative_url_parts->query ) {
+			smart_str_appends( &smart_uri_str, query_separator );
+			smart_str_appends( &smart_uri_str, relative_url_parts->query );
+		} else if ( mf2parse->php_base_url->query ) {
+			smart_str_appends( &smart_uri_str, query_separator );
+			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->query );
+		}
+		
+		if ( relative_url_parts->fragment ) {
+			smart_str_appends( &smart_uri_str, fragment_separator );
+			smart_str_appends( &smart_uri_str, relative_url_parts->fragment );
+		} else if ( mf2parse->php_base_url->fragment ) {
+			smart_str_appends( &smart_uri_str, fragment_separator );
+			smart_str_appends( &smart_uri_str,  mf2parse->php_base_url->fragment );
+		}
+	}
+
+	if( relative_url_parts->query ) {
+		// TODO: finish up relative URL resolution
+	}
+	smart_str_0( &smart_uri_str );
+
+	zval_ptr_dtor( zv_return_value );
+	ZVAL_STRING( zv_return_value, ZSTR_VAL( smart_uri_str.s ) );
+
+	smart_str_free( &smart_uri_str );
+	
+	return 1;
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_resolve_base( zval *object )
+{
+	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+
+	xmlXPathContextPtr xpath = xmlXPathNewContext( mf2parse->document );
+	if ( xpath == NULL ) {
+		php_error_docref( NULL, E_WARNING, "Failed to make an XPath context" );
+		return;
+	}
+	xmlXPathObjectPtr result = xmlXPathEvalExpression( ( xmlChar * ) "//base[@href]", xpath );
+	xmlXPathFreeContext( xpath );
+
+	if ( xmlXPathNodeSetIsEmpty( result->nodesetval ) ) {
+		xmlXPathFreeObject( result );
+		return;
+	}
+
+	xmlNodeSetPtr nodeset = result->nodesetval;
+
+	xmlChar *base_href = xmlGetProp( nodeset->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) );
+	xmlXPathFreeObject( result );
+
+	if ( 0 == xmlStrlen( base_href ) ) {
+		xmlFree( base_href );
+		return;
+	}
+
+	php_url *doc_url_parts = php_url_parse( ( char * ) base_href );
+
+	if( NULL == doc_url_parts ) {
+		php_error_docref( NULL, E_NOTICE, "Parsed document includes an invalid <base> URL" );
+		xmlFree( base_href );
+		return;
+	}
+
+	if ( !mf2_is_relative_url( doc_url_parts ) ) {
+		// The HTML base is found, and is not relative, so it is the base_url
+
+		// TODO: stop redoing this php_url_parse
+		if ( mf2parse->php_base_url ) {
+			php_url_free( mf2parse->php_base_url );
+		}
+		mf2parse->php_base_url = php_url_parse( ( char * ) base_href );
+
+	} else {
+		// The HTML base is found, and is relative o_O
+		zval zv_href;
+		ZVAL_NULL( &zv_href );
+		
+		if ( mf2parse_resolve_relative_uri( object, &zv_href, doc_url_parts ) ) {
+			if ( mf2parse->php_base_url ) {
+				php_url_free( mf2parse->php_base_url );
+			}
+			mf2parse->php_base_url = php_url_parse( Z_STRVAL( zv_href ) );			
+		}
+
+		zval_dtor( &zv_href );
+	}
+
+	xmlFree( base_href );
+	php_url_free( doc_url_parts );
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_add_rel( zval *object, char *rel, char *href, xmlNodePtr xml_node )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
@@ -107,9 +277,15 @@ static void mf2parse_add_rel( zval *object, char *rel, char *href, xmlNodePtr xm
 
 	ZVAL_STRING( &zv_rel, rel );
 	ZVAL_STRING( &zv_href, href );
-	
-	mf2_trim_html_space_chars( &zv_href, Z_STRVAL(zv_href) );
 
+	mf2_trim_html_space_chars( &zv_href, Z_STRVAL( zv_href ) );
+
+	php_url *url_parts = php_url_parse( Z_STRVAL( zv_href ) );
+	if ( mf2_is_relative_url( url_parts ) ) {
+		mf2parse_resolve_relative_uri( object, &zv_href, url_parts );
+	}
+	php_url_free( url_parts );
+	
 	// Rels
 	if ( ( rels_ptr = zend_hash_find( mf2parse->rels, Z_STR( zv_rel ) ) ) != NULL ) {
 		// This rel type has already been recorded, add to that array.
@@ -261,6 +437,10 @@ void mf2parse_new( zval *object, char *data, size_t data_length, zend_bool data_
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
 
+	if ( data_is_uri && !mf2parse->php_base_url ) {
+		mf2parse->php_base_url = php_url_parse_ex( data, data_length );
+	}
+	
 	htmlParserCtxtPtr ctxt = data_is_uri ? htmlCreateFileParserCtxt( data, NULL ) : htmlCreateMemoryParserCtxt( data, data_length );
 
 	if( !ctxt ) {
@@ -274,6 +454,8 @@ void mf2parse_new( zval *object, char *data, size_t data_length, zend_bool data_
 	htmlParseDocument( ctxt );
 	mf2parse->document = ctxt->myDoc;
 	htmlFreeParserCtxt( ctxt );
+
+	mf2parse_resolve_base( object );
 
 	mf2parse_xml_node( object, xmlDocGetRootElement( mf2parse->document ) );
 }

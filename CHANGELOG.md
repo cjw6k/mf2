@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Base URL supplied by function/method call, combined with <base> in document, used for resolving URIs in parse
+- TEST: relative URLs are converted to absolute URLs, using HTML base if available
 - Space characters are trimmed from href attributes
 - TEST: MF2Parse trim html space characters from href attributes
 - TEST: mf-test-suite/v2/rel/xfn-elsewhere

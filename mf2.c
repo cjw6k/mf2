@@ -21,6 +21,7 @@
 
 #include "zend_smart_str.h"
 #include "ext/standard/php_string.h"
+#include "ext/standard/url.h"
 
 #include "mf2.h"
 
@@ -126,6 +127,22 @@ void mf2_trim_html_space_chars( zval *trimmed_string, char *string )
 	ZVAL_STR( trimmed_string, php_trim( smart_data_str.s, " \t\r\f\n", 5, 3 ) );
 	
 	smart_str_free( &smart_data_str );	
+}
+
+
+/**
+ * Check if a given URL is a relative URL.
+ *
+ * @since 0.1.0
+ *
+ * @param  php_url * url_parts  The parsed URL.
+ *
+ * @return  zend_bool  0 The URL is not relative (it is absolute).
+ *                     1 The URL is relative.
+ */
+zend_bool mf2_is_relative_url( php_url *url_parts )
+{
+	return NULL == url_parts->scheme ? 1 : 0;
 }
 
 #endif /* HAVE_MF2 */
