@@ -23,4 +23,17 @@
 extern zend_module_entry php_mf2_module_entry;
 #define phpext_mf2_ptr &php_mf2_module_entry
 
+/* MF2Parse() options */
+#define PHP_MF2_NOERROR         0x01 // 1 << 0
+#define PHP_MF2_NOWARNING       0x02 // 1 << 1
+#define PHP_MF2_NONOTICE        0x04 // 1 << 2
+
+/* LibXML HTML parsing context options */
+#define PHP_MF2_PARSE_RECOVER   0x08 // 1 << 3
+#define PHP_MF2_PARSE_NOERROR   0x10 // 1 << 4
+#define PHP_MF2_PARSE_NOWARNING 0x20 // 1 << 5
+
+/* Combined convenience option, it's the default if no options are specified */
+#define PHP_MF2_PARSE_HAPPY     0x3F // PHP_MF2_NOERROR | PHP_MF2_NOWARNING | PHP_MF2_NONOTICE | PHP_MF2_PARSE_RECOVER | PHP_MF2_PARSE_NOERROR | PHP_MF2_PARSE_NOWARNING
+
 #endif /* PHP_MF2 */

@@ -23,6 +23,7 @@
 
 #include "zend_exceptions.h"
 
+#include "php_mf2.h"
 #include "mf2parse.h"
 #include "php_mf2parse.h"
 
@@ -34,7 +35,7 @@ PHP_FUNCTION(mf2_fetch)
 	char *uri, *base_url = NULL;
 	int num_args = ZEND_NUM_ARGS();
 	size_t uri_length, base_url_length;
-	zend_long options = HTML_PARSE_NOWARNING | HTML_PARSE_NOERROR | HTML_PARSE_RECOVER;
+	zend_long options = PHP_MF2_PARSE_HAPPY;
 	zend_bool options_is_null = 0;
 
 	if ( num_args == 0 ) {
@@ -84,7 +85,7 @@ PHP_FUNCTION(mf2_fetch)
 	}
 
 	if ( options_is_null == 1 ) {
-		mf2parse->options = HTML_PARSE_NOWARNING | HTML_PARSE_NOERROR | HTML_PARSE_RECOVER;
+		mf2parse->options = PHP_MF2_PARSE_HAPPY;
 	} else {
 		mf2parse->options = options;
 	}
@@ -100,7 +101,7 @@ PHP_FUNCTION(mf2_parse)
 	char *data, *base_url = NULL;
 	int num_args = ZEND_NUM_ARGS();
 	size_t data_length, base_url_length;
-	zend_long options = HTML_PARSE_NOWARNING | HTML_PARSE_NOERROR | HTML_PARSE_RECOVER;
+	zend_long options = PHP_MF2_PARSE_HAPPY;
 	zend_bool options_is_null = 0;
 
 	if ( num_args == 0 ) {
@@ -150,7 +151,7 @@ PHP_FUNCTION(mf2_parse)
 	}
 
 	if ( options_is_null == 1 ) {
-		mf2parse->options = HTML_PARSE_NOWARNING | HTML_PARSE_NOERROR | HTML_PARSE_RECOVER;
+		mf2parse->options = PHP_MF2_PARSE_HAPPY;
 	} else {
 		mf2parse->options = options;
 	}

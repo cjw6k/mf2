@@ -6,28 +6,28 @@ mf2: relative URLs are converted to absolute URLs, using HTML base if available
 <?php
 
 // Relative URL encountered with no base set results in a warning
-mf2_parse('<a rel="test" href="/">');
-new MF2Parse('<a rel="test" href="/">');
+mf2_parse('<a rel="test" href="/">', null, 0);
+new MF2Parse('<a rel="test" href="/">', null, null, 0);
 
 // Base provided in constructor
-echo (mf2_parse('<a rel="test" href="/">', 'http://example.com/'))->rels['test'][0], "\n";
-echo (new MF2Parse('<a rel="test" href="/">', 'http://example.com/'))->rels['test'][0], "\n";
+echo (mf2_parse('<a rel="test" href="/">', 'http://example.com/', 0))->rels['test'][0], "\n";
+echo (new MF2Parse('<a rel="test" href="/">', 'http://example.com/', null, 0))->rels['test'][0], "\n";
 
 // Base provided in HTML5 base tag
-echo (mf2_parse('<base href="http://example.net/"><a rel="test" href="/"></a>'))->rels['test'][0], "\n";
-echo (new MF2Parse('<base href="http://example.net/"><a rel="test" href="/"></a>'))->rels['test'][0], "\n";
+echo (mf2_parse('<base href="http://example.net/"><a rel="test" href="/"></a>', null, 0))->rels['test'][0], "\n";
+echo (new MF2Parse('<base href="http://example.net/"><a rel="test" href="/"></a>', null, null, 0))->rels['test'][0], "\n";
 
 // Base in HTML5 tag has priority
-echo (mf2_parse('<base href="http://example.net/"><a rel="test" href="/"></a>', 'http://example.com/'))->rels['test'][0], "\n";
-echo (new MF2Parse('<base href="http://example.net/"><a rel="test" href="/"></a>', 'http://example.com/'))->rels['test'][0], "\n";
+echo (mf2_parse('<base href="http://example.net/"><a rel="test" href="/"></a>', 'http://example.com/', 0))->rels['test'][0], "\n";
+echo (new MF2Parse('<base href="http://example.net/"><a rel="test" href="/"></a>', 'http://example.com/', null, 0))->rels['test'][0], "\n";
 
 // Base in HTML5 tag may be relative
-echo (mf2_parse('<base href="/htmlbase/"><a rel="test" href="relative/"></a>', 'http://example.com/'))->rels['test'][0], "\n";
-echo (new MF2Parse('<base href="/htmlbase/"><a rel="test" href="relative/"></a>', 'http://example.com/'))->rels['test'][0], "\n";
+echo (mf2_parse('<base href="/htmlbase/"><a rel="test" href="relative/"></a>', 'http://example.com/', 0))->rels['test'][0], "\n";
+echo (new MF2Parse('<base href="/htmlbase/"><a rel="test" href="relative/"></a>', 'http://example.com/', null, 0))->rels['test'][0], "\n";
 
 // Invalid base URL in HTML tag generates a notice
-mf2_parse('<html><head><base href="http://:80"></head></html>');
-new MF2Parse('<html><head><base href="http://:80"></head></html>');
+mf2_parse('<html><head><base href="http://:80"></head></html>', null, 0);
+new MF2Parse('<html><head><base href="http://:80"></head></html>', null, null, 0);
 
 
 ?>

@@ -76,27 +76,35 @@ $parse = MF2Parse( 'http://microformats.org', null, true );
 
 __Parsing Options__
 
-mf2 uses the HTML parser from libxml2. The following option flags are available internally and will soon be made available to userland:
+mf2 uses the HTML parser from libxml2. The following option flags are available where indicated in the 'mf2 Name' column (others are as-yet, not implemented):
 
-mf2 Name | LibXML2 Name | Integer Value | Purpose
--------- | ------------ | ------------- | -------
-n/a | HTML_PARSE_RECOVER | 1 | Relaxed parsing
-n/a | HTML_PARSE_NODEFDTD | 4 | do not default a doctype if not found
-n/a | HTML_PARSE_NOERROR | 32 | suppress error reports
-n/a | HTML_PARSE_NOWARNING | 64 | suppress warning reports
-n/a | HTML_PARSE_PEDANTIC | 128 | pedantic error reporting
-n/a | HTML_PARSE_NOBLANKS | 256 | remove blank nodes
-n/a | HTML_PARSE_NONET | 2048 | Forbid network access
-n/a | HTML_PARSE_NOIMPLIED | 8192 | Do not add implied html/body... elements
-n/a | HTML_PARSE_COMPACT | 65535 | compact small text nodes
-n/a | HTML_PARSE_IGNORE_ENC | 209<span></span>7152 | ignore internal document encoding hint
+mf2 Name | LibXML2 Name | Purpose
+-------- | ------------ | -------
+MF2_PARSE_RECOVER | HTML_PARSE_RECOVER | Relaxed parsing
+n/a | HTML_PARSE_NODEFDTD | do not default a doctype if not found
+MF2_PARSE_NOERROR | HTML_PARSE_NOERROR | suppress error reports
+MF2_PARSE_NOWARNING | HTML_PARSE_NOWARNING | suppress warning reports
+n/a | HTML_PARSE_PEDANTIC | pedantic error reporting
+n/a | HTML_PARSE_NOBLANKS | remove blank nodes
+n/a | HTML_PARSE_NONET | Forbid network access
+n/a | HTML_PARSE_NOIMPLIED | Do not add implied html/body... elements
+n/a | HTML_PARSE_COMPACT | compact small text nodes
+n/a | HTML_PARSE_IGNORE_ENC | ignore internal document encoding hint
+MF2_NONOTICE | - | Suppress notice messages that originate outside libxml
+MF2_NOWARNING | - | Suppress warning messages that originate outside libxml
+MF2_NOERROR | - | Suppress error messages that originate outside libxml
+MF2_PARSE_HAPPY | - | Combines all available flags; mutes all the complaining
 
-For immediate use, the integer values of these option flags may be or'd together and provided as the fourth parameter in the constructor:
+The default behaviour, with no options set:
 ```php
-$parse = new MF2Parse( 'http://microformats.org', null, true, 1 | 32 | 64 );
+$parse = mf2_fetch( 'http://microformats.org' );
 ```
 
-The above `$options` could have been provided as the integer `97` to indicate the same configuration, namely `HTML_PARSE_RECOVER | HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING`. __These are the default options, if no options are specified.__
+The above default behaviour is equivalent to specifying the MF2_PARSE_HAPPY convenience option:
+
+```php
+$parse = mf2_fetch( 'http://microformats.org', null, MF2_PARSE_HAPPY );
+```
 
 ## Security
 T.B.D.

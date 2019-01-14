@@ -24,6 +24,7 @@
 #include "zend_exceptions.h"
 
 #include "mf2.h"
+#include "php_mf2.h"
 #include "mf2parse.h"
 
 #include "user_mf2parse.h"
@@ -36,7 +37,7 @@ PHP_METHOD( MF2Parse, __construct )
 	char *data, *base_url = NULL;
 	int num_args = ZEND_NUM_ARGS();
 	size_t data_length, base_url_length;
-	zend_long options = HTML_PARSE_NOWARNING | HTML_PARSE_NOERROR | HTML_PARSE_RECOVER;
+	zend_long options = PHP_MF2_PARSE_HAPPY;
 	zend_bool data_is_uri = 0, options_is_null = 0, data_is_uri_is_null = 0;
 	zval *this;
 
@@ -87,7 +88,7 @@ PHP_METHOD( MF2Parse, __construct )
 	}
 
 	if ( options_is_null == 1 ) {
-		mf2parse->options = HTML_PARSE_NOWARNING | HTML_PARSE_NOERROR | HTML_PARSE_RECOVER;
+		mf2parse->options = PHP_MF2_PARSE_HAPPY;
 	} else {
 		mf2parse->options = options;
 	}
