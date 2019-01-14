@@ -1,7 +1,7 @@
 --TEST--
 mf2: MF2Parse fetch and parse from a non-existent URL
 --SKIPIF--
-<?php if (!extension_loaded("mf2")) print "skip"; ?> 
+<?php if (!extension_loaded("mf2")) print "skip"; if (getenv("SKIP_ONLINE_TESTS")) { die('skip online test'); } ?> 
 --FILE--
 <?php
 

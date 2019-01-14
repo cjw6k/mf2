@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Testing: online tests can be skipped with the --offline arg for run-tests.php
 - TEST: MF2Parse returns an empty parse when the requested local file does not exist
 - TEST: MF2Parse returns an empty parse when the requested URL does not exist
 - TEST: MF2Parse respects allow_url_fopen restrictions

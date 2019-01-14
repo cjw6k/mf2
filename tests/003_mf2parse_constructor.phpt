@@ -93,8 +93,10 @@ var_dump($parse instanceof MF2Parse);
 
 unlink($filename);
 
-$parse = new MF2Parse('http://microformats.org', null, true);
-var_dump($parse instanceof MF2Parse);
+// slows down the tests, and shouldn't be mixed with offline tests anyway
+// -- scenario is covered in 018_security_mf2parse_allow_url_fopen_restrictions
+//$parse = new MF2Parse('http://microformats.org', null, true);
+//var_dump($parse instanceof MF2Parse);
 
 ?>
 --EXPECT--
@@ -111,5 +113,4 @@ Exception: Base URL must be absolute
 bool(true)
 TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type boolean, array given
 TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type boolean, object given
-bool(true)
 bool(true)

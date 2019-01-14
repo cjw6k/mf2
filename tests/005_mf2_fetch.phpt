@@ -1,7 +1,7 @@
 --TEST--
 mf2: fetch data from a URI and return an MF2Parse instance
 --SKIPIF--
-<?php if (!extension_loaded("mf2")) print "skip"; ?> 
+<?php if (!extension_loaded("mf2")) die("skip"); if (getenv("SKIP_ONLINE_TESTS")) die('skip online test'); ?> 
 --FILE--
 <?php
 

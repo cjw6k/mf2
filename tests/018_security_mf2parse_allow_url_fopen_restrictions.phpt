@@ -1,7 +1,7 @@
 --TEST--
 mf2: MF2Parse respects allow_url_fopen restrictions
 --SKIPIF--
-<?php if (!extension_loaded("mf2")) print "skip"; ?> 
+<?php if (!extension_loaded("mf2")) print "skip"; if (getenv("SKIP_ONLINE_TESTS")) { die('skip online test'); } ?> 
 --INI--
 allow_url_fopen=0
 --FILE--
