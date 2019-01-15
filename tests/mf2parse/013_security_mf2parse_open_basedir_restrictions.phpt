@@ -9,12 +9,12 @@ if(!file_exists(__DIR__ . '/basedir-test')){
 	mkdir(__DIR__ . '/basedir-test');
 }
 
-var_dump(mf2_fetch(__DIR__ . '/empty_file.html') instanceof MF2Parse);
+var_dump(mf2_fetch(__DIR__ . '/../empty_file.html') instanceof MF2Parse);
 
 ini_set('open_basedir', __DIR__ . '/basedir-test');
 
-mf2_fetch(__DIR__ . '/empty_file.html');
-new MF2Parse(__DIR__ . '/empty_file.html', null, true);
+mf2_fetch(__DIR__ . '/../empty_file.html');
+new MF2Parse(__DIR__ . '/../empty_file.html', null, true);
 
 ?>
 --CLEAN--

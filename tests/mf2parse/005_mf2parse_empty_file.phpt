@@ -5,7 +5,7 @@ mf2: MF2Parse parse an empty file
 --FILE--
 <?php
 
-$parse = new MF2Parse(__DIR__ . '/empty_file.html', null, true);
+$parse = new MF2Parse(__DIR__ . '/../empty_file.html', null, true);
 var_dump($parse instanceof MF2Parse);
 var_dump($parse);
 
