@@ -456,6 +456,13 @@ void mf2parse_new( zval *object, char *data, size_t data_length, zend_bool data_
 		return;
 	}
 
+	ctxt->vctxt.error = php_libxml_ctx_error;
+	ctxt->vctxt.warning = php_libxml_ctx_warning;
+	if ( ctxt->sax != NULL ) {
+		ctxt->sax->error = php_libxml_ctx_error;
+		ctxt->sax->warning = php_libxml_ctx_warning;
+	}
+
 	int html_parsing_context_options = 0;
 
 	if ( mf2parse->options & PHP_MF2_PARSE_NOWARNING ) {
