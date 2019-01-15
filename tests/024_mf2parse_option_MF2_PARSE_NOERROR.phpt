@@ -1,5 +1,5 @@
 --TEST--
-mf2: MF2Parse accepts MF2_PARSE_NOWARNING option
+mf2: MF2Parse accepts MF2_PARSE_NOERROR option
 --SKIPIF--
 <?php if (!extension_loaded("mf2")) print "skip"; ?> 
 --FILE--
