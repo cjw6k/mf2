@@ -1,6 +1,7 @@
 # Microformats test suite
 
  * with heavy modification by CJWillcock - original README follows.
+ * see upstream @ https://github.com/microformats/tests
 
 This group of tests was built to test microformats parsers. The individual tests are files containing fragments of HTML.  There is also a second a corresponding JSON file, which contains the expected output. 
 
