@@ -6,7 +6,6 @@ mf2: MF2Parse option constants are defined
 <?php
 
 /* MF2Parse() options */
-var_dump(defined('MF2_NOERROR'));
 var_dump(defined('MF2_NOWARNING'));
 var_dump(defined('MF2_NONOTICE'));
 

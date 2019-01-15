@@ -92,7 +92,6 @@ n/a | HTML_PARSE_COMPACT | compact small text nodes
 n/a | HTML_PARSE_IGNORE_ENC | ignore internal document encoding hint
 MF2_NONOTICE | - | Suppress notice messages that originate outside libxml
 MF2_NOWARNING | - | Suppress warning messages that originate outside libxml
-MF2_NOERROR | - | Suppress error messages that originate outside libxml
 MF2_PARSE_HAPPY | - | Combines all available flags; mutes all the complaining
 
 The default behaviour, with no options set:
