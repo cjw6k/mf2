@@ -20,7 +20,9 @@ new MF2Parse(__DIR__ . '/empty_file.html', null, true);
 --CLEAN--
 <?php
 
-unlink(__DIR__ . '/basedir-test');
+if(file_exists(__DIR__ . '/basedir-test')){
+	rmdir(__DIR__ . '/basedir-test');
+}
 
 ?>
 --EXPECTF--
