@@ -146,7 +146,13 @@ Additionally, to verbosely indicate the purpose of (2), all functions therein ar
 
 
 ## Contributing
-T.B.D.
+### Open Issues
+<dl>
+    <dt>How can I test the MF2_PARSE_NOWARNING option?</dt>
+    <dd>See [[tests/025_mf2parse_option_MF2_PARSE_NOWARNING.phpt]]</dd>
+    <dt>How can I test the MF2_PARSE_RECOVER option?</dt>
+    <dd>See [[tests/026_mf2parse_option_MF2_PARSE_RECOVER.phpt]]</dd>    
+</dl>
 
 ## Changelog
 All notable changes to this project will be documented in [CHANGELOG.md](CHANGELOG.md).
