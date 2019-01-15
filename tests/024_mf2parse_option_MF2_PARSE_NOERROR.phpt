@@ -16,11 +16,7 @@ var_dump($parse instanceof MF2Parse);
 ?>
 --EXPECTF--
 LibXML's HTML parsing context emits errors, labelled as warnings (!), about post HTML4 tags
-Warning: mf2_parse(): HTML parser error : Tag aside invalid in %s on line %d
-
-Warning: mf2_parse(): <aside></aside> in %s on line %d
-
-Warning: mf2_parse():       ^ in %s on line %d
+Warning: mf2_parse(): Tag aside invalid in Entity, line: %d in %s on line %d
 bool(true)
 Passing MF2_PARSE_NOERROR mutes those
 bool(true)
