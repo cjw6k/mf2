@@ -145,6 +145,12 @@ Additionally, to verbosely indicate the purpose of (2), all functions therein ar
 
 
 ## Contributing
+
+Discussion in:
+
+* #phpinternals on irc.freenode.net
+* #microformats on irc.freenode.net [(chat logs)](https://chat.indieweb.org/microformats)
+
 ### Open Issues
 <dl>
     <dt>How can I test the MF2_PARSE_NOWARNING option?</dt>
