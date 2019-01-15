@@ -20,6 +20,7 @@
 #if HAVE_MF2
 
 #include "mf2microformat.h"
+#include "user_mf2microformat.h"
 
 #include "php_mf2microformat.h"
 
@@ -102,6 +103,7 @@ void php_mf2microformat_free_object_handler( zend_object *object )
 }
 
 static const zend_function_entry php_mf2microformat_functions[] = {
+	PHP_ME( MF2Microformat, __construct, NULL, ZEND_ACC_PUBLIC )
 	PHP_FE_END
 };
 

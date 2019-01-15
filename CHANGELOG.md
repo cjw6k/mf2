@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- MF2Microformat object throws a guaranteed exception in the userland constructor
+- TEST: MF2Microformat object may not by directly instantiated
 - The MF2Microformat object
 - TEST: MF2Microformat class exists
 - Added optional dependency on json extension

@@ -18,7 +18,7 @@ if test "$PHP_MF2" != "no"; then
 
 	PHP_SETUP_LIBXML(MF2_SHARED_LIBADD, [
 		AC_DEFINE(HAVE_MF2, 1, [Whether you have mf2])
-		PHP_NEW_EXTENSION(mf2, mf2.c php_mf2.c user_mf2.c mf2parse.c php_mf2parse.c user_mf2parse.c mf2microformat.c php_mf2microformat.c, $ext_shared)
+		PHP_NEW_EXTENSION(mf2, mf2.c php_mf2.c user_mf2.c mf2parse.c php_mf2parse.c user_mf2parse.c mf2microformat.c php_mf2microformat.c user_mf2microformat.c, $ext_shared)
 		PHP_SUBST(MF2_SHARED_LIBADD)
 		PHP_ADD_EXTENSION_DEP(mf2, libxml)
 	], [
