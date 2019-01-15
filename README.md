@@ -148,9 +148,9 @@ Additionally, to verbosely indicate the purpose of (2), all functions therein ar
 ### Open Issues
 <dl>
     <dt>How can I test the MF2_PARSE_NOWARNING option?</dt>
-    <dd>See [[tests/025_mf2parse_option_MF2_PARSE_NOWARNING.phpt]]</dd>
+    <dd>See [[tests/mf2parse/021_mf2parse_option_MF2_PARSE_NOWARNING.phpt]]</dd>
     <dt>How can I test the MF2_PARSE_RECOVER option?</dt>
-    <dd>See [[tests/026_mf2parse_option_MF2_PARSE_RECOVER.phpt]]</dd>    
+    <dd>See [[tests/mf2parse/022_mf2parse_option_MF2_PARSE_RECOVER.phpt]]</dd>    
 </dl>
 
 ## Changelog
