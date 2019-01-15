@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- The MF2Microformat object
+- TEST: MF2Microformat class exists
+- Added optional dependency on json extension
 - All warnings and errors are off by default, and recovery mode is active for the libxml parsing context (option: MF2_PARSE_HAPPY)
 - MF2Parse uses some internal options to control suppression of error messages
 - MF2Parse now passes options through to the parsing context of libxml

@@ -24,6 +24,7 @@
 #include "mf2.h"
 #include "user_mf2.h"
 #include "php_mf2parse.h"
+#include "php_mf2microformat.h"
 
 #include "php_mf2.h"
 
@@ -56,6 +57,7 @@ static PHP_MINIT_FUNCTION( mf2 )
 #undef X
 
 	PHP_MINIT( mf2parse )( INIT_FUNC_ARGS_PASSTHRU );
+	PHP_MINIT( mf2microformat )( INIT_FUNC_ARGS_PASSTHRU );
 
 	return SUCCESS;
 }
