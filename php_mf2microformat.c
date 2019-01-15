@@ -19,6 +19,8 @@
 
 #if HAVE_MF2
 
+#include "mf2microformat.h"
+
 #include "php_mf2microformat.h"
 
 zend_class_entry *php_mf2microformat_ce;
