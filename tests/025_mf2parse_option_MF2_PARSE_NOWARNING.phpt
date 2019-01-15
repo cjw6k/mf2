@@ -12,7 +12,7 @@ $parse = mf2_parse($html, null, 0);
 var_dump($parse instanceof MF2Parse);
 
 echo "Passing MF2_PARSE_NOWARNING mutes those\n";
-$parse = mf2_parse($html, null, MF2_PARSE_RECOVER);
+$parse = mf2_parse($html, null, MF2_PARSE_NOWARNING);
 var_dump($parse instanceof MF2Parse);
 
 ?>
