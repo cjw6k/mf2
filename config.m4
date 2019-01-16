@@ -5,6 +5,9 @@ dnl
 PHP_ARG_ENABLE(mf2, whether to enable mf2 support,
 [  --enable-mf2            Enable microformats2 support])
 
+PHP_ARG_WITH(pcre-dir, pcre install prefix,
+[  --with-pcre-dir         mf2: pcre install prefix], no, no)
+
 if test -z "$PHP_LIBXML_DIR"; then
 	PHP_ARG_WITH(libxml-dir, libxml2 install dir,
 	[  --with-libxml-dir=DIR   MF2: libxml2 install prefix], no, no)
@@ -24,5 +27,7 @@ if test "$PHP_MF2" != "no"; then
 	], [
 		AC_MSG_ERROR([xml2-config not found. Please check your libxml2 installation.])
 	])
+
+	PHP_ADD_EXTENSION_DEP(mf2, pcre)
 
 fi

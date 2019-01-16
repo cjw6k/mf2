@@ -28,6 +28,7 @@
 #include "mf2.h"
 #include "php_mf2.h"
 #include "php_mf2parse.h"
+#include "php_mf2microformat.h"
 
 #include "mf2parse.h"
 
@@ -413,15 +414,73 @@ static void mf2parse_get_rels( zval *object, xmlNodePtr xml_node )
 /**
  * @since 0.1.0
  */
+static zend_bool mf2parse_find_v2_roots( zval *object, zval *zv_mf, xmlNodePtr xml_node, zval *zv_classes )
+{
+	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	zval matched, matches;
+
+	ZVAL_NULL( &matched );
+	ZVAL_NULL( &matches );
+
+	// Microformats2 Roots
+	php_pcre_match_impl( mf2parse->regex_roots, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
+		zval_ptr_dtor( &matched );
+		zval_ptr_dtor( &matches );
+
+		return 0;
+	}
+
+	object_init_ex( zv_mf, php_mf2microformat_ce );
+	Z_DELREF_P( zv_mf );
+
+	zval_ptr_dtor( &matched );
+	zval_ptr_dtor( &matches );
+
+	return 1;
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_find_roots( zval *object, zval *zv_mf, xmlNodePtr xml_node )
+{
+	if( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
+		return;
+	}
+
+	xmlChar *classes = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) );
+
+	zval zv_classes;
+	ZVAL_STRING( &zv_classes, ( char * ) classes );
+
+	// Microformats2 root parsing
+	if ( ! mf2parse_find_v2_roots( object, zv_mf, xml_node, &zv_classes ) ) {
+
+		// Backcompat root parsing
+		//mf2parse_find_backcompat_roots( object, mf, xml_node );
+	}
+
+	zval_dtor( &zv_classes );
+	xmlFree( classes );
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
 	xmlNodePtr current_node;
+	zval zv_mf;
+	ZVAL_NULL( &zv_mf );
 
 	for ( current_node = xml_node; current_node; current_node = current_node->next ) {
 		switch ( current_node->type ) {
 			case XML_ELEMENT_NODE:
-				// TODO: microformats2 parsing
+				// Microformats parsing
+				mf2parse_find_roots( object, &zv_mf, current_node );
 
 				// Rel and Rel-URL parsing
 				mf2parse_get_rels( object, current_node );
@@ -429,7 +488,12 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 				// Recurse
 				mf2parse_xml_node( object, current_node->children );
 
-
+				if ( IS_NULL != Z_TYPE( zv_mf ) ) {
+					zend_hash_next_index_insert_new( mf2parse->items, &zv_mf );
+					zval_copy_ctor( &zv_mf );
+					Z_ADDREF( zv_mf );
+				}
+				zval_ptr_dtor( &zv_mf );
 			break;
 
 			default:

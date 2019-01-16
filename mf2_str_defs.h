@@ -29,5 +29,6 @@
 	X(media) \
 	X(title) \
 	X(type) \
+	X(class) \
 
 #endif /* MF2_STR_DEFS_H */

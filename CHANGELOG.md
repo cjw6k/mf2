@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Using PCRE regex to match MF2 roots
+- TEST: MF2Parse items are MF2Microformat objects
+- Added dependency on pcre extension
 - MF2Microformat object throws a guaranteed exception in the userland constructor
 - TEST: MF2Microformat object may not by directly instantiated
 - The MF2Microformat object

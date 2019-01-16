@@ -63,6 +63,11 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 	ALLOC_HASHTABLE( mf2parse->properties );
 	zend_hash_init( mf2parse->properties, 8, NULL, ZVAL_PTR_DTOR, 0 );
 
+	zend_string *tmp;
+	tmp = zend_string_init( MF2_REGEX_ROOTS, strlen( MF2_REGEX_ROOTS ), 0 );
+	mf2parse->regex_roots = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
 	zend_object_std_init( &mf2parse->zo, class_entry );
 	object_properties_init( &mf2parse->zo, class_entry );
 

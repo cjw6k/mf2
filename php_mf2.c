@@ -30,6 +30,7 @@
 
 static const zend_module_dep php_mf2_deps[] = {
 	ZEND_MOD_OPTIONAL( "json" )
+	ZEND_MOD_REQUIRED( "pcre" )
 	ZEND_MOD_REQUIRED( "libxml" )
 	ZEND_MOD_END
 };

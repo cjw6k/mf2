@@ -72,7 +72,7 @@ static zend_object *php_mf2microformat_create_object_handler( zend_class_entry *
  */
 void php_mf2microformat_dtor_object_handler( zend_object *object )
 {
-	php_mf2microformat_object *mf2mf = mf2microformat_fetch_object( object );
+	//php_mf2microformat_object *mf2mf = mf2microformat_fetch_object( object );
 
 	/* shutdown custom properties, but not free their memory here */
 
