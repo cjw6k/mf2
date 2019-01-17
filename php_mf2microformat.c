@@ -116,8 +116,6 @@ static const zend_function_entry php_mf2microformat_functions[] = {
 PHP_MINIT_FUNCTION( mf2microformat )
 {
 	zend_class_entry temp_ce;
-	zval zv_null;
-	ZVAL_NULL( &zv_null );
 
 	INIT_CLASS_ENTRY( temp_ce, "MF2Microformat", php_mf2microformat_functions );
 	php_mf2microformat_ce = zend_register_internal_class( &temp_ce );
