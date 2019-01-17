@@ -125,8 +125,9 @@ PHP_MINIT_FUNCTION( mf2microformat )
 	php_mf2microformat_ce->create_object = php_mf2microformat_create_object_handler;
 	memcpy( &php_mf2microformat_object_handlers, zend_get_std_object_handlers(), sizeof( php_mf2microformat_object_handlers ) );
 
-	php_mf2microformat_object_handlers.free_obj = php_mf2microformat_free_object_handler;
-	php_mf2microformat_object_handlers.dtor_obj = php_mf2microformat_dtor_object_handler;
+	php_mf2microformat_object_handlers.free_obj  = php_mf2microformat_free_object_handler;
+	php_mf2microformat_object_handlers.dtor_obj  = php_mf2microformat_dtor_object_handler;
+	php_mf2microformat_object_handlers.clone_obj = NULL;
 
 	php_mf2microformat_object_handlers.offset = XtOffsetOf( php_mf2microformat_object, zo );
 
