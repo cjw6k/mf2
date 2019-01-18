@@ -30,5 +30,6 @@
 	X(title) \
 	X(type) \
 	X(class) \
+	X(properties) \
 
 #endif /* MF2_STR_DEFS_H */

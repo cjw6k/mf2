@@ -19,6 +19,7 @@
 
 #if HAVE_MF2
 
+#include "mf2.h"
 #include "php_mf2microformat.h"
 
 #include "mf2microformat.h"
@@ -44,5 +45,26 @@ php_mf2microformat_object *mf2microformat_fetch_object( zend_object *object )
 {
 	return ( php_mf2microformat_object * ) ( ( char * ) ( object ) - XtOffsetOf( php_mf2microformat_object, zo ) );
 }
+
+
+/**
+ * @since 0.1.0
+ */
+void mf2microformat_new( zval *object )
+{
+	object_init_ex( object, php_mf2microformat_ce );
+	Z_DELREF_P( object );
+
+	zval zv_type, zv_properties;
+
+	array_init( &zv_type );
+	Z_DELREF( zv_type );
+	zend_update_property_ex( php_mf2microformat_ce, object, MF2_STR( str_type ), &zv_type );
+
+	array_init( &zv_properties );
+	Z_DELREF( zv_properties );
+	zend_update_property_ex( php_mf2microformat_ce, object, MF2_STR( str_properties ), &zv_properties );
+}
+
 
 #endif /* HAVE_MF2 */

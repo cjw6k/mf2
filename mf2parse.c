@@ -28,6 +28,7 @@
 #include "mf2.h"
 #include "php_mf2.h"
 #include "php_mf2parse.h"
+#include "mf2microformat.h"
 #include "php_mf2microformat.h"
 
 #include "mf2parse.h"
@@ -432,8 +433,7 @@ static zend_bool mf2parse_find_v2_roots( zval *object, zval *zv_mf, xmlNodePtr x
 		return 0;
 	}
 
-	object_init_ex( zv_mf, php_mf2microformat_ce );
-	Z_DELREF_P( zv_mf );
+	mf2microformat_new( zv_mf );
 
 	zval_ptr_dtor( &matched );
 	zval_ptr_dtor( &matches );

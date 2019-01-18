@@ -19,6 +19,7 @@
 
 #if HAVE_MF2
 
+#include "mf2.h"
 #include "mf2microformat.h"
 #include "user_mf2microformat.h"
 
@@ -67,7 +68,7 @@ static zend_object *php_mf2microformat_create_object_handler( zend_class_entry *
  *
  * @since 0.1.0
  *
- * @param  zend_object * object  The embedded standard object of the 
+ * @param  zend_object * object  The embedded standard object of the
  *                               MF2Microformat object to be destroyed.
  */
 void php_mf2microformat_dtor_object_handler( zend_object *object )
@@ -90,7 +91,7 @@ void php_mf2microformat_dtor_object_handler( zend_object *object )
  *
  * @since 0.1.0
  *
- * @param  zend_object * object  The embedded standard object of the 
+ * @param  zend_object * object  The embedded standard object of the
  *                               MF2Microformat object to be freed.
  */
 void php_mf2microformat_free_object_handler( zend_object *object )
@@ -128,6 +129,9 @@ PHP_MINIT_FUNCTION( mf2microformat )
 	php_mf2microformat_object_handlers.clone_obj = NULL;
 
 	php_mf2microformat_object_handlers.offset = XtOffsetOf( php_mf2microformat_object, zo );
+
+	zend_declare_property_null( php_mf2microformat_ce, ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), ZEND_ACC_PUBLIC );
+	zend_declare_property_null( php_mf2microformat_ce, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), ZEND_ACC_PUBLIC );
 
 	return SUCCESS;
 }
