@@ -14,12 +14,14 @@
 #ifndef MF2_MICROFORMAT_H
 #define MF2_MICROFORMAT_H
 
+#include "ext/libxml/php_libxml.h"
+
 #include "php_mf2microformat.h"
 
 php_mf2microformat_object *mf2microformat_fetch_object( zend_object *object );
 #define Z_MF2MFOBJ_P( zv_object ) mf2microformat_fetch_object( Z_OBJ_P( ( zv_object ) ) )
 
-void mf2microformat_new( zval *object );
+void mf2microformat_new( zval *object, xmlNodePtr xml_node );
 void mf2microformat_add_type( zval *object, zval *type );
 
 #endif /* MF2_MICROFORMAT_H */

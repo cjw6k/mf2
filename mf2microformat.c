@@ -71,7 +71,28 @@ void mf2microformat_add_type( zval *object, zval *type)
 /**
  * @since 0.1.0
  */
-void mf2microformat_new( zval *object )
+static void mf2microformat_set_id( zval *object, xmlNodePtr xml_node )
+{
+	if ( ! xmlHasProp ( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_id ) ) ) ) {
+		return;
+	}
+
+	xmlChar *x_id;
+	zval zv_id;
+
+	x_id = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_id ) ) );
+	ZVAL_STRING( &zv_id, ( char * ) x_id );
+
+	add_property_zval( object, ZSTR_VAL( MF2_STR( str_id ) ), &zv_id );
+
+	zval_dtor( &zv_id );
+	xmlFree( x_id );
+}
+
+/**
+ * @since 0.1.0
+ */
+void mf2microformat_new( zval *object, xmlNodePtr xml_node )
 {
 	object_init_ex( object, php_mf2microformat_ce );
 	Z_DELREF_P( object );
@@ -85,6 +106,8 @@ void mf2microformat_new( zval *object )
 	array_init( &zv_properties );
 	Z_DELREF( zv_properties );
 	zend_update_property_ex( php_mf2microformat_ce, object, MF2_STR( str_properties ), &zv_properties );
+
+	mf2microformat_set_id( object, xml_node );
 }
 
 

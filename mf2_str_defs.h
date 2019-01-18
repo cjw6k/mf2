@@ -31,5 +31,6 @@
 	X(type) \
 	X(class) \
 	X(properties) \
+	X(id) \
 
 #endif /* MF2_STR_DEFS_H */

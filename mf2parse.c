@@ -433,7 +433,7 @@ static zend_bool mf2parse_find_v2_roots( zval *object, zval *zv_mf, xmlNodePtr x
 		return 0;
 	}
 
-	mf2microformat_new( zv_mf );
+	mf2microformat_new( zv_mf, xml_node );
 
 	zval *match_arr, *full_match;
 	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
