@@ -480,9 +480,11 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
 	xmlNodePtr current_node;
 	zval zv_mf;
-	ZVAL_NULL( &zv_mf );
 
 	for ( current_node = xml_node; current_node; current_node = current_node->next ) {
+
+		ZVAL_NULL( &zv_mf );
+
 		switch ( current_node->type ) {
 			case XML_ELEMENT_NODE:
 				// Microformats parsing
