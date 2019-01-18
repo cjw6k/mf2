@@ -25,6 +25,8 @@ typedef struct _php_mf2parse_object {
 	HashTable *items, *rels, *rel_urls, *properties;
 	xmlDocPtr document;
 	pcre_cache_entry *regex_roots;
+	pcre_cache_entry *regex_properties;
+	zval *context;
 	zend_object zo;
 } php_mf2parse_object;
 

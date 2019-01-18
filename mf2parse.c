@@ -435,6 +435,9 @@ static zend_bool mf2parse_find_v2_roots( zval *object, zval *zv_mf, xmlNodePtr x
 
 	mf2microformat_new( zv_mf, xml_node );
 
+	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( zv_mf );
+	mf2mf->version = 2;
+
 	zval *match_arr, *full_match;
 	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
 		full_match = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 0 );
@@ -475,6 +478,104 @@ static void mf2parse_find_roots( zval *object, zval *zv_mf, xmlNodePtr xml_node 
 /**
  * @since 0.1.0
  */
+static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr xml_node, zval *zv_classes )
+{
+	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	zval matched, matches;
+
+	ZVAL_NULL( &matched );
+	ZVAL_NULL( &matches );
+
+	// Microformats2 Properties
+	php_pcre_match_impl( mf2parse->regex_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
+		zval_ptr_dtor( &matched );
+		zval_ptr_dtor( &matches );
+
+		return;
+	}
+
+	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( zv_mf );
+
+	zval *zv_prefix, *zv_name, *match_arr, zv_property;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
+		zv_prefix = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 1 );
+		zv_name   = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 2 );
+
+		array_init( &zv_property );
+
+		zend_hash_clean( Z_ARRVAL( zv_property ) );
+
+		// TODO: switch on the string's hash values
+
+		if ( zend_string_equals( MF2_STR( str_p ), Z_STR_P( zv_prefix ) ) ) {
+			// parse a p-* property
+			mf2mf->has_p_prop = 1;
+
+			// todo: higher priority checks
+
+			xmlBufferPtr buffer = xmlBufferCreate();
+			xmlNodeBufGetContent( buffer, xml_node );
+
+			// TODO remove script & style, replace img with alt
+			zval zv_buffer;
+			ZVAL_STRING( &zv_buffer, ( char * ) buffer->content );
+
+			add_next_index_string( &zv_property, Z_STRVAL( zv_buffer ) );
+
+			zval_dtor( &zv_buffer );
+			xmlBufferFree( buffer );
+
+			mf2microformat_add_property( zv_mf, zv_name, &zv_property );
+
+		} else if ( zend_string_equals( MF2_STR( str_u ), Z_STR_P( zv_prefix ) ) ) {
+			// parse a u-* property
+			mf2mf->has_u_prop = 1;
+		} else if ( zend_string_equals( MF2_STR( str_dt ), Z_STR_P( zv_prefix ) ) ) {
+			mf2mf->has_dt_prop = 1;
+		} else if ( zend_string_equals( MF2_STR( str_e ), Z_STR_P( zv_prefix ) ) ) {
+			mf2mf->has_e_prop = 1;
+		}
+
+		zval_ptr_dtor( &zv_property );
+	} ZEND_HASH_FOREACH_END();
+
+	zval_ptr_dtor( &matched );
+	zval_ptr_dtor( &matches );
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_find_properties( zval *object, zval *zv_mf, xmlNodePtr xml_node )
+{
+	if( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
+		return;
+	}
+
+	xmlChar *classes = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) );
+
+	zval zv_classes;
+	ZVAL_STRING( &zv_classes, ( char * ) classes );
+
+	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( zv_mf );
+
+	if ( 2 == mf2mf->version ) {
+		// Microformats2 property parsing
+		mf2parse_find_v2_properties( object, zv_mf, xml_node, &zv_classes );
+	} else {
+		// Backcompat property parsing
+		//mf2parse_find_backcompat_properties( object, mf, xml_node );
+	}
+
+	zval_dtor( &zv_classes );
+	xmlFree( classes );
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
@@ -487,13 +588,21 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 
 		switch ( current_node->type ) {
 			case XML_ELEMENT_NODE:
-				// Microformats parsing
+				// Microformats parsing - roots
 				mf2parse_find_roots( object, &zv_mf, current_node );
+
+				// Microformats parsing - properties
+				if ( NULL != mf2parse->context ) {
+					mf2parse_find_properties( object, mf2parse->context, current_node );
+				}
 
 				// Rel and Rel-URL parsing
 				mf2parse_get_rels( object, current_node );
 
 				// Recurse
+				if ( IS_NULL != Z_TYPE( zv_mf ) ) {
+					mf2parse->context = &zv_mf;
+				}
 				mf2parse_xml_node( object, current_node->children );
 
 				if ( IS_NULL != Z_TYPE( zv_mf ) ) {

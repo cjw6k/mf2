@@ -62,10 +62,18 @@ php_mf2microformat_object *mf2microformat_fetch_object( zend_object *object )
 void mf2microformat_add_type( zval *object, zval *type)
 {
 	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
-
 	add_next_index_string( zv_current_types, Z_STRVAL_P( type ) );
-
 	zend_hash_sort( Z_ARRVAL_P( zv_current_types ), mf2_strcasecmp, 1 );
+}
+
+/**
+ * @since 0.1.0
+ */
+void mf2microformat_add_property( zval *object, zval *zv_key, zval *zv_value )
+{
+	zval *zv_current_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 0, NULL );
+	add_assoc_zval_ex( zv_current_properties, Z_STRVAL_P( zv_key ), Z_STRLEN_P( zv_key ), zv_value );
+	zval_copy_ctor( zv_value );
 }
 
 /**
@@ -108,6 +116,9 @@ void mf2microformat_new( zval *object, xmlNodePtr xml_node )
 	zend_update_property_ex( php_mf2microformat_ce, object, MF2_STR( str_properties ), &zv_properties );
 
 	mf2microformat_set_id( object, xml_node );
+
+	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( object );
+	mf2mf->has_p_prop = mf2mf->has_u_prop = mf2mf->has_dt_prop = mf2mf->has_e_prop = 0;
 }
 
 

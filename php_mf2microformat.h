@@ -15,6 +15,8 @@
 #define PHP_MF2MICROFORMAT_H
 
 typedef struct _php_mf2microformat_object {
+	zend_ulong version;
+	zend_bool has_p_prop, has_u_prop, has_dt_prop, has_e_prop;
 	zend_object zo;
 } php_mf2microformat_object;
 

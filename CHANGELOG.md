@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Microformats2 roots and simple properties are parsed, and provided in the output
+- TEST: mf-test-suite/v2/h-adr/simpleproperties
 - TEST: MF2Microformat id is stored in the id member, if present
 - TEST: MF2Microformat vocabularies are stored in the type member, in alphabetical order
 - TEST: MF2Microformat has required type and properties members

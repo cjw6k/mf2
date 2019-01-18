@@ -32,5 +32,9 @@
 	X(class) \
 	X(properties) \
 	X(id) \
+	X(p) \
+	X(u) \
+	X(dt) \
+	X(e) \
 
 #endif /* MF2_STR_DEFS_H */

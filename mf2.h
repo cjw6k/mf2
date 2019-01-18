@@ -28,7 +28,8 @@ mf2_str_globals str_globals_mf2;
 
 #define MF2_STR(str) str_globals_mf2.str
 
-#define MF2_REGEX_ROOTS "/(?<=\\s|^)h-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
+#define MF2_REGEX_ROOTS      "/(?<=\\s|^)h-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
+#define MF2_REGEX_PROPERTIES "/(?<=\\s|^)(e|u|dt|p)-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
 
 zend_bool mf2_in_array( zval *haystack, zval *needle );
 int mf2_strcasecmp( const void *ida, const void *idb );
