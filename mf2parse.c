@@ -435,6 +435,12 @@ static zend_bool mf2parse_find_v2_roots( zval *object, zval *zv_mf, xmlNodePtr x
 
 	mf2microformat_new( zv_mf );
 
+	zval *match_arr, *full_match;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
+		full_match = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 0 );
+		mf2microformat_add_type( zv_mf, full_match );
+	} ZEND_HASH_FOREACH_END();
+
 	zval_ptr_dtor( &matched );
 	zval_ptr_dtor( &matches );
 

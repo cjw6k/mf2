@@ -46,6 +46,27 @@ php_mf2microformat_object *mf2microformat_fetch_object( zend_object *object )
 	return ( php_mf2microformat_object * ) ( ( char * ) ( object ) - XtOffsetOf( php_mf2microformat_object, zo ) );
 }
 
+/**
+ * Add a type to the set of types used by this microformat.
+ *
+ * The microformats vocabularies are represented by the label 'type' in the
+ * standard representation of the parse.
+ *
+ * @link http://microformats.org/wiki/microformats2#v2_vocabularies
+ *
+ * @since 0.1.0
+ *
+ * @param  zval *object      The subject microformat.
+ * @param  zval *vocabulary  The vocabulary to add.
+ */
+void mf2microformat_add_type( zval *object, zval *type)
+{
+	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
+
+	add_next_index_string( zv_current_types, Z_STRVAL_P( type ) );
+
+	zend_hash_sort( Z_ARRVAL_P( zv_current_types ), mf2_strcasecmp, 1 );
+}
 
 /**
  * @since 0.1.0
