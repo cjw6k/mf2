@@ -645,7 +645,66 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
  */
 static void mf2parse_imply_url( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 {
+	if( Z_MF2MFOBJ_P( zv_mf )->has_u_prop ) {
+		return;
+	}
 
+	if ( mf2microformat_has_property( zv_mf, MF2_STR( str_url ) ) ) {
+		return;
+	}
+
+	// TODO: higher priority checks
+	zval zv_node_name, zv_property, zv_name, zv_href;
+	ZVAL_STRING( &zv_node_name, ( char * ) xml_node->name );
+
+	if (
+		(
+			zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_a ) )
+			||
+			zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_area ) )
+		)
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) )
+	) {
+		array_init(&zv_property);
+
+		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) );
+		ZVAL_STRING( &zv_href, ( char * ) attr );
+		mf2_trim_html_space_chars( &zv_href, Z_STRVAL( zv_href ) );
+		add_next_index_string( &zv_property, Z_STRVAL( zv_href ) );
+		zval_dtor( &zv_href );
+		xmlFree(attr);
+
+		ZVAL_STR( &zv_name, MF2_STR( str_url ) );
+		mf2microformat_add_property( zv_mf, &zv_name, &zv_property );
+
+		zval_ptr_dtor( &zv_property );
+	} else {
+		xmlXPathContextPtr xpath_context = xmlXPathNewContext( Z_MF2PARSEOBJ_P( object )->document );
+		xmlXPathObjectPtr results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "a[@href][count(../a) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
+		xmlXPathFreeContext( xpath_context );
+
+		if ( results ) {
+			if ( results->nodesetval->nodeNr > 0 ) {
+				array_init( &zv_property );
+
+				xmlChar *attr = xmlGetProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) );
+				ZVAL_STRING( &zv_href, ( char * ) attr );
+				mf2_trim_html_space_chars( &zv_href, Z_STRVAL( zv_href ) );
+				add_next_index_string( &zv_property, Z_STRVAL( zv_href ) );
+				zval_dtor( &zv_href );
+				xmlFree( attr );
+
+				ZVAL_STR( &zv_name, MF2_STR( str_url ) );
+				mf2microformat_add_property( zv_mf, &zv_name, &zv_property );
+
+				zval_ptr_dtor( &zv_property );
+			}
+			xmlXPathFreeObject( results );
+		}
+	}
+
+	zval_ptr_dtor( &zv_node_name );
 }
 
 /**

@@ -38,5 +38,6 @@
 	X(e) \
 	X(children) \
 	X(name) \
+	X(url) \
 
 #endif /* MF2_STR_DEFS_H */
