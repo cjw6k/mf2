@@ -513,14 +513,14 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr x
 			// parse a p-* property
 			mf2mf->has_p_prop = 1;
 
-			// todo: higher priority checks
-
+			// TODO: higher priority checks
 			xmlBufferPtr buffer = xmlBufferCreate();
 			xmlNodeBufGetContent( buffer, xml_node );
 
 			// TODO remove script & style, replace img with alt
 			zval zv_buffer;
-			mf2_trim_html_space_chars( &zv_buffer, ( char * ) buffer->content );
+			ZVAL_STRING( &zv_buffer, ( char * ) buffer->content );
+			mf2_trim_html_space_chars( &zv_buffer, Z_STRVAL( zv_buffer ) );
 
 			add_next_index_string( &zv_property, Z_STRVAL( zv_buffer ) );
 
