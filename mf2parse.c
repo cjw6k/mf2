@@ -520,7 +520,7 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr x
 
 			// TODO remove script & style, replace img with alt
 			zval zv_buffer;
-			ZVAL_STRING( &zv_buffer, ( char * ) buffer->content );
+			mf2_trim_html_space_chars( &zv_buffer, ( char * ) buffer->content );
 
 			add_next_index_string( &zv_property, Z_STRVAL( zv_buffer ) );
 
