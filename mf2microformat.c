@@ -165,4 +165,22 @@ zend_bool mf2microformat_has_children( zval *object )
 	return IS_NULL != Z_TYPE_P( zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL ) );
 }
 
+/**
+ * @since 0.1.0
+ */
+void mf2microformat_add_child( zval *object, zval *zv_child )
+{
+	zval *zv_current_children = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL );
+
+	if ( IS_NULL == Z_TYPE_P(zv_current_children) ) {
+		zval zv_children;
+		array_init( &zv_children );
+		add_property_zval( object, ZSTR_VAL( MF2_STR( str_children ) ), &zv_children );
+		zv_current_children = &zv_children;
+		Z_DELREF( zv_children );
+	}
+
+	add_next_index_zval( zv_current_children, zv_child );
+}
+
 #endif /* HAVE_MF2 */

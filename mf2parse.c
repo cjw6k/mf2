@@ -886,7 +886,7 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
 	xmlNodePtr current_node;
-	zval zv_mf;
+	zval zv_mf, *previous_context = NULL;
 
 	for ( current_node = xml_node; current_node; current_node = current_node->next ) {
 
@@ -906,20 +906,26 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 				mf2parse_get_rels( object, current_node );
 
 				// Recurse
+				previous_context = mf2parse->context;
 				if ( IS_NULL != Z_TYPE( zv_mf ) ) {
 					mf2parse->context = &zv_mf;
 				}
 				mf2parse_xml_node( object, current_node->children );
 
+				// Good morning!
+				mf2parse->context = previous_context;
+
 				if ( IS_NULL != Z_TYPE( zv_mf ) ) {
 					// Implied properties
 					mf2parse_imply_properties( object, &zv_mf, current_node );
 
-					zend_hash_next_index_insert_new( mf2parse->items, &zv_mf );
+					if ( NULL != mf2parse->context ) {
+						mf2microformat_add_child( mf2parse->context, &zv_mf );
+					} else {
+						zend_hash_next_index_insert_new( mf2parse->items, &zv_mf );
+					}
 					zval_copy_ctor( &zv_mf );
 					Z_ADDREF( zv_mf );
-
-					mf2parse->context = NULL;
 				}
 				zval_ptr_dtor( &zv_mf );
 			break;

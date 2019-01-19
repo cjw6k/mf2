@@ -25,6 +25,7 @@ void mf2microformat_new( zval *object, xmlNodePtr xml_node );
 void mf2microformat_add_type( zval *object, zval *type );
 void mf2microformat_add_property( zval *object, zval *zv_key, zval *zv_value );
 void mf2microformat_get_property( zval *object, zend_string *zv_key, zval *zv_return_value );
+void mf2microformat_add_child( zval *object, zval *zv_child );
 
 zend_bool mf2microformat_has_property( zval *object, zend_string *zv_key );
 zend_bool mf2microformat_has_children( zval *object );
