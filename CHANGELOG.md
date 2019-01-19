@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- MF2Parse: all p-property parsing steps implemented
+- MF2Parse: partial value-class implemented
+- TEST: mf-test-suite/v2/h-card/p-property
 - TEST: mf-test-suite/v2/h-card/justaname
 - TEST: mf-test-suite/v2/h-card/justahyperlink
 - TEST: mf-test-suite/v2/rel/duplicate-rels

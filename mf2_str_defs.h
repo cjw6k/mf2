@@ -39,5 +39,11 @@
 	X(children) \
 	X(name) \
 	X(url) \
+	X(img) \
+	X(alt) \
+	X(data) \
+	X(abbr) \
+	X(value) \
+	X(input) \
 
 #endif /* MF2_STR_DEFS_H */

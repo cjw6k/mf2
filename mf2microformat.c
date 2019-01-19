@@ -72,7 +72,17 @@ void mf2microformat_add_type( zval *object, zval *type)
 void mf2microformat_add_property( zval *object, zval *zv_key, zval *zv_value )
 {
 	zval *zv_current_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 0, NULL );
-	add_assoc_zval_ex( zv_current_properties, Z_STRVAL_P( zv_key ), Z_STRLEN_P( zv_key ), zv_value );
+	zval *zv_current_value = zend_hash_find( Z_ARRVAL_P( zv_current_properties ), Z_STR_P( zv_key ) );
+
+	if( NULL == zv_current_value ) {
+		zval zv_properties;
+		array_init( &zv_properties );
+		add_assoc_zval_ex( zv_current_properties, Z_STRVAL_P( zv_key ), Z_STRLEN_P( zv_key ), &zv_properties );
+		zv_current_value = &zv_properties;
+	}
+
+	add_next_index_zval( zv_current_value, zv_value );
+
 	zval_copy_ctor( zv_value );
 }
 
