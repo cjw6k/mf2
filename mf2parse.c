@@ -532,6 +532,29 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr x
 		} else if ( zend_string_equals( MF2_STR( str_u ), Z_STR_P( zv_prefix ) ) ) {
 			// parse a u-* property
 			mf2mf->has_u_prop = 1;
+
+			zend_string *node_name = zend_string_init( ( char * ) xml_node->name, xmlStrlen( xml_node->name ), 0 );
+
+			if(
+				(
+					zend_string_equals( node_name, MF2_STR( str_a ) )
+					||
+					zend_string_equals( node_name, MF2_STR( str_link ) )
+					||
+					zend_string_equals( node_name, MF2_STR( str_area ) )
+				)
+				&&
+				xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) )
+			){
+
+				xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) );
+				add_next_index_string( &zv_property, ( char * ) attr );
+				xmlFree( attr );
+
+				mf2microformat_add_property( zv_mf, zv_name, &zv_property );
+			}
+
+			zend_string_free( node_name );
 		} else if ( zend_string_equals( MF2_STR( str_dt ), Z_STR_P( zv_prefix ) ) ) {
 			mf2mf->has_dt_prop = 1;
 		} else if ( zend_string_equals( MF2_STR( str_e ), Z_STR_P( zv_prefix ) ) ) {
@@ -576,6 +599,78 @@ static void mf2parse_find_properties( zval *object, zval *zv_mf, xmlNodePtr xml_
 /**
  * @since 0.1.0
  */
+static void mf2parse_imply_name( zval *object, zval *zv_mf, xmlNodePtr xml_node )
+{
+	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( zv_mf );
+
+	if( mf2mf->has_p_prop || mf2mf->has_e_prop ) {
+		return;
+	}
+
+	if ( mf2microformat_has_property( zv_mf, MF2_STR( str_name ) ) ) {
+		return;
+	}
+
+	// TODO: higher priority checks
+	xmlBufferPtr buffer = xmlBufferCreate();
+	xmlNodeBufGetContent( buffer, xml_node );
+
+	// TODO remove script & style, replace img with alt
+	zval zv_buffer, zv_property, zv_name;
+	ZVAL_STRING( &zv_buffer, ( char * ) buffer->content );
+	mf2_trim_html_space_chars( &zv_buffer, Z_STRVAL( zv_buffer ) );
+
+	array_init( &zv_property );
+	add_next_index_string( &zv_property, Z_STRVAL( zv_buffer ) );
+
+	zval_dtor( &zv_buffer );
+	xmlBufferFree( buffer );
+
+	ZVAL_STR( &zv_name, MF2_STR( str_name ) );
+	mf2microformat_add_property( zv_mf, &zv_name, &zv_property );
+
+	zval_ptr_dtor( &zv_property );
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node )
+{
+
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_imply_url( zval *object, zval *zv_mf, xmlNodePtr xml_node )
+{
+
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_imply_properties( zval *object, zval *zv_mf, xmlNodePtr xml_node )
+{
+	// Only on v2 roots
+	if ( 2 != Z_MF2MFOBJ_P( zv_mf )->version ) {
+		return;
+	}
+
+	// Only if there are no nested microformats
+	if ( mf2microformat_has_children( zv_mf ) ) {
+		return;
+	}
+
+	mf2parse_imply_name( object, zv_mf, xml_node );
+	mf2parse_imply_photo( object, zv_mf, xml_node );
+	mf2parse_imply_url( object, zv_mf, xml_node );
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
@@ -606,9 +701,14 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 				mf2parse_xml_node( object, current_node->children );
 
 				if ( IS_NULL != Z_TYPE( zv_mf ) ) {
+					// Implied properties
+					mf2parse_imply_properties( object, &zv_mf, current_node );
+
 					zend_hash_next_index_insert_new( mf2parse->items, &zv_mf );
 					zval_copy_ctor( &zv_mf );
 					Z_ADDREF( zv_mf );
+
+					mf2parse->context = NULL;
 				}
 				zval_ptr_dtor( &zv_mf );
 			break;

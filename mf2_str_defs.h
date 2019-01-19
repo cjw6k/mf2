@@ -36,5 +36,7 @@
 	X(u) \
 	X(dt) \
 	X(e) \
+	X(children) \
+	X(name) \
 
 #endif /* MF2_STR_DEFS_H */

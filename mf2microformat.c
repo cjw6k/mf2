@@ -121,5 +121,38 @@ void mf2microformat_new( zval *object, xmlNodePtr xml_node )
 	mf2mf->has_p_prop = mf2mf->has_u_prop = mf2mf->has_dt_prop = mf2mf->has_e_prop = 0;
 }
 
+/**
+ * @since 0.1.0
+ */
+zend_bool mf2microformat_has_property( zval *object, zend_string *zv_key )
+{
+	zval *zv_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+	if ( IS_ARRAY != Z_TYPE_P( zv_properties ) ) {
+		return 0;
+	}
+
+	return zend_hash_exists( Z_ARRVAL_P( zv_properties ), zv_key );
+}
+
+/**
+ * @since 0.1.0
+ */
+void mf2microformat_get_property( zval *object, zend_string *zv_key, zval *zv_return_value )
+{
+	zval *zv_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+	if ( IS_ARRAY != Z_TYPE_P( zv_properties ) ) {
+		ZVAL_NULL( zv_return_value );
+	}
+
+	zv_return_value = zend_hash_find( Z_ARRVAL_P( zv_properties ), zv_key );
+}
+
+/**
+ * @since 0.1.0
+ */
+zend_bool mf2microformat_has_children( zval *object )
+{
+	return IS_NULL != Z_TYPE_P( zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL ) );
+}
 
 #endif /* HAVE_MF2 */

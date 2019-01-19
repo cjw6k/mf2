@@ -129,7 +129,6 @@ void mf2_trim_html_space_chars( zval *trimmed_string, char *string )
 	smart_str_free( &smart_data_str );	
 }
 
-
 /**
  * Check if a given URL is a relative URL.
  *

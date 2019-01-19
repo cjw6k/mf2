@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v2/h-adr/lettercase
+- TEST: mf-test-suite/v2/h-adr/justname
+- TEST: mf-test-suite/v2/h-adr/geourl
+- TEST: mf-test-suite/v2/h-adr/geo
 - TEST: MF2Parse trim html space characters from found properties
 - Microformats2 roots and simple properties are parsed, and provided in the output
 - TEST: mf-test-suite/v2/h-adr/simpleproperties
