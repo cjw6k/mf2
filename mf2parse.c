@@ -667,6 +667,15 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) );
 		zval zv_value;
 		ZVAL_STRING( &zv_value, ( char * ) attr );
+
+		php_url *url_parts = php_url_parse( Z_STRVAL( zv_value ) );
+		if ( NULL != url_parts ) {
+			if ( mf2_is_relative_url( url_parts ) ) {
+				mf2parse_resolve_relative_uri( object, &zv_value, url_parts );
+			}
+			php_url_free( url_parts );
+		}
+
 		mf2microformat_add_property( zv_mf, zv_name, &zv_value );
 		zval_dtor( &zv_value );
 		xmlFree( attr );
