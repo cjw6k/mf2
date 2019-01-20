@@ -45,5 +45,11 @@
 	X(abbr) \
 	X(value) \
 	X(input) \
+	X(src) \
+	X(audio) \
+	X(video) \
+	X(iframe) \
+	X(poster) \
+	X(object) \
 
 #endif /* MF2_STR_DEFS_H */

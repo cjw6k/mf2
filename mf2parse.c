@@ -154,7 +154,11 @@ static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_va
 
 	if ( relative_url_parts->path ) {
 		if ( *relative_url_parts->path != *path_separator ) {
-			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->path );
+			if ( mf2parse->php_base_url->path ) {
+				smart_str_appends( &smart_uri_str, mf2parse->php_base_url->path );
+			} else {
+				smart_str_appends( &smart_uri_str, path_separator );
+			}
 			smart_str_appends( &smart_uri_str, relative_url_parts->path );
 		} else {
 			smart_str_appends( &smart_uri_str, relative_url_parts->path );
@@ -569,6 +573,14 @@ static zend_bool mf2parse_value_class_p( zval *object, xmlNodePtr xml_node, zval
 /**
  * @since 0.1.0
  */
+static zend_bool mf2parse_value_class_u( zval *object, xmlNodePtr xml_node, zval *zv_return_value )
+{
+	return 0;
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_p_property( zval *object, zval *zv_mf, zval *zv_name, xmlNodePtr xml_node )
 {
 	zval zv_value;
@@ -625,6 +637,7 @@ static void mf2parse_p_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		mf2microformat_add_property( zv_mf, zv_name, &zv_value );
 		xmlFree(attr);
 
+	// Catch-all: textContent
 	} else {
 		xmlBufferPtr buffer = xmlBufferCreate();
 		xmlNodeBufGetContent( buffer, xml_node );
@@ -648,11 +661,15 @@ static void mf2parse_p_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
  */
 static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNodePtr xml_node )
 {
+	zval zv_value;
+	ZVAL_NULL( &zv_value );
+
 	Z_MF2MFOBJ_P( zv_mf )->has_u_prop = 1;
 
 	zend_string *node_name = zend_string_init( ( char * ) xml_node->name, xmlStrlen( xml_node->name ), 0 );
 
-	if(
+	// Priority #1: a.u-x[href] or area.u-x[href] or link.u-x[href]
+	if (
 		(
 			zend_string_equals( node_name, MF2_STR( str_a ) )
 			||
@@ -662,8 +679,7 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		)
 		&&
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) )
-	){
-
+	) {
 		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) );
 		zval zv_value;
 		ZVAL_STRING( &zv_value, ( char * ) attr );
@@ -679,9 +695,116 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		mf2microformat_add_property( zv_mf, zv_name, &zv_value );
 		zval_dtor( &zv_value );
 		xmlFree( attr );
+
+	// Priority #2: img.u-x[src]
+	} else if (
+		zend_string_equals( node_name, MF2_STR( str_img ) )
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_src ) ) )
+	) {
+		xmlChar *attr_src = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_src ) ) );
+		zval zv_src;
+		ZVAL_STRING( &zv_src, ( char * ) attr_src );
+
+		php_url *url_parts = php_url_parse( Z_STRVAL( zv_src ) );
+		if ( NULL != url_parts ) {
+			if ( mf2_is_relative_url( url_parts ) ) {
+				mf2parse_resolve_relative_uri( object, &zv_src, url_parts );
+			}
+			php_url_free( url_parts );
+		}
+
+		if ( xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_alt ) ) ) ) {
+			xmlChar *attr_alt = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_alt ) ) );
+			zval zv_alt;
+			ZVAL_STRING( &zv_alt, ( char * ) attr_alt );
+
+			array_init( &zv_value );
+			add_assoc_zval( &zv_value, ZSTR_VAL( MF2_STR( str_value ) ), &zv_src );
+			zval_copy_ctor( &zv_src );
+			add_assoc_zval( &zv_value, ZSTR_VAL( MF2_STR( str_alt ) ), &zv_alt );
+			zval_copy_ctor( &zv_alt );
+
+			zval_dtor( &zv_alt );
+			xmlFree( attr_alt );
+		} else {
+			ZVAL_ZVAL( &zv_value, &zv_src, 1, 0 );
+		}
+
+		mf2microformat_add_property( zv_mf, zv_name, &zv_value );
+
+		zval_dtor( &zv_src );
+		xmlFree( attr_src );
+
+	// Priority #3: audio.u-x[src] or video.u-x[src] or source.u-x[src] or iframe.u-x[src]
+	} else if (
+		(
+			zend_string_equals( node_name, MF2_STR( str_audio ) )
+			||
+			zend_string_equals( node_name, MF2_STR( str_video ) )
+			||
+			zend_string_equals( node_name, MF2_STR( str_src ) )
+			||
+			zend_string_equals( node_name, MF2_STR( str_iframe ) )
+		)
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_src ) ) )
+	) {
+
+	// Priority #4: video.u-x[poster]
+	} else if (
+		zend_string_equals( node_name, MF2_STR( str_video ) )
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_poster ) ) )
+	) {
+
+	// Priority #5: object.u-x[data]
+	} else if (
+		zend_string_equals( node_name, MF2_STR( str_object ) )
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_data ) ) )
+	) {
+
+	// Priority #6: value-class pattern
+	} else if ( mf2parse_value_class_u( object, xml_node, &zv_value ) ) {
+		//mf2microformat_add_property( zv_mf, zv_name, &zv_value );
+
+	// Priority #7: abbr.u-x[title]
+	} else if (
+		zend_string_equals( node_name, MF2_STR( str_abbr ) )
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) )
+	) {
+
+	// Priority #8: data.u-x[value] or input.u-x[value]
+	} else if (
+		(
+			zend_string_equals( node_name, MF2_STR( str_data ) )
+			||
+			zend_string_equals( node_name, MF2_STR( str_input ) )
+		)
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_value ) ) )
+	) {
+
+	// Catch-all: textContent
+	} else {
+		// xmlBufferPtr buffer = xmlBufferCreate();
+		// xmlNodeBufGetContent( buffer, xml_node );
+
+		// // TODO remove script & style, replace img with alt
+		// zval zv_buffer;
+		// ZVAL_STRING( &zv_buffer, ( char * ) buffer->content );
+		// mf2_trim_html_space_chars( &zv_buffer, Z_STRVAL( zv_buffer ) );
+
+		// mf2microformat_add_property( zv_mf, zv_name, &zv_buffer );
+
+		// zval_dtor( &zv_buffer );
+		// xmlBufferFree( buffer );
 	}
 
 	zend_string_free( node_name );
+	zval_ptr_dtor( &zv_value );
 }
 
 /**
@@ -818,7 +941,6 @@ static void mf2parse_imply_name( zval *object, zval *zv_mf, xmlNodePtr xml_node 
  */
 static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 {
-
 }
 
 /**
@@ -850,6 +972,15 @@ static void mf2parse_imply_url( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) );
 		ZVAL_STRING( &zv_href, ( char * ) attr );
 		mf2_trim_html_space_chars( &zv_href, Z_STRVAL( zv_href ) );
+
+		php_url *url_parts = php_url_parse( Z_STRVAL( zv_href ) );
+		if ( NULL != url_parts ) {
+			if ( mf2_is_relative_url( url_parts ) ) {
+				mf2parse_resolve_relative_uri( object, &zv_href, url_parts );
+			}
+			php_url_free( url_parts );
+		}
+
 		ZVAL_STR( &zv_name, MF2_STR( str_url ) );
 		mf2microformat_add_property( zv_mf, &zv_name, &zv_href );
 
@@ -893,6 +1024,8 @@ static void mf2parse_imply_properties( zval *object, zval *zv_mf, xmlNodePtr xml
 	if ( mf2microformat_has_children( zv_mf ) ) {
 		return;
 	}
+
+	// TODO: parsing spec, property-embedded microformats disqualify node from implied property parsing (?)
 
 	mf2parse_imply_name( object, zv_mf, xml_node );
 	mf2parse_imply_photo( object, zv_mf, xml_node );
