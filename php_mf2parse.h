@@ -27,6 +27,7 @@ typedef struct _php_mf2parse_object {
 	pcre_cache_entry *regex_roots;
 	pcre_cache_entry *regex_properties;
 	zval *context;
+	zval parent_property_contexts;
 	zend_object zo;
 } php_mf2parse_object;
 

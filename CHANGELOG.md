@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- MF2Parse: nested (property-embedded) microformats parsing
+- TEST: mf-test-suite/v2/h-card/hcard
 - MF2Parse: nested (children) microformats parsing
 - TEST: mf-test-suite/v2/h-card/nested
 - MF2Parse: all p-property parsing steps implemented

@@ -496,7 +496,7 @@ static zend_bool mf2parse_value_class_p( zval *object, xmlNodePtr xml_node, zval
 
 			smart_str smart_value_str = {0};
 			xmlNodePtr current_node;
-			xmlChar *attr;
+			// xmlChar *attr;
 			zval zv_node_name;
 
 			for ( int idx = 0; idx < results->nodesetval->nodeNr; idx++ ) {
@@ -694,7 +694,7 @@ static void mf2parse_e_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 /**
  * @since 0.1.0
  */
-static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr xml_node, zval *zv_classes )
+static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root )
 {
 	zval matched, matches;
 
@@ -715,6 +715,19 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr x
 	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
 		zv_prefix = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 1 );
 		zv_name   = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 2 );
+
+		if( node_has_root ) {
+			zval zv_parents;
+			array_init( &zv_parents );
+
+			add_next_index_zval( &zv_parents, zv_prefix );
+			zval_copy_ctor( zv_prefix );
+
+			add_next_index_zval( &zv_parents, zv_name );
+			zval_copy_ctor( zv_name );
+
+			add_next_index_zval( &(Z_MF2PARSEOBJ_P( object )->parent_property_contexts), &zv_parents );
+		}
 
 		// TODO: faster way?
 
@@ -737,7 +750,7 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr x
 /**
  * @since 0.1.0
  */
-static void mf2parse_find_properties( zval *object, zval *zv_mf, xmlNodePtr xml_node )
+static void mf2parse_find_properties( zval *object, zval *zv_mf, xmlNodePtr xml_node, zend_bool node_has_root )
 {
 	if( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
 		return;
@@ -748,11 +761,9 @@ static void mf2parse_find_properties( zval *object, zval *zv_mf, xmlNodePtr xml_
 	zval zv_classes;
 	ZVAL_STRING( &zv_classes, ( char * ) classes );
 
-	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( zv_mf );
-
-	if ( 2 == mf2mf->version ) {
+	if ( 2 == Z_MF2MFOBJ_P( zv_mf )->version ) {
 		// Microformats2 property parsing
-		mf2parse_find_v2_properties( object, zv_mf, xml_node, &zv_classes );
+		mf2parse_find_v2_properties( object, zv_mf, xml_node, &zv_classes, node_has_root );
 	} else {
 		// Backcompat property parsing
 		//mf2parse_find_backcompat_properties( object, mf, xml_node );
@@ -886,7 +897,7 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
 	xmlNodePtr current_node;
-	zval zv_mf, *previous_context = NULL;
+	zval zv_mf, *previous_context = NULL, parent_property_contexts;
 
 	for ( current_node = xml_node; current_node; current_node = current_node->next ) {
 
@@ -899,7 +910,7 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 
 				// Microformats parsing - properties
 				if ( NULL != mf2parse->context ) {
-					mf2parse_find_properties( object, mf2parse->context, current_node );
+					mf2parse_find_properties( object, mf2parse->context, current_node, IS_NULL != Z_TYPE( zv_mf ) );
 				}
 
 				// Rel and Rel-URL parsing
@@ -914,19 +925,26 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 
 				// Good morning!
 				mf2parse->context = previous_context;
+				ZVAL_ARR( &parent_property_contexts, zend_array_dup( Z_ARRVAL( mf2parse->parent_property_contexts ) ) );
+				zend_hash_clean( Z_ARRVAL( mf2parse->parent_property_contexts ) );
 
 				if ( IS_NULL != Z_TYPE( zv_mf ) ) {
 					// Implied properties
 					mf2parse_imply_properties( object, &zv_mf, current_node );
 
 					if ( NULL != mf2parse->context ) {
-						mf2microformat_add_child( mf2parse->context, &zv_mf );
+						if ( zend_array_count( Z_ARRVAL( parent_property_contexts ) ) > 0 ) {
+							mf2microformat_add_nested_child( mf2parse->context, &zv_mf, &parent_property_contexts );
+						} else {
+							mf2microformat_add_child( mf2parse->context, &zv_mf );
+						}
 					} else {
 						zend_hash_next_index_insert_new( mf2parse->items, &zv_mf );
 					}
 					zval_copy_ctor( &zv_mf );
 					Z_ADDREF( zv_mf );
 				}
+				zval_ptr_dtor( &parent_property_contexts );
 				zval_ptr_dtor( &zv_mf );
 			break;
 

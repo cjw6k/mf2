@@ -183,4 +183,45 @@ void mf2microformat_add_child( zval *object, zval *zv_child )
 	add_next_index_zval( zv_current_children, zv_child );
 }
 
+/**
+ * @since 0.1.0
+ */
+void mf2microformat_add_nested_child( zval *object, zval *zv_child, zval *contexts )
+{
+	zval *zv_parent_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+	zval *zv_child_properties = zend_read_property( php_mf2microformat_ce, zv_child, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+
+	zval *zv_prefix, *zv_name, *zv_parent_property, *context, *zv_source;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL_P( contexts ), context ) {
+		zv_prefix = zend_hash_index_find( Z_ARRVAL_P( context ), 0 );
+		zv_name = zend_hash_index_find( Z_ARRVAL_P( context ), 1 );
+		zv_parent_property = zend_hash_find( Z_ARRVAL_P( zv_parent_properties ), Z_STR_P( zv_name ) );
+
+		// TODO: faster?
+
+		if( zend_string_equals( MF2_STR( str_p ), Z_STR_P( zv_prefix ) ) ) {
+			zv_source = zend_hash_find( Z_ARRVAL_P( zv_child_properties ), MF2_STR( str_name ) );
+			mf2microformat_add_value( zv_child, zend_hash_index_find( Z_ARRVAL_P( zv_source ), 0 ) );
+		} else if( zend_string_equals( MF2_STR( str_u ), Z_STR_P( zv_prefix ) ) ) {
+
+		} else if( zend_string_equals( MF2_STR( str_dt ), Z_STR_P( zv_prefix ) ) ) {
+
+		} else if( zend_string_equals( MF2_STR( str_e ), Z_STR_P( zv_prefix ) ) ) {
+
+		}
+
+		zend_hash_clean( Z_ARRVAL_P( zv_parent_property ) );
+		add_next_index_zval( zv_parent_property, zv_child );
+
+	} ZEND_HASH_FOREACH_END();
+}
+
+/**
+ * @since 0.1.0
+ */
+void mf2microformat_add_value( zval *object, zval *zv_value )
+{
+	add_property_zval( object, ZSTR_VAL( MF2_STR( str_value ) ), zv_value );
+}
+
 #endif /* HAVE_MF2 */
