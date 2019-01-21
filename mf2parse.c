@@ -1161,8 +1161,9 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 		&&
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_data ) ) )
 	) {
-
-		// TODO: test/parse
+		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_data ) ) );
+		ZVAL_STRING( &zv_photo, ( char * ) attr );
+		xmlFree( attr );
 
 	} else {
 		xmlXPathContextPtr xpath_context = xmlXPathNewContext( Z_MF2PARSEOBJ_P( object )->document );
@@ -1195,9 +1196,9 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 			if ( results ) {
 				if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
 					done = 1;
-
-					// TODO: test/parse
-
+					xmlChar *attr = xmlGetProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_data ) ) );
+					ZVAL_STRING( &zv_photo, ( char * ) attr );
+					xmlFree( attr );
 				}
 				xmlXPathFreeObject( results );
 			}
@@ -1226,13 +1227,13 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 
 		// Priority #6: .h-x>:only-child:not[.h-*]>object[data]:only-of-type:not[.h-*]
 		if( !done ) {
-			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*//*[count(../*) = 1][not(contains(concat(\" \", @class), \" h-\"))]/object[@data][count(../object) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
+			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[count(../*) = 1][not(contains(concat(\" \", @class), \" h-\"))]/object[@data][count(../object) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
 
 			if ( results ) {
 				if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
-
-					// TODO: test/parse
-
+					xmlChar *attr = xmlGetProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_data ) ) );
+					ZVAL_STRING( &zv_photo, ( char * ) attr );
+					xmlFree( attr );
 				}
 				xmlXPathFreeObject( results );
 			}
