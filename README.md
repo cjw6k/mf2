@@ -157,7 +157,8 @@ Discussion in:
     <dd>See [[tests/mf2parse/021_mf2parse_option_MF2_PARSE_NOWARNING.phpt]]</dd>
     <dt>How can I test the MF2_PARSE_RECOVER option?</dt>
     <dd>See [[tests/mf2parse/022_mf2parse_option_MF2_PARSE_RECOVER.phpt]]</dd>   
-    <dt>mf-test-suite divergence</dt><dd>The mf-test-suite has not yet incorporated parsing alt text from `img.u-x[alt]` elements as per the specification. Tests in mf2 cover follow the current spec, and so diverge from the mf-test-suite and all other parsers that I checked (some have an experimental option which enables the `img.u-x[alt]` parsing). The mf-test-suite should be updated to follow the spec.</dd>
+    <dt>mf-test-suite divergence</dt><dd>The mf-test-suite has not yet incorporated parsing alt text from <code>img.u-x[alt]</code> elements as per the specification. Tests in mf2 follow the current spec, and so diverge from the mf-test-suite and all other parsers that I checked (some have an experimental option which enables the <code>img.u-x[alt]</code> parsing). The mf-test-suite should be updated to follow the spec.</dd>
+    <dt>mf-test-suite errors</dt><dd>The mf-test-suite includes <code>v2/h-card/hyperlinkedphoto.json</code> wherein a relative URL in an <code>img</code> <code>src</code> attribute, has been resolved to an absolute URL, based on the <code>href</code> attribute of the containing <code>a</code>. That is not part of the HTML spec (is it?).</dd>
 </dl>
 
 ## Changelog

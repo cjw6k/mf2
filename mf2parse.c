@@ -910,9 +910,7 @@ static void mf2parse_find_properties( zval *object, zval *zv_mf, xmlNodePtr xml_
  */
 static void mf2parse_imply_name( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 {
-	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( zv_mf );
-
-	if( mf2mf->has_p_prop || mf2mf->has_e_prop ) {
+	if( Z_MF2MFOBJ_P( zv_mf )->has_p_prop || Z_MF2MFOBJ_P( zv_mf )->has_e_prop ) {
 		return;
 	}
 
@@ -920,20 +918,148 @@ static void mf2parse_imply_name( zval *object, zval *zv_mf, xmlNodePtr xml_node 
 		return;
 	}
 
-	// TODO: higher priority checks
-	xmlBufferPtr buffer = xmlBufferCreate();
-	xmlNodeBufGetContent( buffer, xml_node );
+	zval zv_name;
+	ZVAL_NULL( &zv_name );
 
-	// TODO remove script & style, replace img with alt
-	zval zv_buffer, zv_name;
-	ZVAL_STRING( &zv_buffer, ( char * ) buffer->content );
-	mf2_trim_html_space_chars( &zv_buffer, Z_STRVAL( zv_buffer ) );
+	zend_string *node_name = zend_string_init( ( char * ) xml_node->name, xmlStrlen( xml_node->name ), 0 );
 
-	ZVAL_STR( &zv_name, MF2_STR( str_name ) );
-	mf2microformat_add_property( zv_mf, &zv_name, &zv_buffer );
+	// Priority #1: img.h-x or area.h-x
+	if (
+		zend_string_equals( node_name, MF2_STR( str_img ) )
+		||
+		zend_string_equals( node_name, MF2_STR( str_area ) )
+	) {
 
-	zval_dtor( &zv_buffer );
-	xmlBufferFree( buffer );
+		// TODO: test/parse
+
+	// Priority #2: abbr.h-x[title]
+	} else if (
+		zend_string_equals( node_name, MF2_STR( str_abbr ) )
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) )
+	) {
+
+		// TODO: test/parse
+
+	} else {
+		xmlXPathContextPtr xpath_context = xmlXPathNewContext( Z_MF2PARSEOBJ_P( object )->document );
+		xmlXPathObjectPtr results;
+
+		zend_bool done = 0;
+
+		// Priority #3: .h-x>img[alt]:only-child:not([alt=""]):not[.h-*]
+		results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "img[@alt[not(.=\"\")]][count(../img) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
+		if ( results ) {
+			if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
+				done = 1;
+				xmlChar *attr = xmlGetProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_alt ) ) );
+				ZVAL_STRING( &zv_name, ( char * ) attr );
+				xmlFree( attr );
+			}
+
+			xmlXPathFreeObject( results );
+		}
+
+		// Priority #4: .h-x>area[alt]:only-child:not([alt=""]):not[.h-*]
+		if ( ! done ) {
+			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "area[@alt[not(.=\"\")]][count(../area) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
+			if ( results ) {
+				if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
+					done = 1;
+
+					// TODO: test/parse
+
+				}
+
+				xmlXPathFreeObject( results );
+			}
+		}
+
+		// Priority #5: .h-x>abbr[title]:only-child:not([title=""]):not[.h-*]
+		if ( ! done ) {
+			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "abbr[@title[not(.=\"\")]][count(../abbr) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
+			if ( results ) {
+				if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
+					done = 1;
+
+					// TODO: test/parse
+
+				}
+
+				xmlXPathFreeObject( results );
+			}
+		}
+
+		// Priority #6: .h-x>:only-child:not[.h-*]>img[alt]:only-child:not([alt=""]):not[.h-*]
+		if ( ! done ) {
+			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[count(../*) = 1][not(contains(concat(\" \", @class), \" h-\"))]/img[@alt[not(.=\"\")]][count(../img) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
+			if ( results ) {
+				if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
+					done = 1;
+
+					// TODO: test/parse
+
+				}
+
+				xmlXPathFreeObject( results );
+			}
+		}
+
+		// Priority #7: .h-x>:only-child:not[.h-*]>area[alt]:only-child:not([alt=""]):not[.h-*]
+		if ( ! done ) {
+			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[count(../*) = 1][not(contains(concat(\" \", @class), \" h-\"))]/area[@alt[not(.=\"\")]][count(../area) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
+			if ( results ) {
+				if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
+					done = 1;
+
+					// TODO: test/parse
+
+				}
+
+				xmlXPathFreeObject( results );
+			}
+		}
+
+		// Priority #8: .h-x>:only-child:not[.h-*]>abbr[title]:only-child:not([title=""]):not[.h-*]
+		if ( ! done ) {
+			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[count(../*) = 1][not(contains(concat(\" \", @class), \" h-\"))]/abbr[@title[not(.=\"\")]][count(../abbr) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
+			if ( results ) {
+				if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
+					done = 1;
+
+					// TODO: test/parse
+
+				}
+
+				xmlXPathFreeObject( results );
+			}
+		}
+
+		xmlXPathFreeContext( xpath_context );
+
+		// Catch-all: textContent
+		if ( ! done ) {
+			xmlBufferPtr buffer = xmlBufferCreate();
+			xmlNodeBufGetContent( buffer, xml_node );
+
+			// TODO remove script & style, replace img with alt
+			ZVAL_STRING( &zv_name, ( char * ) buffer->content );
+			mf2_trim_html_space_chars( &zv_name, Z_STRVAL( zv_name ) );
+			xmlBufferFree( buffer );
+		}
+	}
+
+	zend_string_free( node_name );
+
+	if ( IS_NULL == Z_TYPE( zv_name ) ) {
+		return;
+	}
+
+	zval zv_key_name;
+	ZVAL_STR( &zv_key_name, MF2_STR( str_name ) );
+	mf2microformat_add_property( zv_mf, &zv_key_name, &zv_name );
+
+	zval_ptr_dtor( &zv_name );
 }
 
 /**
@@ -984,11 +1110,17 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 		if ( results ) {
 			if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
 				done = 1;
+				xmlChar *attr = xmlGetProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_src ) ) );
+				ZVAL_STRING( &zv_photo, ( char * ) attr );
+				xmlFree( attr );
 
-				// TODO: test/parse
+				if( xmlHasProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_alt ) ) ) ) {
+					xmlChar *attr_alt = xmlGetProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_alt ) ) );
+					ZVAL_STRING( &zv_alt, ( char * ) attr_alt );
+					xmlFree( attr_alt );
+				}
 
 			}
-
 			xmlXPathFreeObject( results );
 		}
 
@@ -1061,7 +1193,15 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 
 	if ( IS_NULL != Z_TYPE( zv_alt ) ) {
 
-		// TODO: test/parse
+		zval zv_img_array;
+		array_init( &zv_img_array );
+		add_assoc_zval( &zv_img_array, ZSTR_VAL( MF2_STR( str_value ) ), &zv_photo );
+		zval_copy_ctor( &zv_photo );
+		add_assoc_zval( &zv_img_array, ZSTR_VAL( MF2_STR( str_alt ) ), &zv_alt );
+		zval_copy_ctor( &zv_alt );
+
+		zval_dtor( &zv_photo );
+		ZVAL_ZVAL( &zv_photo, &zv_img_array, 0, 0);
 
 		zval_dtor( &zv_alt );
 	}
