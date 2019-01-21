@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v2/h-card/childimplied
 - TEST: mf-test-suite/v2/h-card/baseurl
 - TEST: mf-test-suite/v2/h-card/relativeurls
 - MF2Parse: u-property relative URLs are resolved to absolutes

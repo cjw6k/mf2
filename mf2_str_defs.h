@@ -51,5 +51,6 @@
 	X(iframe) \
 	X(poster) \
 	X(object) \
+	X(photo) \
 
 #endif /* MF2_STR_DEFS_H */
