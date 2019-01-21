@@ -156,7 +156,8 @@ Discussion in:
     <dt>How can I test the MF2_PARSE_NOWARNING option?</dt>
     <dd>See [[tests/mf2parse/021_mf2parse_option_MF2_PARSE_NOWARNING.phpt]]</dd>
     <dt>How can I test the MF2_PARSE_RECOVER option?</dt>
-    <dd>See [[tests/mf2parse/022_mf2parse_option_MF2_PARSE_RECOVER.phpt]]</dd>    
+    <dd>See [[tests/mf2parse/022_mf2parse_option_MF2_PARSE_RECOVER.phpt]]</dd>   
+    <dt>mf-test-suite divergence</dt><dd>The mf-test-suite has not yet incorporated parsing alt text from `img.u-x[alt]` elements as per the specification. Tests in mf2 cover follow the current spec, and so diverge from the mf-test-suite and all other parsers that I checked (some have an experimental option which enables the `img.u-x[alt]` parsing). The mf-test-suite should be updated to follow the spec.</dd>
 </dl>
 
 ## Changelog
