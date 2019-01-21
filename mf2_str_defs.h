@@ -52,5 +52,7 @@
 	X(poster) \
 	X(object) \
 	X(photo) \
+	X(style) \
+	X(script) \
 
 #endif /* MF2_STR_DEFS_H */
