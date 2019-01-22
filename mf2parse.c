@@ -627,16 +627,15 @@ static void mf2parse_clean_text_content_with_img_src( zval *object, xmlNodePtr x
 /**
  * @since 0.1.0
  */
-static zend_bool mf2parse_value_class_p( zval *object, xmlNodePtr xml_node, zval *zv_return_value )
+static zend_bool mf2parse_value_class( zval *object, xmlNodePtr xml_node, zval *zv_return_value )
 {
 	zend_bool found_vc = 0;
+	xmlXPathObjectPtr results;
 
 	xmlXPathContextPtr xpath_context = xmlXPathNewContext( Z_MF2PARSEOBJ_P( object )->document );
 
 	// TODO: this won't satisfy excluding nested properties with their own values
-	xmlXPathObjectPtr results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[contains(concat(' ', @class, ' '), ' value ')]", xpath_context );
-
-	xmlXPathFreeContext( xpath_context );
+	results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[contains(concat(' ', @class, ' '), ' value ')]", xpath_context );
 
 	if ( results ) {
 		if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
@@ -711,23 +710,26 @@ static zend_bool mf2parse_value_class_p( zval *object, xmlNodePtr xml_node, zval
 		xmlXPathFreeObject( results );
 	}
 
+	if ( ! found_vc ) {
+		// TODO: this won't satisfy excluding nested properties with their own value-titles
+		results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[contains(concat(' ', @class, ' '), ' value-title ')]", xpath_context );
+
+		if ( results ) {
+			if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
+				if ( xmlHasProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) ) ) {
+					found_vc = 1;
+					xmlChar *attr = xmlGetProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) );
+					ZVAL_STRING( zv_return_value, ( char * ) attr );
+					xmlFree( attr );
+				}
+			}
+			xmlXPathFreeObject( results );
+		}
+	}
+
+	xmlXPathFreeContext( xpath_context );
+
 	return found_vc;
-}
-
-/**
- * @since 0.1.0
- */
-static zend_bool mf2parse_value_class_u( zval *object, xmlNodePtr xml_node, zval *zv_return_value )
-{
-	return 0;
-}
-
-/**
- * @since 0.1.0
- */
-static zend_bool mf2parse_value_class_dt( zval *object, xmlNodePtr xml_node, zval *zv_return_value )
-{
-	return 0;
 }
 
 /**
@@ -741,7 +743,7 @@ static void mf2parse_p_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 	Z_MF2MFOBJ_P( zv_mf )->has_p_prop = 1;
 
 	// Priority #1: value-class pattern
-	if ( mf2parse_value_class_p( object, xml_node, &zv_value ) ) {
+	if ( mf2parse_value_class( object, xml_node, &zv_value ) ) {
 		// result is in zv_value
 
 	// Priority #2: abbr.p-x[title] or link.p-x[title]
@@ -823,8 +825,8 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) )
 	) {
 		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) );
-		zval zv_value;
 		ZVAL_STRING( &zv_value, ( char * ) attr );
+		xmlFree( attr );
 
 		php_url *url_parts = php_url_parse( Z_STRVAL( zv_value ) );
 		if ( NULL != url_parts ) {
@@ -833,10 +835,6 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 			}
 			php_url_free( url_parts );
 		}
-
-		mf2microformat_add_property( zv_mf, zv_name, &zv_value );
-		zval_dtor( &zv_value );
-		xmlFree( attr );
 
 	// Priority #2: img.u-x[src]
 	} else if (
@@ -873,8 +871,6 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 			ZVAL_ZVAL( &zv_value, &zv_src, 1, 0 );
 		}
 
-		mf2microformat_add_property( zv_mf, zv_name, &zv_value );
-
 		zval_dtor( &zv_src );
 		xmlFree( attr_src );
 
@@ -901,8 +897,17 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		&&
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_poster ) ) )
 	) {
+		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_poster ) ) );
+		ZVAL_STRING( &zv_value, ( char * ) attr );
+		xmlFree( attr );
 
-		// TODO: Test and Parse
+		php_url *url_parts = php_url_parse( Z_STRVAL( zv_value ) );
+		if ( NULL != url_parts ) {
+			if ( mf2_is_relative_url( url_parts ) ) {
+				mf2parse_resolve_relative_uri( object, &zv_value, url_parts );
+			}
+			php_url_free( url_parts );
+		}
 
 	// Priority #5: object.u-x[data]
 	} else if (
@@ -910,14 +915,13 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		&&
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_data ) ) )
 	) {
-
-		// TODO: Test and Parse
+		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_data ) ) );
+		ZVAL_STRING( &zv_value, ( char * ) attr );
+		xmlFree( attr );
 
 	// Priority #6: value-class pattern
-	} else if ( mf2parse_value_class_u( object, xml_node, &zv_value ) ) {
-		//mf2microformat_add_property( zv_mf, zv_name, &zv_value );
-
-		// TODO: Test and Parse
+	} else if ( mf2parse_value_class( object, xml_node, &zv_value ) ) {
+		// result is in zv_value
 
 	// Priority #7: abbr.u-x[title]
 	} else if (
@@ -925,8 +929,9 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		&&
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) )
 	) {
-
-		// TODO: Test and Parse
+		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) );
+		ZVAL_STRING( &zv_value, ( char * ) attr );
+		xmlFree( attr );
 
 	// Priority #8: data.u-x[value] or input.u-x[value]
 	} else if (
@@ -938,23 +943,25 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		&&
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_value ) ) )
 	) {
-
-		// TODO: Test and Parse
+		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_value ) ) );
+		ZVAL_STRING( &zv_value, ( char * ) attr );
+		xmlFree( attr );
 
 	// Catch-all: textContent
 	} else {
+
 		xmlBufferPtr buffer = xmlBufferCreate();
 		xmlNodeBufGetContent( buffer, xml_node );
 
 		// TODO remove script & style, replace img with alt
-		zval zv_buffer;
-		ZVAL_STRING( &zv_buffer, ( char * ) buffer->content );
-		mf2_trim_html_space_chars( &zv_buffer, Z_STRVAL( zv_buffer ) );
-
-		mf2microformat_add_property( zv_mf, zv_name, &zv_buffer );
-
-		zval_dtor( &zv_buffer );
+		ZVAL_STRING( &zv_value, ( char * ) buffer->content );
 		xmlBufferFree( buffer );
+
+		mf2_trim_html_space_chars( &zv_value, Z_STRVAL( zv_value ) );
+	}
+
+	if ( IS_NULL != Z_TYPE( zv_value ) ) {
+		mf2microformat_add_property( zv_mf, zv_name, &zv_value );
 	}
 
 	zend_string_free( node_name );
@@ -974,7 +981,7 @@ static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlN
 	zend_string *node_name = zend_string_init( ( char * ) xml_node->name, xmlStrlen( xml_node->name ), 0 );
 
 	// Priority #1: value-class pattern
-	if ( mf2parse_value_class_dt( object, xml_node, &zv_value ) ) {
+	if ( mf2parse_value_class( object, xml_node, &zv_value ) ) {
 		// result is in zv_value
 
 	// Priority #2: time.dt-x[datetime] or ins.dt-x[datetime] or del.dt-x[datetime]
