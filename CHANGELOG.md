@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v2/h-entry/justahyperlink
 - TEST: mf-test-suite/v2/h-entry/impliedvalue-nested
 - TEST: mf-test-suite/v2/h-entry/impliedname
 - Moved nested-root context tracking from MF2Parse to MF2Microformat
