@@ -22,6 +22,7 @@
 #include <libxml/parserInternals.h>
 #include <libxml/HTMLparser.h>
 #include <libxml/HTMLtree.h>
+#include <libxml/xmlsave.h>
 #include <libxml/xpath.h>
 
 #include "zend_smart_str.h"
@@ -888,6 +889,40 @@ static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlN
 static void mf2parse_e_property( zval *object, zval *zv_mf, zval *zv_name, xmlNodePtr xml_node )
 {
 	Z_MF2MFOBJ_P( zv_mf )->has_e_prop = 1;
+
+	zval zv_html, zv_set, zv_value;
+
+	array_init( &zv_set );
+	ZVAL_NULL( &zv_html );
+	ZVAL_NULL( &zv_value );
+
+	// TODO: using xmlSaveTree is unlikely to match the specified serialization algorithm's output in all cases
+
+	xmlBufferPtr buffer = xmlBufferCreate();
+	xmlSaveCtxtPtr ctxt = xmlSaveToBuffer( buffer, NULL, 0 );
+
+	xmlNodePtr current_node = xml_node->children;
+	while ( current_node ) {
+		xmlSaveTree( ctxt, current_node );
+		current_node = current_node->next;
+	}
+
+	xmlSaveClose( ctxt );
+	ZVAL_STRING( &zv_html, ( char * ) buffer->content );
+	xmlBufferFree( buffer );
+
+	add_assoc_zval( &zv_set, ZSTR_VAL( MF2_STR( str_html ) ), &zv_html );
+	zval_copy_ctor( &zv_html );
+
+	mf2parse_clean_text_content( object, xml_node, &zv_value );
+	add_assoc_zval( &zv_set, ZSTR_VAL( MF2_STR( str_value ) ), &zv_value );
+	Z_ADDREF( zv_value );
+
+	mf2microformat_add_property( zv_mf, zv_name, &zv_set );
+
+	zval_ptr_dtor( &zv_set );
+	zval_dtor( &zv_html );
+	zval_dtor( &zv_value );
 }
 
 /**

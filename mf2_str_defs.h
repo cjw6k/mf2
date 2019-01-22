@@ -54,5 +54,6 @@
 	X(photo) \
 	X(style) \
 	X(script) \
+	X(html) \
 
 #endif /* MF2_STR_DEFS_H */
