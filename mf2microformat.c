@@ -19,6 +19,8 @@
 
 #if HAVE_MF2
 
+#include "ext/standard/php_var.h"
+
 #include "mf2.h"
 #include "php_mf2microformat.h"
 
@@ -129,6 +131,7 @@ void mf2microformat_new( zval *object, xmlNodePtr xml_node )
 
 	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( object );
 	mf2mf->has_p_prop = mf2mf->has_u_prop = mf2mf->has_dt_prop = mf2mf->has_e_prop = 0;
+	mf2mf->has_nested_roots = 0;
 }
 
 /**
@@ -162,7 +165,48 @@ void mf2microformat_get_property( zval *object, zend_string *zv_key, zval *zv_re
  */
 zend_bool mf2microformat_has_children( zval *object )
 {
-	return IS_NULL != Z_TYPE_P( zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL ) );
+	return (
+		1 == Z_MF2MFOBJ_P( object )->has_nested_roots
+		||
+		IS_NULL != Z_TYPE_P( zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL ) )
+	);
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2microformat_add_nested_child( zval *object, zval *zv_child )
+{
+	Z_MF2MFOBJ_P( object )->has_nested_roots = 1;
+
+	zval *zv_parent_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+	zval *zv_child_properties = zend_read_property( php_mf2microformat_ce, zv_child, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+
+	zval *zv_prefix, *zv_name, *zv_parent_property, *context, *zv_source;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( Z_MF2MFOBJ_P( object )->contexts ), context ) {
+		zv_prefix = zend_hash_index_find( Z_ARRVAL_P( context ), 0 );
+		zv_name = zend_hash_index_find( Z_ARRVAL_P( context ), 1 );
+		zv_parent_property = zend_hash_find( Z_ARRVAL_P( zv_parent_properties ), Z_STR_P( zv_name ) );
+
+		// TODO: faster?
+
+		if( zend_string_equals( MF2_STR( str_p ), Z_STR_P( zv_prefix ) ) ) {
+			zv_source = zend_hash_find( Z_ARRVAL_P( zv_child_properties ), MF2_STR( str_name ) );
+			mf2microformat_add_value( zv_child, zend_hash_index_find( Z_ARRVAL_P( zv_source ), 0 ) );
+		} else if( zend_string_equals( MF2_STR( str_u ), Z_STR_P( zv_prefix ) ) ) {
+			zv_source = zend_hash_find( Z_ARRVAL_P( zv_child_properties ), MF2_STR( str_url ) );
+			mf2microformat_add_value( zv_child, zend_hash_index_find( Z_ARRVAL_P( zv_source ), 0 ) );
+		} else if( zend_string_equals( MF2_STR( str_dt ), Z_STR_P( zv_prefix ) ) ) {
+
+		} else if( zend_string_equals( MF2_STR( str_e ), Z_STR_P( zv_prefix ) ) ) {
+
+		}
+
+		zend_hash_clean( Z_ARRVAL_P( zv_parent_property ) );
+		add_next_index_zval( zv_parent_property, zv_child );
+		Z_ADDREF_P( zv_child );
+
+	} ZEND_HASH_FOREACH_END();
 }
 
 /**
@@ -170,6 +214,12 @@ zend_bool mf2microformat_has_children( zval *object )
  */
 void mf2microformat_add_child( zval *object, zval *zv_child )
 {
+	if ( zend_hash_num_elements( Z_ARRVAL( Z_MF2MFOBJ_P( object )->contexts ) ) ) {
+		mf2microformat_add_nested_child( object, zv_child );
+		Z_DELREF_P( zv_child );
+		return;
+	}
+
 	zval *zv_current_children = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL );
 
 	if ( IS_NULL == Z_TYPE_P(zv_current_children) ) {
@@ -181,39 +231,6 @@ void mf2microformat_add_child( zval *object, zval *zv_child )
 	}
 
 	add_next_index_zval( zv_current_children, zv_child );
-}
-
-/**
- * @since 0.1.0
- */
-void mf2microformat_add_nested_child( zval *object, zval *zv_child, zval *contexts )
-{
-	zval *zv_parent_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
-	zval *zv_child_properties = zend_read_property( php_mf2microformat_ce, zv_child, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
-
-	zval *zv_prefix, *zv_name, *zv_parent_property, *context, *zv_source;
-	ZEND_HASH_FOREACH_VAL( Z_ARRVAL_P( contexts ), context ) {
-		zv_prefix = zend_hash_index_find( Z_ARRVAL_P( context ), 0 );
-		zv_name = zend_hash_index_find( Z_ARRVAL_P( context ), 1 );
-		zv_parent_property = zend_hash_find( Z_ARRVAL_P( zv_parent_properties ), Z_STR_P( zv_name ) );
-
-		// TODO: faster?
-
-		if( zend_string_equals( MF2_STR( str_p ), Z_STR_P( zv_prefix ) ) ) {
-			zv_source = zend_hash_find( Z_ARRVAL_P( zv_child_properties ), MF2_STR( str_name ) );
-			mf2microformat_add_value( zv_child, zend_hash_index_find( Z_ARRVAL_P( zv_source ), 0 ) );
-		} else if( zend_string_equals( MF2_STR( str_u ), Z_STR_P( zv_prefix ) ) ) {
-
-		} else if( zend_string_equals( MF2_STR( str_dt ), Z_STR_P( zv_prefix ) ) ) {
-
-		} else if( zend_string_equals( MF2_STR( str_e ), Z_STR_P( zv_prefix ) ) ) {
-
-		}
-
-		zend_hash_clean( Z_ARRVAL_P( zv_parent_property ) );
-		add_next_index_zval( zv_parent_property, zv_child );
-
-	} ZEND_HASH_FOREACH_END();
 }
 
 /**

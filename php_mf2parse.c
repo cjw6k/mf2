@@ -75,8 +75,6 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 
 	mf2parse->context = NULL;
 
-	array_init( &mf2parse->parent_property_contexts );
-
 	zend_object_std_init( &mf2parse->zo, class_entry );
 	object_properties_init( &mf2parse->zo, class_entry );
 
@@ -157,8 +155,6 @@ void php_mf2parse_free_object_handler( zend_object *object )
 		xmlFreeDoc( mf2parse->document );
 		xmlCleanupParser();
 	}
-
-	zval_ptr_dtor( &mf2parse->parent_property_contexts );
 
 	zend_object_std_dtor( &mf2parse->zo );
 }

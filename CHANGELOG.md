@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
-= MF2Parse: simple e-property parsing
+- TEST: mf-test-suite/v2/h-entry/impliedname
+- Moved nested-root context tracking from MF2Parse to MF2Microformat
+- MF2Parse: simple e-property parsing
 - TEST: mf-test-suite/v2/h-entry/encoding
 - TEST: mf-test-suite/v2/h-card/impliedurl
 - TEST: mf-test-suite/v2/h-card/impliedphoto

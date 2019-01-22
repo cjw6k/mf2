@@ -50,6 +50,7 @@ static zend_object *php_mf2microformat_create_object_handler( zend_class_entry *
 	memset( mf2mf, 0, sizeof( *mf2mf ) - sizeof( zval ) );
 
 	/* allocate memory for custom properties */
+	array_init( &mf2mf->contexts );
 
 	zend_object_std_init( &mf2mf->zo, class_entry );
 	object_properties_init( &mf2mf->zo, class_entry );
@@ -99,6 +100,7 @@ void php_mf2microformat_free_object_handler( zend_object *object )
 	php_mf2microformat_object *mf2mf = mf2microformat_fetch_object( object );
 
 	/* free memory used for custom properties */
+	zval_ptr_dtor( &mf2mf->contexts );
 
 	zend_object_std_dtor( &mf2mf->zo );
 }
