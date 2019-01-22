@@ -725,6 +725,14 @@ static zend_bool mf2parse_value_class_u( zval *object, xmlNodePtr xml_node, zval
 /**
  * @since 0.1.0
  */
+static zend_bool mf2parse_value_class_dt( zval *object, xmlNodePtr xml_node, zval *zv_return_value )
+{
+	return 0;
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_p_property( zval *object, zval *zv_mf, zval *zv_name, xmlNodePtr xml_node )
 {
 	zval zv_value;
@@ -958,7 +966,71 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
  */
 static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlNodePtr xml_node )
 {
+	zval zv_value;
+	ZVAL_NULL( &zv_value );
+
 	Z_MF2MFOBJ_P( zv_mf )->has_dt_prop = 1;
+
+	zend_string *node_name = zend_string_init( ( char * ) xml_node->name, xmlStrlen( xml_node->name ), 0 );
+
+	// Priority #1: value-class pattern
+	if ( mf2parse_value_class_dt( object, xml_node, &zv_value ) ) {
+		// result is in zv_value
+
+	// Priority #2: time.dt-x[datetime] or ins.dt-x[datetime] or del.dt-x[datetime]
+	} else if (
+		(
+			zend_string_equals( node_name, MF2_STR( str_time ) )
+			||
+			zend_string_equals( node_name, MF2_STR( str_ins ) )
+			||
+			zend_string_equals( node_name, MF2_STR( str_del ) )
+		)
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_datetime ) ) )
+	) {
+		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * )ZSTR_VAL( MF2_STR( str_datetime ) ) );
+		ZVAL_STRING( &zv_value, ( char * ) attr );
+		xmlFree(attr);
+
+	// Priority #3: abbr.dt-x[title]
+	} else if (
+		zend_string_equals( node_name, MF2_STR( str_abbr ) )
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) )
+	) {
+
+		// TODO: Test and Parse
+
+	// Priority #4: data.dt-x[value] or input.dt-x[value]
+	} else if (
+		(
+			zend_string_equals( node_name, MF2_STR( str_data ) )
+			||
+			zend_string_equals( node_name, MF2_STR( str_input ) )
+		)
+		&&
+		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_value ) ) )
+	) {
+
+		// TODO: Test and Parse
+
+	// Catch-all: textContext
+	} else {
+
+		// TODO: Test and Parse
+
+	}
+
+	zend_string_free( node_name );
+
+	if( IS_NULL == Z_TYPE( zv_value ) ) {
+		return;
+	}
+
+	mf2microformat_add_property( zv_mf, zv_name, &zv_value );
+
+	zval_dtor( &zv_value );
 }
 
 /**
@@ -989,10 +1061,12 @@ static void mf2parse_e_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 	ZVAL_STRING( &zv_html, ( char * ) buffer->content );
 	xmlBufferFree( buffer );
 
+	mf2_trim_html_space_chars( &zv_html, Z_STRVAL( zv_html ) );
+
 	add_assoc_zval( &zv_set, ZSTR_VAL( MF2_STR( str_html ) ), &zv_html );
 	zval_copy_ctor( &zv_html );
 
-	mf2parse_clean_text_content( object, xml_node, &zv_value );
+	mf2parse_clean_text_content( object, xml_node->children, &zv_value );
 	add_assoc_zval( &zv_set, ZSTR_VAL( MF2_STR( str_value ) ), &zv_value );
 	Z_ADDREF( zv_value );
 

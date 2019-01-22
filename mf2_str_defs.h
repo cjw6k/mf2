@@ -55,5 +55,9 @@
 	X(style) \
 	X(script) \
 	X(html) \
+	X(time) \
+	X(ins) \
+	X(del) \
+	X(datetime) \
 
 #endif /* MF2_STR_DEFS_H */
