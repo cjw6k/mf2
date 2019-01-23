@@ -605,7 +605,7 @@ static void mf2parse_clean_text_content_with_img_src( zval *object, xmlNodePtr x
 		}
 
 		if( current_node->children ) {
-			mf2parse_clean_text_content( object, current_node->children, zv_return_value );
+			mf2parse_clean_text_content_with_img_src( object, current_node->children, zv_return_value );
 			smart_str_appends( &clean_content, Z_STRVAL_P( zv_return_value ) );
 			zval_ptr_dtor( zv_return_value );
 		}
@@ -616,7 +616,6 @@ static void mf2parse_clean_text_content_with_img_src( zval *object, xmlNodePtr x
 	if ( clean_content.s && ( ZSTR_LEN( clean_content.s ) > 0 ) ) {
 		ZVAL_STR( zv_return_value, clean_content.s );
 		zval_copy_ctor( zv_return_value );
-		mf2_trim_html_space_chars( zv_return_value, Z_STRVAL_P( zv_return_value ) );
 	} else {
 		ZVAL_EMPTY_STRING( zv_return_value );
 	}
@@ -791,6 +790,7 @@ static void mf2parse_p_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 	// Catch-all: textContent
 	} else {
 		mf2parse_clean_text_content_with_img_src( object, xml_node->children, &zv_value );
+		mf2_trim_html_space_chars( &zv_value, Z_STRVAL( zv_value ) );
 	}
 
 	if ( IS_NULL != Z_TYPE( zv_value ) ) {
@@ -1073,7 +1073,8 @@ static void mf2parse_e_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 	add_assoc_zval( &zv_set, ZSTR_VAL( MF2_STR( str_html ) ), &zv_html );
 	zval_copy_ctor( &zv_html );
 
-	mf2parse_clean_text_content( object, xml_node->children, &zv_value );
+	mf2parse_clean_text_content_with_img_src( object, xml_node->children, &zv_value );
+	mf2_trim_html_space_chars( &zv_value, Z_STRVAL( zv_value ) );
 	add_assoc_zval( &zv_set, ZSTR_VAL( MF2_STR( str_value ) ), &zv_value );
 	Z_ADDREF( zv_value );
 
