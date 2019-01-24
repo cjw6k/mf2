@@ -1088,7 +1088,7 @@ static void mf2parse_e_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 /**
  * @since 0.1.0
  */
-static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root )
+static void mf2parse_find_v2_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root )
 {
 	zval matched, matches;
 
@@ -1120,19 +1120,19 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr x
 			add_next_index_zval( &zv_parents, zv_name );
 			zval_copy_ctor( zv_name );
 
-			add_next_index_zval( &( Z_MF2MFOBJ_P( zv_mf )->contexts ), &zv_parents );
+			add_next_index_zval( &( Z_MF2MFOBJ_P( zv_mf_embedded )->contexts ), &zv_parents );
 		}
 
 		// TODO: faster way?
 
 		if ( zend_string_equals( MF2_STR( str_p ), Z_STR_P( zv_prefix ) ) ) {
-			mf2parse_p_property( object, zv_mf, zv_name, xml_node );
+			mf2parse_p_property( object, Z_MF2PARSEOBJ_P( object )->context, zv_name, xml_node );
 		} else if ( zend_string_equals( MF2_STR( str_u ), Z_STR_P( zv_prefix ) ) ) {
-			mf2parse_u_property( object, zv_mf, zv_name, xml_node );
+			mf2parse_u_property( object, Z_MF2PARSEOBJ_P( object )->context, zv_name, xml_node );
 		} else if ( zend_string_equals( MF2_STR( str_dt ), Z_STR_P( zv_prefix ) ) ) {
-			mf2parse_dt_property( object, zv_mf, zv_name, xml_node );
+			mf2parse_dt_property( object, Z_MF2PARSEOBJ_P( object )->context, zv_name, xml_node );
 		} else if ( zend_string_equals( MF2_STR( str_e ), Z_STR_P( zv_prefix ) ) ) {
-			mf2parse_e_property( object, zv_mf, zv_name, xml_node );
+			mf2parse_e_property( object, Z_MF2PARSEOBJ_P( object )->context, zv_name, xml_node );
 		}
 
 	} ZEND_HASH_FOREACH_END();
@@ -1144,7 +1144,7 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf, xmlNodePtr x
 /**
  * @since 0.1.0
  */
-static void mf2parse_find_properties( zval *object, zval *zv_mf, xmlNodePtr xml_node, zend_bool node_has_root )
+static void mf2parse_find_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zend_bool node_has_root )
 {
 	if( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
 		return;
@@ -1155,9 +1155,9 @@ static void mf2parse_find_properties( zval *object, zval *zv_mf, xmlNodePtr xml_
 	zval zv_classes;
 	ZVAL_STRING( &zv_classes, ( char * ) classes );
 
-	if ( 2 == Z_MF2MFOBJ_P( zv_mf )->version ) {
+	if ( 2 == Z_MF2MFOBJ_P( Z_MF2PARSEOBJ_P( object )->context )->version ) {
 		// Microformats2 property parsing
-		mf2parse_find_v2_properties( object, zv_mf, xml_node, &zv_classes, node_has_root );
+		mf2parse_find_v2_properties( object, zv_mf_embedded, xml_node, &zv_classes, node_has_root );
 	} else {
 		// Backcompat property parsing
 		//mf2parse_find_backcompat_properties( object, mf, xml_node );
@@ -1634,7 +1634,7 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 
 				// Microformats parsing - properties
 				if ( NULL != mf2parse->context ) {
-					mf2parse_find_properties( object, mf2parse->context, current_node, IS_NULL != Z_TYPE( zv_mf ) );
+					mf2parse_find_properties( object, &zv_mf, current_node, IS_NULL != Z_TYPE( zv_mf ) );
 				}
 
 				// Rel and Rel-URL parsing
@@ -1683,7 +1683,7 @@ void mf2parse_new( zval *object, char *data, size_t data_length, zend_bool data_
 		mf2parse->php_base_url = php_url_parse_ex( data, data_length );
 	}
 
-	htmlParserCtxtPtr ctxt = data_is_uri ? htmlCreateFileParserCtxt( data, NULL ) : htmlCreateMemoryParserCtxt( data, data_length );
+	htmlParserCtxtPtr ctxt = data_is_uri ? htmlCreateFileParserCtxt( data, "UTF8" ) : htmlCreateMemoryParserCtxt( data, data_length );
 
 	if( !ctxt ) {
 		return;

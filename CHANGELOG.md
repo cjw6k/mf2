@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Moved nested-root context tracking from parent-root to child-root
+- TEST: mf-test-suite/v2/h-feed/simple
 - TEST: mf-test-suite/v2/h-entry/urlincontent
 - TEST: mf-test-suite/v2/h-entry/u-property
 - TEST: mf-test-suite/v2/h-entry/summarycontent

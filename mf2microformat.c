@@ -183,7 +183,7 @@ static void mf2microformat_add_nested_child( zval *object, zval *zv_child )
 	zval *zv_child_properties = zend_read_property( php_mf2microformat_ce, zv_child, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
 
 	zval *zv_prefix, *zv_name, *zv_parent_property, *context, *zv_source;
-	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( Z_MF2MFOBJ_P( object )->contexts ), context ) {
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( Z_MF2MFOBJ_P( zv_child )->contexts ), context ) {
 		zv_prefix = zend_hash_index_find( Z_ARRVAL_P( context ), 0 );
 		zv_name = zend_hash_index_find( Z_ARRVAL_P( context ), 1 );
 		zv_parent_property = zend_hash_find( Z_ARRVAL_P( zv_parent_properties ), Z_STR_P( zv_name ) );
@@ -214,7 +214,7 @@ static void mf2microformat_add_nested_child( zval *object, zval *zv_child )
  */
 void mf2microformat_add_child( zval *object, zval *zv_child )
 {
-	if ( zend_hash_num_elements( Z_ARRVAL( Z_MF2MFOBJ_P( object )->contexts ) ) ) {
+	if ( zend_hash_num_elements( Z_ARRVAL( Z_MF2MFOBJ_P( zv_child )->contexts ) ) ) {
 		mf2microformat_add_nested_child( object, zv_child );
 		Z_DELREF_P( zv_child );
 		return;
