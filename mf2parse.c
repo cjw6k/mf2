@@ -27,6 +27,8 @@
 
 #include "zend_smart_str.h"
 #include "ext/libxml/php_libxml.h"
+#include "ext/date/php_date.h"
+#include "ext/pcre/php_pcre.h"
 
 #include "mf2.h"
 #include "php_mf2.h"
@@ -734,6 +736,238 @@ static zend_bool mf2parse_value_class( zval *object, xmlNodePtr xml_node, zval *
 /**
  * @since 0.1.0
  */
+static zend_bool mf2parse_value_class_dt( zval *object, xmlNodePtr xml_node, zval *zv_return_value )
+{
+	zend_bool found_vc = 0, found_timezone = 0, found_time = 0, found_date = 0;
+
+	xmlXPathObjectPtr results;
+	xmlXPathContextPtr xpath_context = xmlXPathNewContext( Z_MF2PARSEOBJ_P( object )->document );
+
+	// TODO: this won't satisfy excluding nested properties with their own values
+	results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[contains(concat(' ', @class, ' '), ' value ')]", xpath_context );
+
+	if ( results ) {
+		if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
+			found_vc = 1;
+
+			smart_str smart_value_str = {0};
+			xmlNodePtr current_node;
+			xmlChar *attr;
+			zval zv_node_name, zv_value, zv_date, zv_time, zv_timezone;
+
+			ZVAL_NULL( &zv_date );
+			ZVAL_NULL( &zv_time );
+			ZVAL_NULL( &zv_timezone );
+
+			for ( int idx = 0; idx < results->nodesetval->nodeNr; idx++ ) {
+
+				current_node = results->nodesetval->nodeTab[idx];
+				ZVAL_NULL( &zv_value );
+
+				if ( XML_ELEMENT_NODE != current_node->type ) {
+					continue;
+				}
+
+				ZVAL_STRING( &zv_node_name, ( char * ) current_node->name );
+
+				if ( zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_img ) ) || zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_area ) ) ) {
+					// if ( xmlHasProp( current_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_alt ) ) ) ) {
+						// attr = xmlGetProp( current_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_alt ) ) );
+						// ZVAL_STRING( &zv_value, ( char * ) attr );
+						// // smart_str_appends( &smart_value_str, ( char * ) attr );
+						// xmlFree( attr );
+					// }
+				} else if ( zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_data ) ) ) {
+					// if ( xmlHasProp( current_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_value ) ) ) ) {
+						// attr = xmlGetProp( current_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_value ) ) );
+						// ZVAL_STRING( &zv_value, ( char * ) attr );
+						// // smart_str_appends( &smart_value_str, ( char * ) attr );
+						// xmlFree( attr );
+					// } else {
+						// xmlBufferPtr buffer;
+						// buffer = xmlBufferCreate();
+						// xmlNodeBufGetContent(buffer, current_node);
+						// ZVAL_STRING( &zv_value, ( char * ) buffer->content );
+						// // smart_str_appends( &smart_value_str, ( char * ) buffer->content );
+						// xmlBufferFree( buffer );
+					// }
+				} else if ( zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_abbr ) ) ) {
+					// if ( xmlHasProp( current_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) ) ) {
+						// attr = xmlGetProp( current_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) );
+						// ZVAL_STRING( &zv_value, ( char * ) attr );
+						// // smart_str_appends( &smart_value_str, ( char * ) attr );
+						// xmlFree( attr );
+					// } else {
+						// xmlBufferPtr buffer;
+						// buffer = xmlBufferCreate();
+						// xmlNodeBufGetContent(buffer, current_node);
+						// ZVAL_STRING( &zv_value, ( char * ) buffer->content );
+						// // smart_str_appends( &smart_value_str, ( char * ) buffer->content );
+						// xmlBufferFree( buffer );
+					// }
+				} else if (
+					zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_del ) )
+					||
+					zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_ins ) )
+					||
+					zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_time ) )
+				) {
+					if ( xmlHasProp( current_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_datetime ) ) ) ) {
+						attr = xmlGetProp( current_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_datetime ) ) );
+						ZVAL_STRING( &zv_value, ( char * ) attr );
+						xmlFree( attr );
+					} else {
+						xmlBufferPtr buffer;
+						buffer = xmlBufferCreate();
+						xmlNodeBufGetContent(buffer, current_node);
+						ZVAL_STRING( &zv_value, ( char *) buffer->content );
+						xmlBufferFree( buffer );
+					}
+				} else {
+					xmlBufferPtr buffer;
+					buffer = xmlBufferCreate();
+					xmlNodeBufGetContent(buffer, current_node);
+					ZVAL_STRING( &zv_value, ( char *) buffer->content );
+					xmlBufferFree( buffer );
+				}
+
+				if ( IS_NULL != Z_TYPE( zv_value ) ) {
+					mf2_trim_html_space_chars( &zv_value, Z_STRVAL( zv_value ) );
+
+					if ( ! found_date ) {
+						zval matches, matched;
+						ZVAL_NULL( &matched );
+						ZVAL_NULL( &matches );
+
+						php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_dt_iso8601, Z_STRVAL( zv_value ), Z_STRLEN( zv_value ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+						if ( ( Z_LVAL( matched ) > 0 ) && IS_ARRAY == Z_TYPE( matches ) ) {
+							found_date = 1;
+							zval *match_part = zend_hash_index_find( Z_ARRVAL_P( zend_hash_index_find( Z_ARRVAL( matches ), 0 ) ), 1 );
+							ZVAL_COPY( &zv_date, match_part );
+
+							if ( NULL != ( match_part = zend_hash_index_find( Z_ARRVAL_P( zend_hash_index_find( Z_ARRVAL( matches ), 0 ) ), 2 ) ) ) {
+								found_time = 1;
+								ZVAL_COPY( &zv_time, match_part );
+
+								if ( NULL != ( match_part = zend_hash_index_find( Z_ARRVAL_P( zend_hash_index_find( Z_ARRVAL( matches ), 0 ) ), 3 ) ) ) {
+									found_timezone = 1;
+									ZVAL_COPY( &zv_timezone, match_part );
+								}
+							}
+						} // TODO: else YYYY-DDD
+
+						zval_ptr_dtor( &matches );
+						zval_ptr_dtor( &matched );
+					}
+
+					if ( ! found_time ) {
+						zval matches, matched;
+						ZVAL_NULL( &matched );
+						ZVAL_NULL( &matches );
+
+						php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_dt_time, Z_STRVAL( zv_value ), Z_STRLEN( zv_value ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+						if ( ( Z_LVAL( matched ) > 0 ) && IS_ARRAY == Z_TYPE( matches ) ) {
+							found_time = 1;
+							zval *match_part = zend_hash_index_find( Z_ARRVAL_P( zend_hash_index_find( Z_ARRVAL( matches ), 0 ) ), 1 );
+							ZVAL_COPY( &zv_time, match_part );
+
+							if ( NULL != ( match_part = zend_hash_index_find( Z_ARRVAL_P( zend_hash_index_find( Z_ARRVAL( matches ), 0 ) ), 2 ) ) ) {
+								found_timezone = 1;
+								ZVAL_COPY( &zv_timezone, match_part );
+							}
+						}
+
+						zval_ptr_dtor( &matches );
+						zval_ptr_dtor( &matched );
+					} else if ( ! found_timezone ) {
+						zval matches, matched;
+						ZVAL_NULL( &matched );
+						ZVAL_NULL( &matches );
+
+						php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_dt_timezone, Z_STRVAL( zv_value ), Z_STRLEN( zv_value ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+						if ( ( Z_LVAL( matched ) > 0 ) && IS_ARRAY == Z_TYPE( matches ) ) {
+							found_timezone = 1;
+							zval *match_part = zend_hash_index_find( Z_ARRVAL_P( zend_hash_index_find( Z_ARRVAL( matches ), 0 ) ), 1 );
+							ZVAL_COPY( &zv_timezone, match_part );
+						}
+
+						zval_ptr_dtor( &matches );
+						zval_ptr_dtor( &matched );
+					}
+				}
+
+				zval_dtor( &zv_value );
+
+				zval_ptr_dtor( &zv_node_name );
+			}
+
+			if ( IS_NULL != Z_TYPE( zv_date ) ) {
+				smart_str_appends( &smart_value_str, Z_STRVAL( zv_date ) );
+				zval_ptr_dtor( &Z_MF2MFOBJ_P( Z_MF2PARSEOBJ_P( object )->context )->date_context );
+				ZVAL_COPY( &Z_MF2MFOBJ_P( Z_MF2PARSEOBJ_P( object )->context )->date_context, &zv_date );
+			} else {
+				if ( IS_NULL != Z_TYPE( Z_MF2MFOBJ_P( Z_MF2PARSEOBJ_P( object )->context )->date_context ) ) {
+					found_date = 1;
+					smart_str_appends( &smart_value_str, Z_STRVAL( Z_MF2MFOBJ_P( Z_MF2PARSEOBJ_P( object )->context )->date_context ) );
+				}
+			}
+
+			if ( IS_NULL != Z_TYPE( zv_time ) ) {
+				if ( found_date ) {
+					smart_str_appends( &smart_value_str, " " );
+				}
+				smart_str_appends( &smart_value_str, Z_STRVAL( zv_time ) );
+			}
+
+			if ( ( IS_NULL != Z_TYPE( zv_timezone ) ) && found_time ) {
+				smart_str_appends( &smart_value_str, Z_STRVAL( zv_timezone ) );
+			}
+
+			smart_str_0( &smart_value_str );
+
+			zval_dtor( &zv_date );
+			zval_dtor( &zv_time );
+			zval_dtor( &zv_timezone );
+
+			if( NULL != smart_value_str.s ) {
+				ZVAL_STRING( zv_return_value, ZSTR_VAL( smart_value_str.s ) );
+			} else {
+				ZVAL_EMPTY_STRING( zv_return_value );
+			}
+
+			smart_str_free( &smart_value_str );
+		}
+		xmlXPathFreeObject( results );
+	}
+
+	if ( ! found_vc ) {
+		// TODO: this won't satisfy excluding nested properties with their own value-titles
+		results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[contains(concat(' ', @class, ' '), ' value-title ')]", xpath_context );
+
+		if ( results ) {
+			if ( ! xmlXPathNodeSetIsEmpty( results->nodesetval ) ) {
+				if ( xmlHasProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) ) ) {
+					found_vc = 1;
+					xmlChar *attr = xmlGetProp( results->nodesetval->nodeTab[0], ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) );
+					ZVAL_STRING( zv_return_value, ( char * ) attr );
+					xmlFree( attr );
+				}
+			}
+			xmlXPathFreeObject( results );
+		}
+	}
+
+	xmlXPathFreeContext( xpath_context );
+
+	return found_vc;
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_p_property( zval *object, zval *zv_mf, zval *zv_name, xmlNodePtr xml_node )
 {
 	zval zv_value;
@@ -973,6 +1207,7 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
  */
 static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlNodePtr xml_node )
 {
+
 	zval zv_value;
 	ZVAL_NULL( &zv_value );
 
@@ -981,7 +1216,7 @@ static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlN
 	zend_string *node_name = zend_string_init( ( char * ) xml_node->name, xmlStrlen( xml_node->name ), 0 );
 
 	// Priority #1: value-class pattern
-	if ( mf2parse_value_class( object, xml_node, &zv_value ) ) {
+	if ( mf2parse_value_class_dt( object, xml_node, &zv_value ) ) {
 		// result is in zv_value
 
 	// Priority #2: time.dt-x[datetime] or ins.dt-x[datetime] or del.dt-x[datetime]
@@ -1006,8 +1241,9 @@ static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlN
 		&&
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_title ) ) )
 	) {
-
-		// TODO: Test and Parse
+		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * )ZSTR_VAL( MF2_STR( str_title ) ) );
+		ZVAL_STRING( &zv_value, ( char * ) attr );
+		xmlFree(attr);
 
 	// Priority #4: data.dt-x[value] or input.dt-x[value]
 	} else if (
@@ -1019,13 +1255,14 @@ static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlN
 		&&
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_value ) ) )
 	) {
-
-		// TODO: Test and Parse
+		xmlChar *attr = xmlGetProp( xml_node, ( xmlChar * )ZSTR_VAL( MF2_STR( str_value ) ) );
+		ZVAL_STRING( &zv_value, ( char * ) attr );
+		xmlFree(attr);
 
 	// Catch-all: textContext
 	} else {
-
-		// TODO: Test and Parse
+		mf2parse_clean_text_content_with_img_src( object, xml_node->children, &zv_value );
+		mf2_trim_html_space_chars( &zv_value, Z_STRVAL( zv_value ) );
 
 	}
 
@@ -1035,9 +1272,18 @@ static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlN
 		return;
 	}
 
-	mf2microformat_add_property( zv_mf, zv_name, &zv_value );
+	zval zv_datetime;
+	php_date_instantiate( php_date_get_date_ce(), &zv_datetime );
+
+	if ( ( Z_STRLEN( zv_value ) > 0 ) && php_date_initialize( Z_PHPDATE_P( &zv_datetime ), Z_STRVAL( zv_value ), Z_STRLEN( zv_value ), NULL, NULL, 0 ) ) {
+		add_property_zval( &zv_datetime, ZSTR_VAL( MF2_STR( str_value ) ), &zv_value );
+		mf2microformat_add_property( zv_mf, zv_name, &zv_datetime );
+	} else {
+		mf2microformat_add_property( zv_mf, zv_name, &zv_value );
+	}
 
 	zval_dtor( &zv_value );
+	zval_ptr_dtor( &zv_datetime );
 }
 
 /**

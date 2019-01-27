@@ -26,6 +26,10 @@ typedef struct _php_mf2parse_object {
 	xmlDocPtr document;
 	pcre_cache_entry *regex_roots;
 	pcre_cache_entry *regex_properties;
+	pcre_cache_entry *regex_dt_iso8601;
+	pcre_cache_entry *regex_dt_day;
+	pcre_cache_entry *regex_dt_time;
+	pcre_cache_entry *regex_dt_timezone;
 	zval *context;
 	zend_object zo;
 } php_mf2parse_object;

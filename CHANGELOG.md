@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v2/h-event/ampm
+- TEST: mf-test-suite/v2/h-event/attendees
+- TEST: mf-test-suite/v2/h-event/combining
+- TEST: mf-test-suite/v2/h-event/concatenate
+- TEST: mf-test-suite/v2/h-event/dates
+- TEST: mf-test-suite/v2/h-event/time
+- TEST: mf-test-suite/v2/h-event/justaname
+- TEST: mf-test-suite/v2/h-event/justahyperlink
+- TEST: mf-test-suite/v2/h-event/dt-property
+- MF2Parse: dt-property parsing including with value-class and value-title
+- Using DateTime objects for dt-properties
 - TEST: mf-test-suite/v2/h-feed/impliedtitle
 - Moved nested-root context tracking from parent-root to child-root
 - TEST: mf-test-suite/v2/h-feed/simple

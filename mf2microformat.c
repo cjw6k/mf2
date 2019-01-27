@@ -19,8 +19,6 @@
 
 #if HAVE_MF2
 
-#include "ext/standard/php_var.h"
-
 #include "mf2.h"
 #include "php_mf2microformat.h"
 
@@ -185,8 +183,6 @@ static void mf2microformat_add_nested_child( zval *object, zval *zv_child )
 	zval *zv_prefix, *zv_name, *zv_parent_property, *context, *zv_source;
 	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( Z_MF2MFOBJ_P( zv_child )->contexts ), context ) {
 		zv_prefix = zend_hash_index_find( Z_ARRVAL_P( context ), 0 );
-		zv_name = zend_hash_index_find( Z_ARRVAL_P( context ), 1 );
-		zv_parent_property = zend_hash_find( Z_ARRVAL_P( zv_parent_properties ), Z_STR_P( zv_name ) );
 
 		// TODO: faster?
 
@@ -202,9 +198,14 @@ static void mf2microformat_add_nested_child( zval *object, zval *zv_child )
 
 		}
 
-		zend_hash_clean( Z_ARRVAL_P( zv_parent_property ) );
-		add_next_index_zval( zv_parent_property, zv_child );
-		Z_ADDREF_P( zv_child );
+		zv_name = zend_hash_index_find( Z_ARRVAL_P( context ), 1 );
+		zv_parent_property = zend_hash_find( Z_ARRVAL_P( zv_parent_properties ), Z_STR_P( zv_name ) );
+
+		// The final entry in the property on the parent is the one to replace with this nested root
+		zend_hash_internal_pointer_end( Z_ARRVAL_P( zv_parent_property ) );
+		zval zv_replace_key;
+		zend_hash_get_current_key_zval( Z_ARRVAL_P( zv_parent_property ), &zv_replace_key );
+		array_set_zval_key( Z_ARRVAL_P( zv_parent_property ), &zv_replace_key, zv_child );
 
 	} ZEND_HASH_FOREACH_END();
 }

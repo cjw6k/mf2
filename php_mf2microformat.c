@@ -52,6 +52,8 @@ static zend_object *php_mf2microformat_create_object_handler( zend_class_entry *
 	/* allocate memory for custom properties */
 	array_init( &mf2mf->contexts );
 
+	ZVAL_NULL( &mf2mf->date_context );
+
 	zend_object_std_init( &mf2mf->zo, class_entry );
 	object_properties_init( &mf2mf->zo, class_entry );
 
@@ -101,6 +103,7 @@ void php_mf2microformat_free_object_handler( zend_object *object )
 
 	/* free memory used for custom properties */
 	zval_ptr_dtor( &mf2mf->contexts );
+	zval_ptr_dtor( &mf2mf->date_context );
 
 	zend_object_std_dtor( &mf2mf->zo );
 }

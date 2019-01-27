@@ -73,6 +73,22 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 	mf2parse->regex_properties = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );
 
+	tmp = zend_string_init( MF2_REGEX_DT_ISO8601, strlen( MF2_REGEX_DT_ISO8601 ), 0 );
+	mf2parse->regex_dt_iso8601 = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
+	tmp = zend_string_init( MF2_REGEX_DT_TIME, strlen( MF2_REGEX_DT_TIME ), 0 );
+	mf2parse->regex_dt_time = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
+	tmp = zend_string_init( MF2_REGEX_DT_DAY, strlen( MF2_REGEX_DT_DAY ), 0 );
+	mf2parse->regex_dt_day = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
+	tmp = zend_string_init( MF2_REGEX_DT_TIMEZONE, strlen( MF2_REGEX_DT_TIMEZONE ), 0 );
+	mf2parse->regex_dt_timezone = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
 	mf2parse->context = NULL;
 
 	zend_object_std_init( &mf2parse->zo, class_entry );
