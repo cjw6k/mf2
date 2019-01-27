@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v2/h-geo/hidden
 - TEST: mf-test-suite/v2/h-geo/justaname
 - TEST: mf-test-suite/v2/h-geo/simpleproperties
 - MF2PARSE_RESOLVE_RELATIVE_URI macro for resolving relative URIs
