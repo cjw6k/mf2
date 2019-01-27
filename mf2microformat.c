@@ -95,16 +95,10 @@ static void mf2microformat_set_id( zval *object, xmlNodePtr xml_node )
 		return;
 	}
 
-	xmlChar *x_id;
 	zval zv_id;
-
-	x_id = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_id ) ) );
-	ZVAL_STRING( &zv_id, ( char * ) x_id );
-
+	MF2_ZVAL_XMLATTR( zv_id, xml_node, MF2_STR( str_id ) );
 	add_property_zval( object, ZSTR_VAL( MF2_STR( str_id ) ), &zv_id );
-
 	zval_dtor( &zv_id );
-	xmlFree( x_id );
 }
 
 /**

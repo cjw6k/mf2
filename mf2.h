@@ -40,4 +40,51 @@ int mf2_strcasecmp( const void *ida, const void *idb );
 void mf2_trim_html_space_chars( zval *trimmed_string, char *string );
 zend_bool mf2_is_relative_url( php_url *url_parts );
 
+#define MF2_ZVAL_XMLATTR( _zv_result, _xml_node, _zstr_attribute ) \
+	MF2_ZVAL_XMLATTR_P( &_zv_result, _xml_node, _zstr_attribute )
+
+#define MF2_ZVAL_XMLATTR_P( _zv_result, _xml_node, _zstr_attribute ) \
+	xmlChar *_xml_attr = xmlGetProp( _xml_node, ( xmlChar * )ZSTR_VAL( _zstr_attribute ) ); \
+	ZVAL_STRING( _zv_result, ( char * ) _xml_attr ); \
+	xmlFree( _xml_attr );
+
+#define MF2_TRY_ZVAL_XMLATTR( _zv_result, _xml_node, _zstr_attribute ) \
+	if ( xmlHasProp( _xml_node, ( xmlChar * ) ZSTR_VAL( _zstr_attribute ) ) ) { \
+		MF2_ZVAL_XMLATTR( _zv_result, _xml_node, _zstr_attribute ); \
+	}
+
+#define MF2_SMART_STR_XMLATTR( _smart_str, _xml_node, _zstr_attribute ) \
+	xmlChar *_xml_attr = xmlGetProp( _xml_node, ( xmlChar * ) ZSTR_VAL( _zstr_attribute ) ); \
+	smart_str_appends( &_smart_str, ( char * ) _xml_attr ); \
+	xmlFree( _xml_attr );
+
+#define MF2_TRY_SMART_STR_XMLATTR( _smart_str, _xml_node, _zstr_attribute ) \
+	if ( xmlHasProp( _xml_node, ( xmlChar * ) ZSTR_VAL( _zstr_attribute ) ) ) { \
+		MF2_SMART_STR_XMLATTR( _smart_str, _xml_node, _zstr_attribute ) \
+	}
+
+#define MF2_ZVAL_XMLBUFFER( _zv_result, _xml_node ) \
+	xmlBufferPtr _xml_buffer; \
+	_xml_buffer = xmlBufferCreate(); \
+	xmlNodeBufGetContent( _xml_buffer, _xml_node ); \
+	ZVAL_STRING( &_zv_result, ( char * ) _xml_buffer->content ); \
+	xmlBufferFree( _xml_buffer );
+
+#define MF2_TRY_ZVAL_XMLATTR_XMLBUFFER( _zv_result, _xml_node, _zstr_attribute ) \
+	MF2_TRY_ZVAL_XMLATTR( _zv_result, _xml_node, _zstr_attribute ) else { \
+		MF2_ZVAL_XMLBUFFER( _zv_result, _xml_node ); \
+	}
+
+#define MF2_SMART_STR_XMLBUFFER( _smart_str, _xml_node ) \
+	xmlBufferPtr _xml_buffer; \
+	_xml_buffer = xmlBufferCreate(); \
+	xmlNodeBufGetContent( _xml_buffer, _xml_node ); \
+	smart_str_appends( &_smart_str, ( char * ) _xml_buffer->content ); \
+	xmlBufferFree( _xml_buffer );
+
+#define MF2_TRY_SMART_STR_XMLATTR_XMLBUFFER( _smart_str, _xml_node, _zstr_attribute ) \
+	MF2_TRY_SMART_STR_XMLATTR( _smart_str, _xml_node, _zstr_attribute ) else { \
+		MF2_SMART_STR_XMLBUFFER( _smart_str, _xml_node ) \
+	}
+
 #endif /* MF2_H */

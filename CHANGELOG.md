@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- MF2_ macros for common operations on libxml data: attributes and buffers
 - TEST: mf-test-suite/v2/h-event/ampm
 - TEST: mf-test-suite/v2/h-event/attendees
 - TEST: mf-test-suite/v2/h-event/combining
