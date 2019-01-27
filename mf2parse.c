@@ -297,14 +297,7 @@ static void mf2parse_add_rel( zval *object, char *rel, char *href, xmlNodePtr xm
 	ZVAL_STRING( &zv_href, href );
 
 	mf2_trim_html_space_chars( &zv_href, Z_STRVAL( zv_href ) );
-
-	php_url *url_parts = php_url_parse( Z_STRVAL( zv_href ) );
-	if ( NULL != url_parts ) {
-		if ( mf2_is_relative_url( url_parts ) ) {
-			mf2parse_resolve_relative_uri( object, &zv_href, url_parts );
-		}
-		php_url_free( url_parts );
-	}
+	MF2PARSE_RESOLVE_RELATIVE_URI( object, zv_href );
 
 	// Rels
 	if ( ( rels_ptr = zend_hash_find( mf2parse->rels, Z_STR( zv_rel ) ) ) != NULL ) {
@@ -969,14 +962,7 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_href ) ) )
 	) {
 		MF2_ZVAL_XMLATTR( zv_value, xml_node, MF2_STR( str_href ) );
-
-		php_url *url_parts = php_url_parse( Z_STRVAL( zv_value ) );
-		if ( NULL != url_parts ) {
-			if ( mf2_is_relative_url( url_parts ) ) {
-				mf2parse_resolve_relative_uri( object, &zv_value, url_parts );
-			}
-			php_url_free( url_parts );
-		}
+		MF2PARSE_RESOLVE_RELATIVE_URI( object, zv_value );
 
 	// Priority #2: img.u-x[src]
 	} else if (
@@ -986,14 +972,7 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 	) {
 		zval zv_src;
 		MF2_ZVAL_XMLATTR( zv_src, xml_node, MF2_STR( str_src ) );
-
-		php_url *url_parts = php_url_parse( Z_STRVAL( zv_src ) );
-		if ( NULL != url_parts ) {
-			if ( mf2_is_relative_url( url_parts ) ) {
-				mf2parse_resolve_relative_uri( object, &zv_src, url_parts );
-			}
-			php_url_free( url_parts );
-		}
+		MF2PARSE_RESOLVE_RELATIVE_URI( object, zv_src );
 
 		if ( xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_alt ) ) ) ) {
 			zval zv_alt;
@@ -1036,14 +1015,7 @@ static void mf2parse_u_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 		xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_poster ) ) )
 	) {
 		MF2_ZVAL_XMLATTR( zv_value, xml_node, MF2_STR( str_poster ) );
-
-		php_url *url_parts = php_url_parse( Z_STRVAL( zv_value ) );
-		if ( NULL != url_parts ) {
-			if ( mf2_is_relative_url( url_parts ) ) {
-				mf2parse_resolve_relative_uri( object, &zv_value, url_parts );
-			}
-			php_url_free( url_parts );
-		}
+		MF2PARSE_RESOLVE_RELATIVE_URI( object, zv_value );
 
 	// Priority #5: object.u-x[data]
 	} else if (
@@ -1534,13 +1506,7 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 		return;
 	}
 
-	php_url *url_parts = php_url_parse( Z_STRVAL( zv_photo ) );
-	if ( NULL != url_parts ) {
-		if ( mf2_is_relative_url( url_parts ) ) {
-			mf2parse_resolve_relative_uri( object, &zv_photo, url_parts );
-		}
-		php_url_free( url_parts );
-	}
+	MF2PARSE_RESOLVE_RELATIVE_URI( object, zv_photo );
 
 	if ( IS_NULL != Z_TYPE( zv_alt ) ) {
 
@@ -1656,14 +1622,7 @@ static void mf2parse_imply_url( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 	}
 
 	mf2_trim_html_space_chars( &zv_href, Z_STRVAL( zv_href ) );
-
-	php_url *url_parts = php_url_parse( Z_STRVAL( zv_href ) );
-	if ( NULL != url_parts ) {
-		if ( mf2_is_relative_url( url_parts ) ) {
-			mf2parse_resolve_relative_uri( object, &zv_href, url_parts );
-		}
-		php_url_free( url_parts );
-	}
+	MF2PARSE_RESOLVE_RELATIVE_URI( object, zv_href );
 
 	zval zv_name;
 	ZVAL_STR( &zv_name, MF2_STR( str_url ) );
