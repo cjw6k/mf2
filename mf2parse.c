@@ -1257,10 +1257,8 @@ static void mf2parse_find_properties( zval *object, zval *zv_mf_embedded, xmlNod
 		return;
 	}
 
-	xmlChar *classes = xmlGetProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) );
-
 	zval zv_classes;
-	ZVAL_STRING( &zv_classes, ( char * ) classes );
+	MF2_ZVAL_XMLATTR( zv_classes, xml_node, MF2_STR( str_class ) );
 
 	if ( 2 == Z_MF2MFOBJ_P( Z_MF2PARSEOBJ_P( object )->context )->version ) {
 		// Microformats2 property parsing
@@ -1271,7 +1269,6 @@ static void mf2parse_find_properties( zval *object, zval *zv_mf_embedded, xmlNod
 	}
 
 	zval_dtor( &zv_classes );
-	xmlFree( classes );
 }
 
 /**
