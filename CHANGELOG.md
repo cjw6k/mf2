@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v2/h-review-aggregate/hevent
 - TEST: mf-test-suite/v2/h-review/vcard
 - TEST: mf-test-suite/v2/h-review/implieditem
 - TEST: mf-test-suite/v2/h-review/item
