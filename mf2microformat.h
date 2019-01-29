@@ -23,6 +23,8 @@ php_mf2microformat_object *mf2microformat_fetch_object( zend_object *object );
 
 void mf2microformat_new( zval *object, xmlNodePtr xml_node );
 void mf2microformat_add_type( zval *object, zval *type );
+void mf2microformat_add_backcompat_type( zval *object, zval *type );
+zval *mf2microformat_get_backcompat_types( zval *object );
 void mf2microformat_add_property( zval *object, zval *zv_key, zval *zv_value );
 void mf2microformat_get_property( zval *object, zend_string *zv_key, zval *zv_return_value );
 void mf2microformat_add_child( zval *object, zval *zv_child );

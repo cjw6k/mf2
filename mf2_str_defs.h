@@ -59,5 +59,14 @@
 	X(ins) \
 	X(del) \
 	X(datetime) \
+	X(vcard) \
+	X(hentry) \
+	X(vevent) \
+	X(hproduct) \
+	X(hrecipe) \
+	X(hresume) \
+	X(hreview) \
+	X(adr) \
+	X(geo) \
 
 #endif /* MF2_STR_DEFS_H */

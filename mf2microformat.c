@@ -19,6 +19,8 @@
 
 #if HAVE_MF2
 
+#include "zend_smart_str.h"
+
 #include "mf2.h"
 #include "php_mf2microformat.h"
 
@@ -56,14 +58,100 @@ php_mf2microformat_object *mf2microformat_fetch_object( zend_object *object )
  *
  * @since 0.1.0
  *
- * @param  zval *object      The subject microformat.
- * @param  zval *vocabulary  The vocabulary to add.
+ * @param  zval *object   The subject microformat.
+ * @param  zval *zv_type  The vocabulary type to add.
  */
-void mf2microformat_add_type( zval *object, zval *type)
+void mf2microformat_add_type( zval *object, zval *zv_type)
 {
 	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
-	add_next_index_string( zv_current_types, Z_STRVAL_P( type ) );
+	add_next_index_string( zv_current_types, Z_STRVAL_P( zv_type ) );
 	zend_hash_sort( Z_ARRVAL_P( zv_current_types ), mf2_strcasecmp, 1 );
+}
+
+/**
+ * Add a backcompat type to the set of types used by this microformat.
+ *
+ * The microformats vocabularies are represented by the label 'type' in the
+ * standard representation of the parse. Backcompat microformats are sometimes
+ * referred to as Classic Microformats.
+ *
+ * @link http://microformats.org/wiki/Main_Page#Specifications
+ *
+ * @since 0.1.0
+ *
+ * @param  zval *object   The subject microformat.
+ * @param  zval *zv_type  The backcompat vocabulary type to add.
+ */
+void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
+{
+	add_next_index_string( &Z_MF2MFOBJ_P( object )->backcompat_types, Z_STRVAL_P( zv_type ) );
+
+	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
+
+	smart_str ss_type = {0};
+	smart_str_appends( &ss_type, "h-" );
+
+	/** hCard.
+	 * @link http://microformats.org/wiki/hCard */
+	if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vcard ) ) ) {
+		// smart_str_appends( &ss_type, "card" );
+
+	/** hAtom.
+	 * @link http://microformats.org/wiki/hAtom */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hentry ) ) ) {
+		// smart_str_appends( &ss_type, "entry" );
+
+	/** hCalendar.
+	 * @link http://microformats.org/wiki/hCalendar */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vevent ) ) ) {
+		// smart_str_appends( &ss_type, "event" );
+
+	/** hProduct.
+	 * @link http://microformats.org/wiki/hProduct */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hproduct ) ) ) {
+		// smart_str_appends( &ss_type, "product" );
+
+	/** hRecipe.
+	 * @link http://microformats.org/wiki/hRecipe */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hrecipe ) ) ) {
+		// smart_str_appends( &ss_type, "recipe" );
+
+	/** hResume.
+	 * @link http://microformats.org/wiki/hResume */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hresume ) ) ) {
+		// smart_str_appends( &ss_type, "resume" );
+
+	/** hReview.
+	 * @link http://microformats.org/wiki/hReview */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hreview ) ) ) {
+		// smart_str_appends( &ss_type, "review" );
+
+	/** hreview-aggregate.
+	 * @link http://microformats.org/wiki/hreview-aggregate */
+	} else if ( 0 == strcasecmp( Z_STRVAL_P( zv_type ), "hreview-aggregate" ) ) {
+		// smart_str_appends( &ss_type, "review-aggregate" );
+
+	/** adr, geo.
+	 * @link http://microformats.org/wiki/adr
+	 * @link http://microformats.org/wiki/geo */
+	} else {
+		smart_str_appends( &ss_type, Z_STRVAL_P( zv_type ) );
+	}
+
+	smart_str_0( &ss_type );
+
+	add_next_index_string( zv_current_types, ZSTR_VAL( ss_type.s ) );
+	zend_hash_sort( Z_ARRVAL_P( zv_current_types ), mf2_strcasecmp, 1 );
+
+	smart_str_free( &ss_type );
+}
+
+/**
+ * @since 0.1.0
+ */
+zval *mf2microformat_get_backcompat_types( zval *object )
+{
+	return &Z_MF2MFOBJ_P( object )->backcompat_types;
 }
 
 /**

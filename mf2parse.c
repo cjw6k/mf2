@@ -455,6 +455,44 @@ static zend_bool mf2parse_find_v2_roots( zval *object, zval *zv_mf, xmlNodePtr x
 /**
  * @since 0.1.0
  */
+static zend_bool mf2parse_find_backcompat_roots( zval *object, zval *zv_mf, xmlNodePtr xml_node, zval *zv_classes )
+{
+	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	zval matched, matches;
+
+	ZVAL_NULL( &matched );
+	ZVAL_NULL( &matches );
+
+	// Classic Microformats (Backcompat) Roots
+	php_pcre_match_impl( mf2parse->regex_backcompat_roots, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
+		zval_ptr_dtor( &matched );
+		zval_ptr_dtor( &matches );
+
+		return 0;
+	}
+
+	mf2microformat_new( zv_mf, xml_node );
+
+	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( zv_mf );
+	mf2mf->version = 1;
+
+	zval *match_arr, *full_match;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
+		full_match = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 0 );
+		mf2microformat_add_backcompat_type( zv_mf, full_match );
+	} ZEND_HASH_FOREACH_END();
+
+	zval_ptr_dtor( &matched );
+	zval_ptr_dtor( &matches );
+
+	return 1;
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_find_roots( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 {
 	if( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
@@ -470,7 +508,7 @@ static void mf2parse_find_roots( zval *object, zval *zv_mf, xmlNodePtr xml_node 
 	if ( ! mf2parse_find_v2_roots( object, zv_mf, xml_node, &zv_classes ) ) {
 
 		// Backcompat root parsing
-		//mf2parse_find_backcompat_roots( object, mf, xml_node );
+		mf2parse_find_backcompat_roots( object, zv_mf, xml_node, &zv_classes );
 	}
 
 	zval_dtor( &zv_classes );
@@ -1251,6 +1289,110 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf_embedded, xml
 /**
  * @since 0.1.0
  */
+static void mf2parse_find_backcompat_adr_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root )
+{
+	zval matched, matches;
+
+	ZVAL_NULL( &matched );
+	ZVAL_NULL( &matches );
+
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_adr_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
+		zval_ptr_dtor( &matched );
+		zval_ptr_dtor( &matches );
+
+		return;
+	}
+
+	zval *zv_name, *match_arr;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
+		zv_name = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 1 );
+
+		if( node_has_root ) {
+			zval zv_parents;
+			array_init( &zv_parents );
+
+			add_next_index_string( &zv_parents, "p" );
+
+			add_next_index_zval( &zv_parents, zv_name );
+			zval_copy_ctor( zv_name );
+
+			add_next_index_zval( &( Z_MF2MFOBJ_P( zv_mf_embedded )->contexts ), &zv_parents );
+		}
+
+		mf2parse_p_property( object, Z_MF2PARSEOBJ_P( object )->context, zv_name, xml_node );
+
+	} ZEND_HASH_FOREACH_END();
+
+	zval_ptr_dtor( &matched );
+	zval_ptr_dtor( &matches );
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_find_backcompat_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root, zval *zv_type )
+{
+	// TODO: combine regexes?
+
+	// TODO: faster?
+
+	/** hCard.
+	 * @link http://microformats.org/wiki/hCard */
+	if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vcard ) ) ) {
+		// mf2parse_find_backcompat_vcard_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** hAtom.
+	 * @link http://microformats.org/wiki/hAtom */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hentry ) ) ) {
+		// mf2parse_find_backcompat_hatom_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** hCalendar.
+	 * @link http://microformats.org/wiki/hCalendar */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vevent ) ) ) {
+		// mf2parse_find_backcompat_hcalendar_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** hProduct.
+	 * @link http://microformats.org/wiki/hProduct */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hproduct ) ) ) {
+		// mf2parse_find_backcompat_hproduct_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** hRecipe.
+	 * @link http://microformats.org/wiki/hRecipe */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hrecipe ) ) ) {
+		// mf2parse_find_backcompat_hrecipe_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** hResume.
+	 * @link http://microformats.org/wiki/hResume */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hresume ) ) ) {
+		// mf2parse_find_backcompat_hresume_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** hReview.
+	 * @link http://microformats.org/wiki/hReview */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hreview ) ) ) {
+		// mf2parse_find_backcompat_hreview_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** hreview-aggregate.
+	 * @link http://microformats.org/wiki/hreview-aggregate */
+	} else if ( 0 == strcasecmp( Z_STRVAL_P( zv_type ), "hreview-aggregate" ) ) {
+		// mf2parse_find_backcompat_hreview_aggregate_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** adr.
+	 * @link http://microformats.org/wiki/adr */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_adr ) ) ) {
+		mf2parse_find_backcompat_adr_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** geo.
+	 * @link http://microformats.org/wiki/geo */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_geo ) ) ) {
+		// mf2parse_find_backcompat_geo_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+	}
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_find_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zend_bool node_has_root )
 {
 	if( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
@@ -1264,8 +1406,11 @@ static void mf2parse_find_properties( zval *object, zval *zv_mf_embedded, xmlNod
 		// Microformats2 property parsing
 		mf2parse_find_v2_properties( object, zv_mf_embedded, xml_node, &zv_classes, node_has_root );
 	} else {
-		// Backcompat property parsing
-		//mf2parse_find_backcompat_properties( object, mf, xml_node );
+		// Classic Microformats (Backcompat) property parsing
+		zval *zv_type;
+		ZEND_HASH_FOREACH_VAL( Z_ARRVAL_P( mf2microformat_get_backcompat_types( Z_MF2PARSEOBJ_P( object )->context ) ), zv_type ) {
+			mf2parse_find_backcompat_properties( object, zv_mf_embedded, xml_node, &zv_classes, node_has_root, zv_type );
+		} ZEND_HASH_FOREACH_END();
 	}
 
 	zval_dtor( &zv_classes );
