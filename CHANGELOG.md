@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v1/hcalendar/concatenate
 - TEST: mf-test-suite/v1/hcalendar/combining
 - TEST: mf-test-suite/v1/hcalendar/attendees
 - TEST: mf-test-suite/v1/hcalendar/ampm
