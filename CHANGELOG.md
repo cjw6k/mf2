@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v1/hcard/multiple
 - TEST: mf-test-suite/v1/hcard/single
 - TEST: mf-test-suite/v1/hcard/name
 - TEST: mf-test-suite/v1/hcard/format

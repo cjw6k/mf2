@@ -81,5 +81,6 @@
 	X(bday) \
 	X(fn) \
 	X(rev) \
+	X(sound) \
 
 #endif /* MF2_STR_DEFS_H */

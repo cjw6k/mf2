@@ -1503,6 +1503,8 @@ static void mf2parse_find_backcompat_hcard_properties( zval *object, zval *zv_mf
 			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_uid ) )
 			||
 			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_key ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_sound ) )
 		) {
 			ZVAL_STRING( &zv_prefix, "u" );
 		} else if (
@@ -1550,6 +1552,8 @@ static void mf2parse_find_backcompat_hcard_properties( zval *object, zval *zv_mf
 			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_uid ) )
 			||
 			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_key ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_sound ) )
 		) {
 			mf2parse_u_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
 		} else if (
