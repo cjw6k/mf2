@@ -104,7 +104,7 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	/** hCalendar.
 	 * @link http://microformats.org/wiki/hCalendar */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vevent ) ) ) {
-		// smart_str_appends( &ss_type, "event" );
+		smart_str_appends( &ss_type, "event" );
 
 	/** hProduct.
 	 * @link http://microformats.org/wiki/hProduct */

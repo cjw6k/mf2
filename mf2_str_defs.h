@@ -68,5 +68,11 @@
 	X(hreview) \
 	X(adr) \
 	X(geo) \
+	X(dtstart) \
+	X(dtend) \
+	X(duration) \
+	X(start) \
+	X(end) \
+	X(summary) \
 
 #endif /* MF2_STR_DEFS_H */
