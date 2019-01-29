@@ -29,9 +29,10 @@ mf2_str_globals str_globals_mf2;
 #define MF2_STR(str) str_globals_mf2.str
 
 #define MF2_REGEX_ROOTS                     "/(?<=\\s|^)h-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
-#define MF2_REGEX_BACKCOMPAT_ROOTS          "/(?<=\\s|^)(adr)(?=\\s|$)/"
+#define MF2_REGEX_BACKCOMPAT_ROOTS          "/(?<=\\s|^)(adr|geo)(?=\\s|$)/"
 #define MF2_REGEX_PROPERTIES                "/(?<=\\s|^)(e|u|dt|p)-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
 #define MF2_REGEX_BACKCOMPAT_ADR_PROPERTIES "/(?<=\\s|^)(post-office-box|extended-address|street-address|locality|region|postal-code|country-name)(?=\\s|$)/"
+#define MF2_REGEX_BACKCOMPAT_GEO_PROPERTIES "/(?<=\\s|^)(latitude|longitude)(?=\\s|$)/"
 #define MF2_REGEX_DT_ISO8601                "/^((?:[0-9]{4})-(?:1[0-2]|0[1-9])-(?:3[01]|0[1-9]|[12][0-9]))(?:T((?:2[0-3]|[01][0-9]):(?:[0-5][0-9]):(?:[0-5][0-9])(?:\\.[0-9]+)?)(Z|(?:[+-][01][0-9](?::?[0-5][0-9])?))?)?$/"
 #define MF2_REGEX_DT_DAY                    "/^([0-9]{4}-(?:(?:00[1-9])|(?:[0-2][1-9][0-9])|(?:3[0-5][0-9])|(?:36[0-6])))$/"
 #define MF2_REGEX_DT_TIME                   "/^((?:(?:0?[0-9])|(?:1[0-9])|2[0-3])(?:(?:(?:[aA]\\.?[mM]\\.?)|(?:[pP]\\.?[mM]\\.?))|(?::[0-5][0-9]))(?::[0-5][0-9])?(?:(?:[aA]\\.?[mM]\\.?)|(?:[pP]\\.?[mM]\\.?))?)(Z|(?:[+-][01][0-9](?::?[0-5][0-9])?))?$/"
