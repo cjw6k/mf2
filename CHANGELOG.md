@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v1/geo/hidden
 - TEST: mf-test-suite/v1/geo/abbrpattern
 - TEST: mf-test-suite/v1/geo/simpleproperties
 - TEST: mf-test-suite/v1/adr/simpleproperties
