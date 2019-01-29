@@ -1,6 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | mf2: extension for PHP                                                |
+  | mf2: extension for PHP                                               |
   +----------------------------------------------------------------------+
   | Copyright © 2019 Christopher James Willcock                          |
   +----------------------------------------------------------------------+
@@ -1505,7 +1505,11 @@ static void mf2parse_find_backcompat_hcard_properties( zval *object, zval *zv_mf
 			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_key ) )
 		) {
 			ZVAL_STRING( &zv_prefix, "u" );
-		} else if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_bday ) ) ) {
+		} else if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_bday ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_rev ) )
+		) {
 			ZVAL_STRING( &zv_prefix, "dt" );
 		} else {
 			ZVAL_STRING( &zv_prefix, "p" );
@@ -1548,7 +1552,11 @@ static void mf2parse_find_backcompat_hcard_properties( zval *object, zval *zv_mf
 			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_key ) )
 		) {
 			mf2parse_u_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
-		} else if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_bday ) ) ) {
+		} else if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_bday ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_rev ) )
+		) {
 			mf2parse_dt_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
 		} else {
 			mf2parse_p_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );

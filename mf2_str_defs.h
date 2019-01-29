@@ -80,5 +80,6 @@
 	X(key) \
 	X(bday) \
 	X(fn) \
+	X(rev) \
 
 #endif /* MF2_STR_DEFS_H */
