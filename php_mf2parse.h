@@ -31,6 +31,7 @@ typedef struct _php_mf2parse_object {
 	pcre_cache_entry *regex_backcompat_geo_properties;
 	pcre_cache_entry *regex_backcompat_hcalendar_properties;
 	pcre_cache_entry *regex_backcompat_hcard_properties;
+	pcre_cache_entry *regex_backcompat_hentry_properties;
 	pcre_cache_entry *regex_dt_iso8601;
 	pcre_cache_entry *regex_dt_day;
 	pcre_cache_entry *regex_dt_time;

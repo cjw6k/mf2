@@ -82,5 +82,8 @@
 	X(fn) \
 	X(rev) \
 	X(sound) \
+	X(published) \
+	X(updated) \
+	X(content) \
 
 #endif /* MF2_STR_DEFS_H */

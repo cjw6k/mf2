@@ -99,7 +99,7 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	/** hAtom.
 	 * @link http://microformats.org/wiki/hAtom */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hentry ) ) ) {
-		// smart_str_appends( &ss_type, "entry" );
+		smart_str_appends( &ss_type, "entry" );
 
 	/** hCalendar.
 	 * @link http://microformats.org/wiki/hCalendar */
