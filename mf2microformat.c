@@ -94,7 +94,7 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	/** hCard.
 	 * @link http://microformats.org/wiki/hCard */
 	if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vcard ) ) ) {
-		// smart_str_appends( &ss_type, "card" );
+		smart_str_appends( &ss_type, "card" );
 
 	/** hAtom.
 	 * @link http://microformats.org/wiki/hAtom */

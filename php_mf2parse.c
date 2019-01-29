@@ -89,6 +89,10 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 	mf2parse->regex_backcompat_hcalendar_properties = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );
 
+	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HCARD_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HCARD_PROPERTIES ), 0 );
+	mf2parse->regex_backcompat_hcard_properties = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
 	tmp = zend_string_init( MF2_REGEX_DT_ISO8601, strlen( MF2_REGEX_DT_ISO8601 ), 0 );
 	mf2parse->regex_dt_iso8601 = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );

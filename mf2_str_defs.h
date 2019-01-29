@@ -74,5 +74,11 @@
 	X(start) \
 	X(end) \
 	X(summary) \
+	X(email) \
+	X(logo) \
+	X(uid) \
+	X(key) \
+	X(bday) \
+	X(fn) \
 
 #endif /* MF2_STR_DEFS_H */

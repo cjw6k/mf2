@@ -1398,7 +1398,7 @@ static void mf2parse_find_backcompat_hcalendar_properties( zval *object, zval *z
 		ZVAL_NULL( &zv_compat_name );
 
 		// TODO: deduplication
-		
+
 		if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_url ) ) ) {
 			ZVAL_STRING( &zv_prefix, "u" );
 		} else if (
@@ -1467,6 +1467,105 @@ static void mf2parse_find_backcompat_hcalendar_properties( zval *object, zval *z
 /**
  * @since 0.1.0
  */
+static void mf2parse_find_backcompat_hcard_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root )
+{
+	zval matched, matches;
+
+	ZVAL_NULL( &matched );
+	ZVAL_NULL( &matches );
+
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hcard_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
+		zval_ptr_dtor( &matched );
+		zval_ptr_dtor( &matches );
+
+		return;
+	}
+
+	zval zv_prefix, zv_compat_name, *zv_name, *match_arr;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
+		zv_name = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 1 );
+		ZVAL_NULL( &zv_prefix );
+		ZVAL_NULL( &zv_compat_name );
+
+		// TODO: deduplication
+
+		if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_email ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_logo ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_photo ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_url ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_uid ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_key ) )
+		) {
+			ZVAL_STRING( &zv_prefix, "u" );
+		} else if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_bday ) ) ) {
+			ZVAL_STRING( &zv_prefix, "dt" );
+		} else {
+			ZVAL_STRING( &zv_prefix, "p" );
+
+			if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_fn ) ) ) {
+				ZVAL_STRING( &zv_compat_name, ZSTR_VAL( MF2_STR( str_name ) ) );
+			} else if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_title ) ) ) {
+				ZVAL_STRING( &zv_compat_name, "job-title" );
+			}
+		}
+
+		if ( IS_NULL == Z_TYPE( zv_compat_name ) ) {
+			ZVAL_COPY( &zv_compat_name, zv_name );
+		}
+
+		if( node_has_root ) {
+			zval zv_parents;
+			array_init( &zv_parents );
+
+			add_next_index_zval( &zv_parents, &zv_prefix );
+			zval_copy_ctor( &zv_prefix );
+
+			add_next_index_zval( &zv_parents, &zv_compat_name );
+			zval_copy_ctor( &zv_compat_name );
+
+			add_next_index_zval( &( Z_MF2MFOBJ_P( zv_mf_embedded )->contexts ), &zv_parents );
+		}
+
+		if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_email ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_logo ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_photo ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_url ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_uid ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_key ) )
+		) {
+			mf2parse_u_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
+		} else if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_bday ) ) ) {
+			mf2parse_dt_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
+		} else {
+			mf2parse_p_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
+		}
+
+		zval_ptr_dtor( &zv_compat_name );
+		zval_ptr_dtor( &zv_prefix );
+
+	} ZEND_HASH_FOREACH_END();
+
+	zval_ptr_dtor( &matched );
+	zval_ptr_dtor( &matches );
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_find_backcompat_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root, zval *zv_type )
 {
 	// TODO: combine regexes?
@@ -1476,7 +1575,7 @@ static void mf2parse_find_backcompat_properties( zval *object, zval *zv_mf_embed
 	/** hCard.
 	 * @link http://microformats.org/wiki/hCard */
 	if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vcard ) ) ) {
-		// mf2parse_find_backcompat_vcard_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+		mf2parse_find_backcompat_hcard_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
 
 	/** hAtom.
 	 * @link http://microformats.org/wiki/hAtom */
