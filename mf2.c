@@ -78,6 +78,32 @@ zend_bool mf2_in_array( zval *haystack, zval *needle )
 }
 
 /**
+ * Checks for the presence of a zend_string value inside an array.
+ *
+ * @see mf2_in_array
+ *
+ * @since 0.1.0
+ *
+ * @param  zval * haystack       The array of values to search within.
+ * @param  zend_string * needle  The value for which to search the array.
+ *
+ * @return  zend_bool  0 If needle is in haystack.
+ *                     1 If needle is not in haystack.
+ */
+zend_bool mf2_string_in_array( zval *haystack, zend_string *needle )
+{
+	zval zv_needle;
+	ZVAL_STRING( &zv_needle, ZSTR_VAL( needle ) );
+
+	zend_bool result;
+	result = mf2_in_array( haystack, &zv_needle );
+
+	zval_dtor( &zv_needle );
+
+	return result;
+}
+
+/**
  * Case insensitive string comparison for hash buckets.
  *
  * This callback is used by the zend_hash_sort function to sort values stored
@@ -104,9 +130,9 @@ int mf2_strcasecmp( const void *ida, const void *idb )
  *
  * The HTML5 specification defines space characters:
  *
- *   "The space characters, for the purposes of this specification, 
- *    are U+0020 SPACE, U+0009 CHARACTER TABULATION (tab), 
- *    U+000A LINE FEED (LF), U+000C FORM FEED (FF), and 
+ *   "The space characters, for the purposes of this specification,
+ *    are U+0020 SPACE, U+0009 CHARACTER TABULATION (tab),
+ *    U+000A LINE FEED (LF), U+000C FORM FEED (FF), and
  *    U+000D CARRIAGE RETURN (CR)."
  *
  * @link https://www.w3.org/TR/html52/infrastructure.html#common-parser-idioms
@@ -114,19 +140,19 @@ int mf2_strcasecmp( const void *ida, const void *idb )
  * @since 0.1.0
  *
  * @param  zval * trimmed_string  The resultant trimmed string.
- * @param  char * string          The string to trim. 
+ * @param  char * string          The string to trim.
  */
 void mf2_trim_html_space_chars( zval *trimmed_string, char *string )
-{	
-	smart_str smart_data_str = {0};	
-	
+{
+	smart_str smart_data_str = {0};
+
 	smart_str_appends( &smart_data_str, string );
 	smart_str_0( &smart_data_str );
 
 	zval_dtor( trimmed_string );
 	ZVAL_STR( trimmed_string, php_trim( smart_data_str.s, " \t\r\f\n", 5, 3 ) );
-	
-	smart_str_free( &smart_data_str );	
+
+	smart_str_free( &smart_data_str );
 }
 
 /**

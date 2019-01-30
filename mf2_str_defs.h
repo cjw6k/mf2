@@ -60,6 +60,7 @@
 	X(del) \
 	X(datetime) \
 	X(vcard) \
+	X(hfeed) \
 	X(hentry) \
 	X(vevent) \
 	X(hproduct) \
@@ -85,5 +86,8 @@
 	X(published) \
 	X(updated) \
 	X(content) \
+	X(tag) \
+	X(bookmark) \
+	X(category) \
 
 #endif /* MF2_STR_DEFS_H */

@@ -32,7 +32,7 @@ mf2_str_globals str_globals_mf2;
 	"/(?<=\\s|^)h-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_ROOTS \
-	"/(?<=\\s|^)(adr|geo|vevent|vcard|hentry)(?=\\s|$)/"
+	"/(?<=\\s|^)(adr|geo|vevent|vcard|hentry|hfeed)(?=\\s|$)/"
 
 #define MF2_REGEX_PROPERTIES \
 	"/(?<=\\s|^)(e|u|dt|p)-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
@@ -50,7 +50,10 @@ mf2_str_globals str_globals_mf2;
 	"/(?<=\\s|^)(fn|family-name|given-name|additional-name|honorific-prefix|honorific-suffix|adr|post-office-box|extended-address|street-address|locality|region|postal-code|country-name|agent|bday|category|class|email|geo|latitude|longitude|key|label|logo|mailer|nickname|note|org|organization-name|organization-unit|photo|rev|role|sort-string|sound|tel|title|tz|uid|url)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_HENTRY_PROPERTIES \
-	"/(?<=\\s|^)(author|rel-bookmark|entry-title|entry-content|entry-summary|published|updated|rel-tag)(?=\\s|$)/"
+	"/(?<=\\s|^)(author|entry-title|entry-content|entry-summary|published|updated)(?=\\s|$)/"
+
+#define MF2_REGEX_BACKCOMPAT_HFEED_PROPERTIES \
+	"/(?<=\\s|^)(author|photo|url)(?=\\s|$)/"
 
 #define MF2_REGEX_DT_ISO8601 \
 	"/^((?:[0-9]{4})-(?:1[0-2]|0[1-9])-(?:3[01]|0[1-9]|[12][0-9]))(?:T((?:2[0-3]|[01][0-9]):(?:[0-5][0-9]):(?:[0-5][0-9])(?:\\.[0-9]+)?)(Z|(?:[+-][01][0-9](?::?[0-5][0-9])?))?)?$/"
@@ -66,6 +69,7 @@ mf2_str_globals str_globals_mf2;
 
 
 zend_bool mf2_in_array( zval *haystack, zval *needle );
+zend_bool mf2_string_in_array( zval *haystack, zend_string *needle );
 int mf2_strcasecmp( const void *ida, const void *idb );
 void mf2_trim_html_space_chars( zval *trimmed_string, char *string );
 zend_bool mf2_is_relative_url( php_url *url_parts );
