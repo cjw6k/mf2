@@ -116,7 +116,17 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	/** hProduct.
 	 * @link http://microformats.org/wiki/hProduct */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hproduct ) ) ) {
-		// smart_str_appends( &ss_type, "product" );
+		smart_str_appends( &ss_type, "product" );
+
+	/** hReview.
+	 * @link http://microformats.org/wiki/hReview */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hreview ) ) ) {
+		smart_str_appends( &ss_type, "review" );
+
+	/** hreview-aggregate.
+	 * @link http://microformats.org/wiki/hreview-aggregate */
+	} else if ( 0 == strcasecmp( Z_STRVAL_P( zv_type ), "hreview-aggregate" ) ) {
+		smart_str_appends( &ss_type, "review-aggregate" );
 
 	/** hRecipe.
 	 * @link http://microformats.org/wiki/hRecipe */
@@ -127,16 +137,6 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	 * @link http://microformats.org/wiki/hResume */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hresume ) ) ) {
 		// smart_str_appends( &ss_type, "resume" );
-
-	/** hReview.
-	 * @link http://microformats.org/wiki/hReview */
-	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hreview ) ) ) {
-		// smart_str_appends( &ss_type, "review" );
-
-	/** hreview-aggregate.
-	 * @link http://microformats.org/wiki/hreview-aggregate */
-	} else if ( 0 == strcasecmp( Z_STRVAL_P( zv_type ), "hreview-aggregate" ) ) {
-		// smart_str_appends( &ss_type, "review-aggregate" );
 
 	/** adr, geo.
 	 * @link http://microformats.org/wiki/adr

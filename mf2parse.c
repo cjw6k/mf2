@@ -1825,6 +1825,169 @@ static void mf2parse_find_backcompat_hnews_properties( zval *object, zval *zv_mf
 /**
  * @since 0.1.0
  */
+static void mf2parse_find_backcompat_hproduct_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root )
+{
+	zval matched, matches;
+
+	ZVAL_NULL( &matched );
+	ZVAL_NULL( &matches );
+
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hproduct_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
+		zval_ptr_dtor( &matched );
+		zval_ptr_dtor( &matches );
+
+		return;
+	}
+
+	zval zv_prefix, zv_compat_name, *zv_name, *match_arr;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
+		zv_name = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 1 );
+		ZVAL_NULL( &zv_prefix );
+		ZVAL_NULL( &zv_compat_name );
+
+		// TODO: deduplication
+
+		if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_photo ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_url ) )
+		) {
+			ZVAL_STRING( &zv_prefix, "u" );
+		} else {
+			ZVAL_STRING( &zv_prefix, "p" );
+
+			if ( 0 == strcasecmp( Z_STRVAL_P( zv_name ), ZSTR_VAL( MF2_STR( str_fn ) ) ) ) {
+				ZVAL_STRING( &zv_compat_name, ZSTR_VAL( MF2_STR( str_name ) ) );
+			}
+		}
+
+		if ( IS_NULL == Z_TYPE( zv_compat_name ) ) {
+			ZVAL_COPY( &zv_compat_name, zv_name );
+		}
+
+		if( node_has_root ) {
+			zval zv_parents;
+			array_init( &zv_parents );
+
+			add_next_index_zval( &zv_parents, &zv_prefix );
+			zval_copy_ctor( &zv_prefix );
+
+			add_next_index_zval( &zv_parents, &zv_compat_name );
+			zval_copy_ctor( &zv_compat_name );
+
+			add_next_index_zval( &( Z_MF2MFOBJ_P( zv_mf_embedded )->contexts ), &zv_parents );
+		}
+
+		if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_photo ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_url ) )
+		) {
+			mf2parse_u_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
+		} else {
+			mf2parse_p_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
+		}
+
+		zval_ptr_dtor( &zv_compat_name );
+		zval_ptr_dtor( &zv_prefix );
+
+	} ZEND_HASH_FOREACH_END();
+
+	zval_ptr_dtor( &matched );
+	zval_ptr_dtor( &matches );
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_find_backcompat_hreview_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root )
+{
+	zval matched, matches;
+
+	ZVAL_NULL( &matched );
+	ZVAL_NULL( &matches );
+
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hreview_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
+		zval_ptr_dtor( &matched );
+		zval_ptr_dtor( &matches );
+
+		return;
+	}
+
+	zval *zv_name, *match_arr;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
+		zv_name = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 1 );
+
+		if( node_has_root ) {
+			zval zv_parents;
+			array_init( &zv_parents );
+
+			add_next_index_string( &zv_parents, "p" );
+
+			add_next_index_zval( &zv_parents, zv_name );
+			zval_copy_ctor( zv_name );
+
+			add_next_index_zval( &( Z_MF2MFOBJ_P( zv_mf_embedded )->contexts ), &zv_parents );
+		}
+
+		mf2parse_p_property( object, Z_MF2PARSEOBJ_P( object )->context, zv_name, xml_node );
+
+	} ZEND_HASH_FOREACH_END();
+
+	zval_ptr_dtor( &matched );
+	zval_ptr_dtor( &matches );
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_find_backcompat_hreview_aggregate_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root )
+{
+	zval matched, matches;
+
+	ZVAL_NULL( &matched );
+	ZVAL_NULL( &matches );
+
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hreview_aggregate_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+
+	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
+		zval_ptr_dtor( &matched );
+		zval_ptr_dtor( &matches );
+
+		return;
+	}
+
+	zval *zv_name, *match_arr;
+	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
+		zv_name = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 1 );
+
+		if( node_has_root ) {
+			zval zv_parents;
+			array_init( &zv_parents );
+
+			add_next_index_string( &zv_parents, "p" );
+
+			add_next_index_zval( &zv_parents, zv_name );
+			zval_copy_ctor( zv_name );
+
+			add_next_index_zval( &( Z_MF2MFOBJ_P( zv_mf_embedded )->contexts ), &zv_parents );
+		}
+
+		mf2parse_p_property( object, Z_MF2PARSEOBJ_P( object )->context, zv_name, xml_node );
+
+	} ZEND_HASH_FOREACH_END();
+
+	zval_ptr_dtor( &matched );
+	zval_ptr_dtor( &matches );
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_find_backcompat_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zval *zv_classes, zend_bool node_has_root, zval *zv_type )
 {
 	// TODO: combine regexes?
@@ -1856,7 +2019,17 @@ static void mf2parse_find_backcompat_properties( zval *object, zval *zv_mf_embed
 	/** hProduct.
 	 * @link http://microformats.org/wiki/hProduct */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hproduct ) ) ) {
-		// mf2parse_find_backcompat_hproduct_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+		mf2parse_find_backcompat_hproduct_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** hReview.
+	 * @link http://microformats.org/wiki/hReview */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hreview ) ) ) {
+		mf2parse_find_backcompat_hreview_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
+
+	/** hreview-aggregate.
+	 * @link http://microformats.org/wiki/hreview-aggregate */
+	} else if ( 0 == strcasecmp( Z_STRVAL_P( zv_type ), "hreview-aggregate" ) ) {
+		mf2parse_find_backcompat_hreview_aggregate_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
 
 	/** hRecipe.
 	 * @link http://microformats.org/wiki/hRecipe */
@@ -1867,16 +2040,6 @@ static void mf2parse_find_backcompat_properties( zval *object, zval *zv_mf_embed
 	 * @link http://microformats.org/wiki/hResume */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hresume ) ) ) {
 		// mf2parse_find_backcompat_hresume_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
-
-	/** hReview.
-	 * @link http://microformats.org/wiki/hReview */
-	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hreview ) ) ) {
-		// mf2parse_find_backcompat_hreview_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
-
-	/** hreview-aggregate.
-	 * @link http://microformats.org/wiki/hreview-aggregate */
-	} else if ( 0 == strcasecmp( Z_STRVAL_P( zv_type ), "hreview-aggregate" ) ) {
-		// mf2parse_find_backcompat_hreview_aggregate_properties( object, zv_mf_embedded, xml_node, zv_classes, node_has_root );
 
 	/** adr.
 	 * @link http://microformats.org/wiki/adr */

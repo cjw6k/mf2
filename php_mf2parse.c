@@ -105,6 +105,18 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 	mf2parse->regex_backcompat_hnews_properties = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );
 
+	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HPRODUCT_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HPRODUCT_PROPERTIES ), 0 );
+	mf2parse->regex_backcompat_hproduct_properties = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
+	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HREVIEW_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HREVIEW_PROPERTIES ), 0 );
+	mf2parse->regex_backcompat_hreview_properties = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
+	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES ), 0 );
+	mf2parse->regex_backcompat_hreview_aggregate_properties = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
 	tmp = zend_string_init( MF2_REGEX_DT_ISO8601, strlen( MF2_REGEX_DT_ISO8601 ), 0 );
 	mf2parse->regex_dt_iso8601 = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );
