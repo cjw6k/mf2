@@ -62,6 +62,7 @@
 	X(vcard) \
 	X(hfeed) \
 	X(hentry) \
+	X(hnews) \
 	X(vevent) \
 	X(hproduct) \
 	X(hrecipe) \
@@ -89,5 +90,6 @@
 	X(tag) \
 	X(bookmark) \
 	X(category) \
+	X(principles) \
 
 #endif /* MF2_STR_DEFS_H */

@@ -103,6 +103,11 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hentry ) ) ) {
 		smart_str_appends( &ss_type, "entry" );
 
+	/** hNews.
+	 * @link http://microformats.org/wiki/hNews */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hnews ) ) ) {
+		smart_str_appends( &ss_type, "news" );
+
 	/** hCalendar.
 	 * @link http://microformats.org/wiki/hCalendar */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vevent ) ) ) {

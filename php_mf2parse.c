@@ -101,6 +101,10 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 	mf2parse->regex_backcompat_hfeed_properties = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );
 
+	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HNEWS_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HNEWS_PROPERTIES ), 0 );
+	mf2parse->regex_backcompat_hnews_properties = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
 	tmp = zend_string_init( MF2_REGEX_DT_ISO8601, strlen( MF2_REGEX_DT_ISO8601 ), 0 );
 	mf2parse->regex_dt_iso8601 = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );
