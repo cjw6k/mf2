@@ -113,6 +113,10 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 	mf2parse->regex_backcompat_hreview_properties = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );
 
+	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HRESUME_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HRESUME_PROPERTIES ), 0 );
+	mf2parse->regex_backcompat_hresume_properties = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hreview_aggregate_properties = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );

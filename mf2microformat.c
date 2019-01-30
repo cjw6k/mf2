@@ -128,15 +128,15 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	} else if ( 0 == strcasecmp( Z_STRVAL_P( zv_type ), "hreview-aggregate" ) ) {
 		smart_str_appends( &ss_type, "review-aggregate" );
 
+	/** hResume.
+	 * @link http://microformats.org/wiki/hResume */
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hresume ) ) ) {
+		smart_str_appends( &ss_type, "resume" );
+
 	/** hRecipe.
 	 * @link http://microformats.org/wiki/hRecipe */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hrecipe ) ) ) {
 		// smart_str_appends( &ss_type, "recipe" );
-
-	/** hResume.
-	 * @link http://microformats.org/wiki/hResume */
-	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hresume ) ) ) {
-		// smart_str_appends( &ss_type, "resume" );
 
 	/** adr, geo.
 	 * @link http://microformats.org/wiki/adr

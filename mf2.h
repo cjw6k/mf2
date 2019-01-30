@@ -32,7 +32,7 @@ mf2_str_globals str_globals_mf2;
 	"/(?<=\\s|^)h-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_ROOTS \
-	"/(?<=\\s|^)(adr|geo|vevent|vcard|hentry|hfeed|hnews|hproduct|hreview|hreview-aggregate)(?=\\s|$)/"
+	"/(?<=\\s|^)(adr|geo|vevent|vcard|hentry|hfeed|hnews|hproduct|hreview|hreview-aggregate|hresume)(?=\\s|$)/"
 
 #define MF2_REGEX_PROPERTIES \
 	"/(?<=\\s|^)(e|u|dt|p)-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
@@ -66,6 +66,9 @@ mf2_str_globals str_globals_mf2;
 
 #define MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES \
 	"/(?<=\\s|^)(rating|average|best|count)(?=\\s|$)/"
+
+#define MF2_REGEX_BACKCOMPAT_HRESUME_PROPERTIES \
+	"/(?<=\\s|^)(summary|contact|education|experience|skill|affiliation|publications)(?=\\s|$)/"
 
 #define MF2_REGEX_DT_ISO8601 \
 	"/^((?:[0-9]{4})-(?:1[0-2]|0[1-9])-(?:3[01]|0[1-9]|[12][0-9]))(?:T((?:2[0-3]|[01][0-9]):(?:[0-5][0-9]):(?:[0-5][0-9])(?:\\.[0-9]+)?)(Z|(?:[+-][01][0-9](?::?[0-5][0-9])?))?)?$/"
