@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v1/hresume/work
 - TEST: mf-test-suite/v1/hresume/affiliation
 - TEST: mf-test-suite/v1/hproduct/aggregate
 - TEST: mf-test-suite/v1/hproduct/simpleproperties
