@@ -128,7 +128,7 @@ static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_va
 	}
 
 	smart_str_appends( &smart_uri_str, !relative_url_parts->scheme ? mf2parse->php_base_url->scheme : relative_url_parts->scheme );
-	smart_str_appends(&smart_uri_str, scheme_separator);
+	smart_str_appends( &smart_uri_str, scheme_separator );
 
 	if ( !relative_url_parts->host ) {
 		zend_bool has_user_or_pass = 0;
@@ -201,7 +201,7 @@ static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_va
 		}
 	}
 
-	if( relative_url_parts->query ) {
+	if ( relative_url_parts->query ) {
 		// TODO: finish up relative URL resolution
 	}
 	smart_str_0( &smart_uri_str );
@@ -248,7 +248,7 @@ static void mf2parse_resolve_base( zval *object )
 
 	php_url *doc_url_parts = php_url_parse( ( char * ) base_href );
 
-	if( NULL == doc_url_parts ) {
+	if ( NULL == doc_url_parts ) {
 		if ( ! ( mf2parse->options & PHP_MF2_NONOTICE ) ) {
 			php_error_docref( NULL, E_NOTICE, "Parsed document includes an invalid <base> URL" );
 		}
@@ -328,7 +328,7 @@ static void mf2parse_add_rel( zval *object, char *rel, char *href, xmlNodePtr xm
 
 		// Rels
 		rels_ptr = zend_hash_find( Z_ARRVAL_P( rel_urls_ptr ), MF2_STR( str_rels ) );
-		if( !mf2_in_array( rels_ptr, &zv_rel ) ) {
+		if ( !mf2_in_array( rels_ptr, &zv_rel ) ) {
 			add_next_index_string( rels_ptr, Z_STRVAL( zv_rel ) );
 			zend_hash_sort( Z_ARRVAL_P( rels_ptr ), mf2_strcasecmp, 1 );
 		}
@@ -540,7 +540,7 @@ static zend_bool mf2parse_find_backcompat_roots( zval *object, zval *zv_mf, xmlN
  */
 static void mf2parse_find_roots( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 {
-	if( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
+	if ( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
 		return;
 	}
 
@@ -597,11 +597,11 @@ static void mf2parse_clean_text_content( zval *object, xmlNodePtr xml_node, zval
 			zend_string_release( node_name );
 		}
 
-		if( current_node->content ) {
+		if ( current_node->content ) {
 			smart_str_appends( &clean_content, ( char * ) current_node->content );
 		}
 
-		if( current_node->children ) {
+		if ( current_node->children ) {
 			mf2parse_clean_text_content( object, current_node->children, zv_return_value );
 			smart_str_appends( &clean_content, Z_STRVAL_P( zv_return_value ) );
 			zval_ptr_dtor( zv_return_value );
@@ -671,11 +671,11 @@ static void mf2parse_clean_text_content_with_img_src( zval *object, xmlNodePtr x
 			zend_string_release( node_name );
 		}
 
-		if( current_node->content ) {
+		if ( current_node->content ) {
 			smart_str_appends( &clean_content, ( char * ) current_node->content );
 		}
 
-		if( current_node->children ) {
+		if ( current_node->children ) {
 			mf2parse_clean_text_content_with_img_src( object, current_node->children, zv_return_value );
 			smart_str_appends( &clean_content, Z_STRVAL_P( zv_return_value ) );
 			zval_ptr_dtor( zv_return_value );
@@ -740,7 +740,7 @@ static zend_bool mf2parse_value_class( zval *object, xmlNodePtr xml_node, zval *
 
 			smart_str_0( &smart_value_str );
 
-			if( NULL != smart_value_str.s ) {
+			if ( NULL != smart_value_str.s ) {
 				ZVAL_STRING( zv_return_value, ZSTR_VAL( smart_value_str.s ) );
 			} else {
 				ZVAL_EMPTY_STRING( zv_return_value );
@@ -926,7 +926,7 @@ static zend_bool mf2parse_value_class_dt( zval *object, xmlNodePtr xml_node, zva
 			zval_dtor( &zv_time );
 			zval_dtor( &zv_timezone );
 
-			if( NULL != smart_value_str.s ) {
+			if ( NULL != smart_value_str.s ) {
 				ZVAL_STRING( zv_return_value, ZSTR_VAL( smart_value_str.s ) );
 			} else {
 				ZVAL_EMPTY_STRING( zv_return_value );
@@ -1212,7 +1212,7 @@ static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlN
 
 	zend_string_free( node_name );
 
-	if( IS_NULL == Z_TYPE( zv_value ) ) {
+	if ( IS_NULL == Z_TYPE( zv_value ) ) {
 		return;
 	}
 
@@ -1300,7 +1300,7 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf_embedded, xml
 		zv_prefix = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 1 );
 		zv_name   = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 2 );
 
-		if( node_has_root ) {
+		if ( node_has_root ) {
 			zval zv_parents;
 			array_init( &zv_parents );
 
@@ -2202,7 +2202,7 @@ static void mf2parse_find_backcompat_properties( zval *object, zval *zv_mf_embed
  */
 static void mf2parse_find_properties( zval *object, zval *zv_mf_embedded, xmlNodePtr xml_node, zend_bool node_has_root )
 {
-	if( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
+	if ( ! xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_class ) ) ) ) {
 		return;
 	}
 
@@ -2233,7 +2233,7 @@ static void mf2parse_find_properties( zval *object, zval *zv_mf_embedded, xmlNod
  */
 static void mf2parse_imply_name( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 {
-	if( Z_MF2MFOBJ_P( zv_mf )->has_p_prop || Z_MF2MFOBJ_P( zv_mf )->has_e_prop ) {
+	if ( Z_MF2MFOBJ_P( zv_mf )->has_p_prop || Z_MF2MFOBJ_P( zv_mf )->has_e_prop ) {
 		return;
 	}
 
@@ -2364,7 +2364,7 @@ static void mf2parse_imply_name( zval *object, zval *zv_mf, xmlNodePtr xml_node 
  */
 static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 {
-	if( Z_MF2MFOBJ_P( zv_mf )->has_u_prop ) {
+	if ( Z_MF2MFOBJ_P( zv_mf )->has_u_prop ) {
 		return;
 	}
 
@@ -2413,7 +2413,7 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 		}
 
 		// Priority #4: .h-x>object[data]:only-of-type:not[.h-*]
-		if( ! done ) {
+		if ( ! done ) {
 			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "object[@data][count(../object) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
 
 			if ( results ) {
@@ -2426,7 +2426,7 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 		}
 
 		// Priority #5: .h-x>:only-child:not[.h-*]>img[src]:only-of-type:not[.h-*]
-		if( ! done ) {
+		if ( ! done ) {
 			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[count(../*) = 1][not(contains(concat(\" \", @class), \" h-\"))]/img[@src][count(../img) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
 
 			if ( results ) {
@@ -2440,7 +2440,7 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 		}
 
 		// Priority #6: .h-x>:only-child:not[.h-*]>object[data]:only-of-type:not[.h-*]
-		if( !done ) {
+		if ( !done ) {
 			results = xmlXPathNodeEval( xml_node, ( xmlChar * ) "*[count(../*) = 1][not(contains(concat(\" \", @class), \" h-\"))]/object[@data][count(../object) = 1][not(contains(concat(\" \", @class), \" h-\"))]", xpath_context );
 
 			if ( results ) {
@@ -2456,7 +2456,7 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
 
 	zend_string_free( node_name );
 
-	if( IS_NULL == Z_TYPE( zv_photo ) ) {
+	if ( IS_NULL == Z_TYPE( zv_photo ) ) {
 		return;
 	}
 
@@ -2489,7 +2489,7 @@ static void mf2parse_imply_photo( zval *object, zval *zv_mf, xmlNodePtr xml_node
  */
 static void mf2parse_imply_url( zval *object, zval *zv_mf, xmlNodePtr xml_node )
 {
-	if( Z_MF2MFOBJ_P( zv_mf )->has_u_prop ) {
+	if ( Z_MF2MFOBJ_P( zv_mf )->has_u_prop ) {
 		return;
 	}
 
@@ -2679,7 +2679,7 @@ void mf2parse_new( zval *object, char *data, size_t data_length, zend_bool data_
 
 	htmlParserCtxtPtr ctxt = data_is_uri ? htmlCreateFileParserCtxt( data, "UTF8" ) : htmlCreateMemoryParserCtxt( data, data_length );
 
-	if( !ctxt ) {
+	if ( !ctxt ) {
 		return;
 	}
 
