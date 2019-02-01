@@ -36,6 +36,7 @@ typedef struct _php_mf2parse_object {
 	pcre_cache_entry *regex_backcompat_hnews_properties;
 	pcre_cache_entry *regex_backcompat_hproduct_properties;
 	pcre_cache_entry *regex_backcompat_hreview_properties;
+	pcre_cache_entry *regex_backcompat_hitem_properties;
 	pcre_cache_entry *regex_backcompat_hreview_aggregate_properties;
 	pcre_cache_entry *regex_backcompat_hresume_properties;
 	pcre_cache_entry *regex_dt_iso8601;

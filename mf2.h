@@ -32,7 +32,7 @@ mf2_str_globals str_globals_mf2;
 	"/(?<=\\s|^)h-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_ROOTS \
-	"/(?<=\\s|^)(adr|geo|vevent|vcard|hentry|hfeed|hnews|hproduct|hreview|hreview-aggregate|hresume)(?=\\s|$)/"
+	"/(?<=\\s|^)(adr|geo|vevent|vcard|hentry|hfeed|hnews|hproduct|hreview|item|hreview-aggregate|hresume)(?=\\s|$)/"
 
 #define MF2_REGEX_PROPERTIES \
 	"/(?<=\\s|^)(e|u|dt|p)-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
@@ -62,7 +62,10 @@ mf2_str_globals str_globals_mf2;
 	"/(?<=\\s|^)(fn|photo|description|url|price|review|category|brand)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_HREVIEW_PROPERTIES \
-	"/(?<=\\s|^)(rating)(?=\\s|$)/"
+	"/(?<=\\s|^)(rating|item)(?=\\s|$)/"
+
+#define MF2_REGEX_BACKCOMPAT_HITEM_PROPERTIES \
+	"/(?<=\\s|^)(photo|fn|url)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES \
 	"/(?<=\\s|^)(rating|average|best|count)(?=\\s|$)/"

@@ -68,6 +68,7 @@
 	X(hrecipe) \
 	X(hresume) \
 	X(hreview) \
+	X(item) \
 	X(adr) \
 	X(geo) \
 	X(dtstart) \

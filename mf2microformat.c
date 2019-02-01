@@ -122,6 +122,8 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	 * @link http://microformats.org/wiki/hReview */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hreview ) ) ) {
 		smart_str_appends( &ss_type, "review" );
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_item ) ) ) {
+		smart_str_appends( &ss_type, "item" );
 
 	/** hreview-aggregate.
 	 * @link http://microformats.org/wiki/hreview-aggregate */
