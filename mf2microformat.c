@@ -89,14 +89,24 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
 
 	if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_item ) ) ) {
-		zval zv_hcard;
-		ZVAL_STRING( &zv_hcard, "h-card" );
-		if ( mf2_in_array( zv_current_types, &zv_hcard ) ) {
-			zval_dtor( &zv_hcard );
+		zval zv_h;
+		ZVAL_STRING( &zv_h, "h-card" );
+		if ( mf2_in_array( zv_current_types, &zv_h ) ) {
+			zval_dtor( &zv_h );
 			return;
 		}
-		zval_dtor( &zv_hcard );
-	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vcard ) ) ) {
+		zval_dtor( &zv_h );
+		ZVAL_STRING( &zv_h, "h-event" );
+		if ( mf2_in_array( zv_current_types, &zv_h ) ) {
+			zval_dtor( &zv_h );
+			return;
+		}
+		zval_dtor( &zv_h );
+	} else if (
+		zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vcard ) )
+		||
+		zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vevent ) )
+	) {
 		zval zv_hitem;
 		ZVAL_STRING( &zv_hitem, "h-item" );
 
