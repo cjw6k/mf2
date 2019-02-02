@@ -62,7 +62,7 @@ mf2_str_globals str_globals_mf2;
 	"/(?<=\\s|^)(fn|photo|description|url|price|review|category|brand)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_HREVIEW_PROPERTIES \
-	"/(?<=\\s|^)(rating|item)(?=\\s|$)/"
+	"/(?<=\\s|^)(summary|fn|photo|url|reviewer|dtreviewed|rating|best|worst|description|item)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_HITEM_PROPERTIES \
 	"/(?<=\\s|^)(photo|fn|url)(?=\\s|$)/"

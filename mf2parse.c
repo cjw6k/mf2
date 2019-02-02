@@ -364,6 +364,7 @@ static void mf2parse_add_rel( zval *object, char *rel, char *href, xmlNodePtr xm
 	}
 
 	// hAtom rel-bookmark and rel-tag parsing
+	// hReview rel-self, rel-bookmark and rel-tag parsing
 	if (
 		NULL != mf2parse->context
 		&&
@@ -375,6 +376,8 @@ static void mf2parse_add_rel( zval *object, char *rel, char *href, xmlNodePtr xm
 			mf2_string_in_array( &Z_MF2MFOBJ_P( mf2parse->context )->backcompat_types, MF2_STR( str_hentry ) )
 			||
 			mf2_string_in_array( &Z_MF2MFOBJ_P( mf2parse->context )->backcompat_types, MF2_STR( str_hnews ) )
+			||
+			mf2_string_in_array( &Z_MF2MFOBJ_P( mf2parse->context )->backcompat_types, MF2_STR( str_hreview ) )
 		)
 	) {
 		zval zv_key;
@@ -389,12 +392,24 @@ static void mf2parse_add_rel( zval *object, char *rel, char *href, xmlNodePtr xm
 
 			zval_dtor( &zv_value );
 		} else if (
-			zend_string_equals( Z_STR( zv_rel ), MF2_STR( str_bookmark ) )
-			&&
-			mf2_string_in_array( &Z_MF2MFOBJ_P( mf2parse->context )->backcompat_types, MF2_STR( str_hentry ) )
+			(
+				zend_string_equals( Z_STR( zv_rel ), MF2_STR( str_bookmark ) )
+				&&
+				mf2_string_in_array( &Z_MF2MFOBJ_P( mf2parse->context )->backcompat_types, MF2_STR( str_hentry ) )
+			)
+			||
+			(
+				(
+					zend_string_equals( Z_STR( zv_rel ), MF2_STR( str_bookmark ) )
+					||
+					zend_string_equals( Z_STR( zv_rel ), MF2_STR( str_self ) )
+				)
+				&&
+				mf2_string_in_array( &Z_MF2MFOBJ_P( mf2parse->context )->backcompat_types, MF2_STR( str_hreview ) )
+			)
 		) {
 			ZVAL_STRING( &zv_key, ZSTR_VAL( MF2_STR( str_url ) ) );
-			mf2microformat_add_property( mf2parse->context, &zv_key, &zv_href );
+			mf2microformat_add_property_no_duplicate_values( mf2parse->context, &zv_key, &zv_href );
 		} else if (
 			zend_string_equals( Z_STR( zv_rel ), MF2_STR( str_principles ) )
 			&&
@@ -2001,7 +2016,7 @@ static void mf2parse_find_backcompat_hreview_properties( zval *object, zval *zv_
 		return;
 	}
 
-	zval *zv_name, *match_arr;
+	zval zv_prefix, zv_compat_name, *zv_name, *match_arr;
 	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( matches ), match_arr ) {
 		zv_name = zend_hash_index_find( Z_ARRVAL_P( match_arr ), 1 );
 
@@ -2009,21 +2024,85 @@ static void mf2parse_find_backcompat_hreview_properties( zval *object, zval *zv_
 			continue;
 		}
 
+		ZVAL_NULL( &zv_prefix );
+		ZVAL_NULL( &zv_compat_name );
+
+		// TODO: deduplication
+
+		if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_photo ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_url ) )
+		) {
+			ZVAL_STRING( &zv_prefix, "u" );
+		} else if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_dtreviewed ) )
+		) {
+			ZVAL_STRING( &zv_prefix, "dt" );
+
+			if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_dtreviewed ) ) ) {
+				ZVAL_STRING( &zv_compat_name, ZSTR_VAL( MF2_STR( str_reviewed ) ) );
+			}
+		} else if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_description ) )
+		) {
+			ZVAL_STRING( &zv_prefix, "e" );
+			ZVAL_STRING( &zv_compat_name, ZSTR_VAL( MF2_STR( str_content ) ) );
+		} else {
+			ZVAL_STRING( &zv_prefix, "p" );
+
+			if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_summary ) ) ) {
+				ZVAL_STRING( &zv_compat_name, ZSTR_VAL( MF2_STR( str_name ) ) );
+			} else if ( zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_reviewer ) ) ) {
+				ZVAL_STRING( &zv_compat_name, ZSTR_VAL( MF2_STR( str_author ) ) );
+			}
+		}
+
+		if ( IS_NULL == Z_TYPE( zv_compat_name ) ) {
+			ZVAL_COPY( &zv_compat_name, zv_name );
+		}
+
+		if ( mf2_in_array( zv_parsed_properties, &zv_compat_name ) ) {
+			zval_ptr_dtor( &zv_compat_name );
+			zval_ptr_dtor( &zv_prefix );
+			continue;
+		}
+
 		if ( node_has_root ) {
 			zval zv_parents;
 			array_init( &zv_parents );
 
-			add_next_index_string( &zv_parents, "p" );
+			add_next_index_zval( &zv_parents, &zv_prefix );
+			zval_copy_ctor( &zv_prefix );
 
-			add_next_index_zval( &zv_parents, zv_name );
-			zval_copy_ctor( zv_name );
+			add_next_index_zval( &zv_parents, &zv_compat_name );
+			zval_copy_ctor( &zv_compat_name );
 
 			add_next_index_zval( &( Z_MF2MFOBJ_P( zv_mf_embedded )->contexts ), &zv_parents );
 		}
 
-		mf2parse_p_property( object, Z_MF2PARSEOBJ_P( object )->context, zv_name, xml_node );
+		if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_photo ) )
+			||
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_url ) )
+		) {
+			mf2parse_u_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
+		} else if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_dtreviewed ) )
+		) {
+			mf2parse_dt_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
+		} else if (
+			zend_string_equals( Z_STR_P( zv_name ), MF2_STR( str_description ) )
+		) {
+			mf2parse_e_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
+		} else {
+			mf2parse_p_property( object, Z_MF2PARSEOBJ_P( object )->context, &zv_compat_name, xml_node );
+		}
 
-		add_next_index_string( zv_parsed_properties, Z_STRVAL_P( zv_name ) );
+		add_next_index_string( zv_parsed_properties, Z_STRVAL( zv_compat_name ) );
+
+		zval_ptr_dtor( &zv_compat_name );
+		zval_ptr_dtor( &zv_prefix );
 
 	} ZEND_HASH_FOREACH_END();
 
@@ -2118,7 +2197,8 @@ static void mf2parse_find_backcompat_hitem_properties( zval *object, zval *zv_mf
 	} ZEND_HASH_FOREACH_END();
 
 	zval_ptr_dtor( &matched );
-	zval_ptr_dtor( &matches );}
+	zval_ptr_dtor( &matches );
+}
 
 /**
  * @since 0.1.0

@@ -92,5 +92,11 @@
 	X(bookmark) \
 	X(category) \
 	X(principles) \
+	X(dtreviewed) \
+	X(description) \
+	X(self) \
+	X(reviewer) \
+	X(author) \
+	X(reviewed) \
 
 #endif /* MF2_STR_DEFS_H */

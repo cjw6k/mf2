@@ -88,6 +88,30 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 
 	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
 
+	if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_item ) ) ) {
+		zval zv_hcard;
+		ZVAL_STRING( &zv_hcard, "h-card" );
+		if ( mf2_in_array( zv_current_types, &zv_hcard ) ) {
+			zval_dtor( &zv_hcard );
+			return;
+		}
+		zval_dtor( &zv_hcard );
+	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_vcard ) ) ) {
+		zval zv_hitem;
+		ZVAL_STRING( &zv_hitem, "h-item" );
+
+		zval *zv_type_ptr;
+		zend_ulong type_key;
+		ZEND_HASH_FOREACH_NUM_KEY_VAL( Z_ARRVAL_P( zv_current_types ), type_key, zv_type_ptr ) {
+			if ( 0 == strcasecmp( Z_STRVAL_P( zv_type_ptr ), Z_STRVAL( zv_hitem ) ) ) {
+				zend_hash_index_del( Z_ARRVAL_P( zv_current_types ), type_key );
+				break;
+			}
+		} ZEND_HASH_FOREACH_END();
+
+		zval_dtor( &zv_hitem );
+	}
+
 	smart_str ss_type = {0};
 	smart_str_appends( &ss_type, "h-" );
 
@@ -181,6 +205,27 @@ void mf2microformat_add_property( zval *object, zval *zv_key, zval *zv_value )
 	add_next_index_zval( zv_current_value, zv_value );
 
 	zval_copy_ctor( zv_value );
+}
+
+/**
+ * @since 0.1.0
+ */
+void mf2microformat_add_property_no_duplicate_values( zval *object, zval *zv_key, zval *zv_value )
+{
+	zval *zv_current_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 0, NULL );
+	zval *zv_current_value = zend_hash_find( Z_ARRVAL_P( zv_current_properties ), Z_STR_P( zv_key ) );
+
+	if( NULL == zv_current_value ) {
+		zval zv_properties;
+		array_init( &zv_properties );
+		add_assoc_zval_ex( zv_current_properties, Z_STRVAL_P( zv_key ), Z_STRLEN_P( zv_key ), &zv_properties );
+		zv_current_value = &zv_properties;
+	}
+
+	if ( ! mf2_in_array( zv_current_value, zv_value ) ) {
+		add_next_index_zval( zv_current_value, zv_value );
+		zval_copy_ctor( zv_value );
+	}
 }
 
 /**
