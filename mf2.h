@@ -68,7 +68,7 @@ mf2_str_globals str_globals_mf2;
 	"/(?<=\\s|^)(photo|fn|url)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES \
-	"/(?<=\\s|^)(rating|average|best|count)(?=\\s|$)/"
+	"/(?<=\\s|^)(item|rating|average|best|count)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_HRESUME_PROPERTIES \
 	"/(?<=\\s|^)(summary|contact|education|experience|skill|affiliation|publications)(?=\\s|$)/"
