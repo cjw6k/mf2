@@ -2841,7 +2841,7 @@ static void mf2parse_include_pattern( zval *object, xmlNodePtr xml_node ) {
 	smart_str_appendl( &ss_xpath, "//*[@id='", sizeof( "//*[@id='" ) - 1 );
 
 	// Using [1] as start of zv_id cstr, skips # char
-	smart_str_appendl( &ss_xpath, &( Z_STRVAL( zv_id )[1] ), sizeof( &( Z_STRVAL( zv_id )[1] ) ) - 1 );
+	smart_str_appendl( &ss_xpath, &( Z_STRVAL( zv_id )[1] ), Z_STRLEN( zv_id ) - 1 );
 
 	smart_str_appendl( &ss_xpath, "']", sizeof( "']" ) - 1 );
 	smart_str_0( &ss_xpath );
