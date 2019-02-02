@@ -25,6 +25,8 @@ void mf2parse_new( zval *object, char *data, size_t data_length, zend_bool data_
 #define mf2parse_new_from_uri( object, uri, uri_length ) mf2parse_new( object, uri, uri_length, 1 )
 #define mf2parse_new_from_data( object, data, data_length ) mf2parse_new( object, data, data_length, 0 )
 
+void mf2parse_xml_node( zval *object, xmlNodePtr xml_node );
+
 #define MF2PARSE_RESOLVE_RELATIVE_URI( _object, _zv_relative ) \
 	php_url *_url_parts = php_url_parse( Z_STRVAL( _zv_relative ) ); \
 	if ( NULL != _url_parts ) { \

@@ -2782,7 +2782,93 @@ static void mf2parse_imply_properties( zval *object, zval *zv_mf, xmlNodePtr xml
 /**
  * @since 0.1.0
  */
-static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
+static zend_bool mf2parse_has_include_pattern( zval *object, xmlNodePtr xml_node ) {
+	zend_bool result = 0;
+
+	zval zv_classes;
+	ZVAL_NULL( &zv_classes );
+	MF2_TRY_ZVAL_XMLATTR( zv_classes, xml_node, MF2_STR( str_class ) );
+
+	if( IS_NULL != Z_TYPE( zv_classes ) ) {
+		char *search_class = NULL, *last = NULL;
+		search_class = php_strtok_r( Z_STRVAL( zv_classes ), " ", &last );
+
+		while( search_class ) {
+			if ( 0 == strcasecmp( search_class, ZSTR_VAL( MF2_STR( str_include ) ) ) ) {
+				result = 1;
+				break;
+			}
+			search_class = php_strtok_r( NULL, " ", &last );
+		}
+	}
+
+	zval_dtor( &zv_classes );
+
+	return result;
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_include_pattern( zval *object, xmlNodePtr xml_node ) {
+	zval zv_id;
+	zend_string *zs_name = zend_string_init( ( char * ) xml_node->name, xmlStrlen( xml_node->name ), 0 );
+
+	// We seek a and object tags.
+	if ( zend_string_equals ( zs_name, MF2_STR( str_a ) ) ) {
+		MF2_TRY_ZVAL_XMLATTR( zv_id, xml_node, MF2_STR( str_href ) );
+	} else if ( zend_string_equals ( zs_name, MF2_STR( str_object ) ) ) {
+		MF2_TRY_ZVAL_XMLATTR( zv_id, xml_node, MF2_STR( str_data ) );
+	} else {
+		zend_string_free( zs_name );
+		return;
+	}
+
+	zend_string_free( zs_name );
+
+	if ( IS_NULL == Z_TYPE( zv_id ) ) {
+		zval_dtor( &zv_id );
+		return;
+	}
+
+	// Must begin with # and contain something else too
+	if ( 2 > Z_STRLEN( zv_id ) ) {
+		zval_dtor( &zv_id );
+		return;
+	}
+
+	smart_str ss_xpath = {0};
+	smart_str_appendl( &ss_xpath, "//*[@id='", sizeof( "//*[@id='" ) - 1 );
+
+	// Using [1] as start of zv_id cstr, skips # char
+	smart_str_appendl( &ss_xpath, &( Z_STRVAL( zv_id )[1] ), sizeof( &( Z_STRVAL( zv_id )[1] ) ) - 1 );
+
+	smart_str_appendl( &ss_xpath, "']", sizeof( "']" ) - 1 );
+	smart_str_0( &ss_xpath );
+
+	zval_dtor( &zv_id );
+
+	xmlXPathObjectPtr xpath_results;
+	xmlXPathContextPtr xpath_context = xmlXPathNewContext( Z_MF2PARSEOBJ_P( object )->document );
+
+	xpath_results = xmlXPathEval( ( xmlChar * ) ZSTR_VAL( ss_xpath.s ), xpath_context );
+	smart_str_free( &ss_xpath );
+
+	if ( xpath_results ) {
+		if ( ! xmlXPathNodeSetIsEmpty( xpath_results->nodesetval ) ) {
+			mf2parse_xml_node( object, xpath_results->nodesetval->nodeTab[0] );
+		}
+
+		xmlXPathFreeObject( xpath_results );
+	}
+
+	xmlXPathFreeContext( xpath_context );
+}
+
+/**
+ * @since 0.1.0
+ */
+void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
 	xmlNodePtr current_node;
@@ -2794,6 +2880,14 @@ static void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 
 		switch ( current_node->type ) {
 			case XML_ELEMENT_NODE:
+				// Include-Pattern, for backcompat roots only
+				if ( NULL != mf2parse->context && ( 1 == Z_MF2MFOBJ_P( mf2parse->context )->version ) ) {
+					if ( mf2parse_has_include_pattern( object, current_node ) ) {
+						mf2parse_include_pattern( object, current_node );
+						continue;
+					}
+				}
+
 				// Microformats parsing - roots
 				mf2parse_find_roots( object, &zv_mf, current_node );
 
