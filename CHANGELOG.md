@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Complete set of passing tests from the Microformats test suite
+- TEST: mf-test-suite/mixed/h-card/mixedproperties
 - TEST: mf-test-suite/mixed/h-card/tworoots
 - TEST: mf-test-suite/mixed/h-entry/mixedroots
 - TEST: mf-test-suite/mixed/h-resume/mixedroots
