@@ -218,6 +218,59 @@ static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_va
 /**
  * @since 0.1.0
  */
+static void mf2parse_resolve_relative_node_attributes( zval *object, xmlNodePtr xml_node )
+{
+	zval zv_attr, zv_value, zv_temp;
+
+	xmlNodePtr current_node;
+
+	for ( current_node = xml_node; current_node; current_node = current_node->next ) {
+
+		switch( current_node->type ) {
+			case XML_ELEMENT_NODE:
+				ZVAL_NULL( &zv_attr );
+				ZVAL_NULL( &zv_value );
+				ZVAL_NULL( &zv_temp );
+
+				// We seek src and href attributes.
+				MF2_TRY_ZVAL_XMLATTR( zv_value, current_node, MF2_STR( str_href ) );
+				if ( IS_NULL == Z_TYPE( zv_value ) ) {
+					MF2_TRY_ZVAL_XMLATTR( zv_value, current_node, MF2_STR( str_src ) );
+					if ( IS_NULL != Z_TYPE( zv_value ) ) {
+						ZVAL_STRING( &zv_attr, ZSTR_VAL( MF2_STR( str_src ) ) );
+					}
+				} else {
+					ZVAL_STRING( &zv_attr, ZSTR_VAL( MF2_STR( str_href ) ) );
+				}
+
+				if (
+					IS_NULL != Z_TYPE( zv_attr )
+				) {
+					ZVAL_COPY( &zv_temp, &zv_value );
+					MF2PARSE_RESOLVE_RELATIVE_URI( object, zv_value );
+
+					if ( ! xmlStrEqual( ( xmlChar * ) Z_STRVAL( zv_value ), ( xmlChar * ) Z_STRVAL( zv_temp ) ) ) {
+						xmlSetProp( current_node, ( xmlChar * ) Z_STRVAL( zv_attr ), ( xmlChar * ) Z_STRVAL( zv_value ) );
+					}
+				}
+
+				zval_dtor( &zv_attr );
+				zval_dtor( &zv_value );
+				zval_dtor( &zv_temp );
+			break;
+
+			default:
+				// Here to fill out the enum and keep the compilier quiet
+			break;
+		}
+
+		mf2parse_resolve_relative_node_attributes( object, xml_node->children );
+	}
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_resolve_base( zval *object )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
@@ -824,7 +877,7 @@ static zend_bool mf2parse_value_class_dt( zval *object, xmlNodePtr xml_node, zva
 				ZVAL_STRING( &zv_node_name, ( char * ) current_node->name );
 
 				if ( zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_img ) ) || zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_area ) ) ) {
-					// MF2_TRY_ZVAL_STRING_XMLATTR( zv_value, current_node, MF2_STR( str_alt ) );
+					// MF2_TRY_ZVAL_XMLATTR( zv_value, current_node, MF2_STR( str_alt ) );
 				} else if ( zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_data ) ) ) {
 					// MF2_TRY_ZVAL_XMLATTR_XMLBUFFER( zv_value, current_node, MF2_STR( str_value ) );
 				} else if ( zend_string_equals( Z_STR( zv_node_name ), MF2_STR( str_abbr ) ) ) {
@@ -1324,12 +1377,14 @@ static void mf2parse_e_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 	ZVAL_NULL( &zv_html );
 	ZVAL_NULL( &zv_value );
 
-	// TODO: using xmlSaveTree is unlikely to match the specified serialization algorithm's output in all cases
-
 	xmlBufferPtr buffer = xmlBufferCreate();
 	xmlSaveCtxtPtr ctxt = xmlSaveToBuffer( buffer, NULL, 0 );
 
+	// TODO: as written, resolving relative attributes changes the document, is this a problem?
+
 	xmlNodePtr current_node = xml_node->children;
+	mf2parse_resolve_relative_node_attributes( object, current_node );
+
 	while ( current_node ) {
 		xmlSaveTree( ctxt, current_node );
 		current_node = current_node->next;
