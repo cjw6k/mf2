@@ -100,5 +100,6 @@
 	X(reviewed) \
 	X(include) \
 	X(itemref) \
+	X(headers) \
 
 #endif /* MF2_STR_DEFS_H */

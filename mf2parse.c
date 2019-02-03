@@ -2876,6 +2876,13 @@ static zend_bool mf2parse_has_include_pattern( zval *object, xmlNodePtr xml_node
 /**
  * @since 0.1.0
  */
+static zend_bool mf2parse_has_table_headers( zval *object, xmlNodePtr xml_node ) {
+	return xmlHasProp( xml_node, ( xmlChar * ) ZSTR_VAL( MF2_STR( str_headers ) ) ) ? 1 : 0;
+}
+
+/**
+ * @since 0.1.0
+ */
 static void mf2parse_referenced_node_id( zval *object, zval *zv_id, zend_bool skip_first_char )
 {
 	smart_str ss_xpath = {0};
@@ -2981,6 +2988,24 @@ static void mf2parse_microdata( zval *object, xmlNodePtr xml_node )
 /**
  * @since 0.1.0
  */
+static void mf2parse_table_headers( zval *object, xmlNodePtr xml_node )
+{
+	zval zv_id;
+	MF2_TRY_ZVAL_XMLATTR( zv_id, xml_node, MF2_STR( str_headers ) );
+
+	if ( IS_NULL == Z_TYPE( zv_id ) ) {
+		zval_dtor( &zv_id );
+		return;
+	}
+
+	mf2parse_referenced_node_id( object, &zv_id, 0 );
+
+	zval_dtor( &zv_id );
+}
+
+/**
+ * @since 0.1.0
+ */
 void mf2parse_xml_node( zval *object, xmlNodePtr xml_node, zend_bool no_siblings )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
@@ -3029,6 +3054,15 @@ void mf2parse_xml_node( zval *object, xmlNodePtr xml_node, zend_bool no_siblings
 
 				// ZZZzzzZZZzzz ...
 				mf2parse_microdata( object, current_node );
+				if (
+					IS_NULL != Z_TYPE( zv_mf )
+					&&
+					1 == Z_MF2MFOBJ_P( &zv_mf )->version
+					&&
+					mf2parse_has_table_headers( object, current_node )
+				) {
+					mf2parse_table_headers( object, current_node );
+				}
 
 				// Good morning!
 				mf2parse->context = previous_context;

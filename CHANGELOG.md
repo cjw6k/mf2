@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- TEST: mf-test-suite/v1/includes/table
 - TEST: mf-test-suite/v1/includes/heventitemref
 - TEST: mf-test-suite/v1/includes/hcarditemref
 - TEST: mf-test-suite/v1/includes/object
