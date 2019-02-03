@@ -1026,6 +1026,71 @@ static void mf2parse_p_property( zval *object, zval *zv_mf, zval *zv_name, xmlNo
 	// Catch-all: textContent
 	} else {
 		mf2parse_clean_text_content_with_img_src( object, xml_node->children, &zv_value );
+
+		// Include itemref textContent, only for backcompat roots
+		if (
+			1 == Z_MF2MFOBJ_P( zv_mf )->version
+			&&
+			xmlHasProp( xml_node, ( xmlChar *) ZSTR_VAL( MF2_STR( str_itemref ) ) )
+		) {
+			smart_str ss_with_microdata = {0};
+			smart_str_appends( &ss_with_microdata, Z_STRVAL( zv_value ) );
+
+			zval zv_itemref;
+			ZVAL_NULL( &zv_itemref );
+			MF2_TRY_ZVAL_XMLATTR( zv_itemref, xml_node, MF2_STR( str_itemref ) );
+
+			if ( IS_NULL != Z_TYPE( zv_itemref ) ) {
+				char *search_class = NULL, *last = NULL;
+				zval zv_search_class;
+				ZVAL_NULL( &zv_search_class );
+				search_class = php_strtok_r( Z_STRVAL( zv_itemref ), " ", &last );
+
+				zval zv_classes;
+				ZVAL_NULL( &zv_classes );
+				MF2_TRY_ZVAL_XMLATTR( zv_classes, xml_node, MF2_STR( str_class ) );
+
+				while( search_class ) {
+					ZVAL_STRING( &zv_search_class, search_class );
+
+					smart_str ss_xpath = {0};
+					smart_str_appendl( &ss_xpath, "//*[@id='", sizeof( "//*[@id='" ) - 1 );
+
+					smart_str_appendl( &ss_xpath, Z_STRVAL( zv_search_class ), Z_STRLEN( zv_search_class ) );
+
+					smart_str_appendl( &ss_xpath, "']", sizeof( "']" ) - 1 );
+					smart_str_0( &ss_xpath );
+
+					xmlXPathObjectPtr xpath_results;
+					xmlXPathContextPtr xpath_context = xmlXPathNewContext( Z_MF2PARSEOBJ_P( object )->document );
+
+					xpath_results = xmlXPathEval( ( xmlChar * ) ZSTR_VAL( ss_xpath.s ), xpath_context );
+					smart_str_free( &ss_xpath );
+
+					if ( xpath_results ) {
+						if ( ! xmlXPathNodeSetIsEmpty( xpath_results->nodesetval ) ) {
+							MF2_SMART_STR_XMLBUFFER( ss_with_microdata, xpath_results->nodesetval->nodeTab[0] );
+						}
+
+						xmlXPathFreeObject( xpath_results );
+					}
+
+					xmlXPathFreeContext( xpath_context );
+
+					smart_str_0( &ss_with_microdata );
+					mf2_trim_html_space_chars( &zv_value, ZSTR_VAL( ss_with_microdata.s ) );
+					smart_str_free( &ss_with_microdata );
+
+					search_class = php_strtok_r( NULL, " ", &last );
+					zval_dtor( &zv_search_class );
+				}
+
+				zval_dtor( &zv_classes );
+			}
+
+			zval_dtor( &zv_itemref );
+		}
+
 		mf2_trim_html_space_chars( &zv_value, Z_STRVAL( zv_value ) );
 	}
 
@@ -2955,14 +3020,15 @@ void mf2parse_xml_node( zval *object, xmlNodePtr xml_node, zend_bool no_siblings
 
 					// "It is nearly time for the news, and ..."
 					mf2parse->context = &zv_mf;
-
-					mf2parse_microdata( object, current_node );
 				}
 
 				// "... there has been enough magic for one day," said Zebedee.
 				if ( current_node->children ) {
 					mf2parse_xml_node( object, current_node->children, 0 );
 				}
+
+				// ZZZzzzZZZzzz ...
+				mf2parse_microdata( object, current_node );
 
 				// Good morning!
 				mf2parse->context = previous_context;
