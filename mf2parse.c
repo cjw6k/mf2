@@ -29,6 +29,7 @@
 #include "ext/libxml/php_libxml.h"
 #include "ext/date/php_date.h"
 #include "ext/pcre/php_pcre.h"
+#include "ext/standard/php_var.h"
 
 #include "mf2.h"
 #include "php_mf2.h"
@@ -2810,7 +2811,43 @@ static zend_bool mf2parse_has_include_pattern( zval *object, xmlNodePtr xml_node
 /**
  * @since 0.1.0
  */
-static void mf2parse_include_pattern( zval *object, xmlNodePtr xml_node ) {
+static void mf2parse_referenced_node_id( zval *object, zval *zv_id, zend_bool skip_first_char )
+{
+	smart_str ss_xpath = {0};
+	smart_str_appendl( &ss_xpath, "//*[@id='", sizeof( "//*[@id='" ) - 1 );
+
+	if ( skip_first_char ) {
+		// Using [1] as start of zv_id cstr, skips # char
+		smart_str_appendl( &ss_xpath, &( Z_STRVAL_P( zv_id )[1] ), Z_STRLEN_P( zv_id ) - 1 );
+	} else {
+		smart_str_appendl( &ss_xpath, Z_STRVAL_P( zv_id ), Z_STRLEN_P( zv_id ) );
+	}
+
+	smart_str_appendl( &ss_xpath, "']", sizeof( "']" ) - 1 );
+	smart_str_0( &ss_xpath );
+
+	xmlXPathObjectPtr xpath_results;
+	xmlXPathContextPtr xpath_context = xmlXPathNewContext( Z_MF2PARSEOBJ_P( object )->document );
+
+	xpath_results = xmlXPathEval( ( xmlChar * ) ZSTR_VAL( ss_xpath.s ), xpath_context );
+	smart_str_free( &ss_xpath );
+
+	if ( xpath_results ) {
+		if ( ! xmlXPathNodeSetIsEmpty( xpath_results->nodesetval ) ) {
+			mf2parse_xml_node( object, xpath_results->nodesetval->nodeTab[0], 1 );
+		}
+
+		xmlXPathFreeObject( xpath_results );
+	}
+
+	xmlXPathFreeContext( xpath_context );
+}
+
+/**
+ * @since 0.1.0
+ */
+static void mf2parse_include_pattern( zval *object, xmlNodePtr xml_node )
+{
 	zval zv_id;
 	zend_string *zs_name = zend_string_init( ( char * ) xml_node->name, xmlStrlen( xml_node->name ), 0 );
 
@@ -2837,38 +2874,49 @@ static void mf2parse_include_pattern( zval *object, xmlNodePtr xml_node ) {
 		return;
 	}
 
-	smart_str ss_xpath = {0};
-	smart_str_appendl( &ss_xpath, "//*[@id='", sizeof( "//*[@id='" ) - 1 );
-
-	// Using [1] as start of zv_id cstr, skips # char
-	smart_str_appendl( &ss_xpath, &( Z_STRVAL( zv_id )[1] ), Z_STRLEN( zv_id ) - 1 );
-
-	smart_str_appendl( &ss_xpath, "']", sizeof( "']" ) - 1 );
-	smart_str_0( &ss_xpath );
+	mf2parse_referenced_node_id( object, &zv_id, 1 );
 
 	zval_dtor( &zv_id );
-
-	xmlXPathObjectPtr xpath_results;
-	xmlXPathContextPtr xpath_context = xmlXPathNewContext( Z_MF2PARSEOBJ_P( object )->document );
-
-	xpath_results = xmlXPathEval( ( xmlChar * ) ZSTR_VAL( ss_xpath.s ), xpath_context );
-	smart_str_free( &ss_xpath );
-
-	if ( xpath_results ) {
-		if ( ! xmlXPathNodeSetIsEmpty( xpath_results->nodesetval ) ) {
-			mf2parse_xml_node( object, xpath_results->nodesetval->nodeTab[0] );
-		}
-
-		xmlXPathFreeObject( xpath_results );
-	}
-
-	xmlXPathFreeContext( xpath_context );
 }
 
 /**
  * @since 0.1.0
  */
-void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
+static void mf2parse_microdata( zval *object, xmlNodePtr xml_node )
+{
+	zval zv_itemref;
+	ZVAL_NULL( &zv_itemref );
+	MF2_TRY_ZVAL_XMLATTR( zv_itemref, xml_node, MF2_STR( str_itemref ) );
+
+	if ( IS_NULL != Z_TYPE( zv_itemref ) ) {
+		char *search_class = NULL, *last = NULL;
+		zval zv_search_class;
+		ZVAL_NULL( &zv_search_class );
+		search_class = php_strtok_r( Z_STRVAL( zv_itemref ), " ", &last );
+
+		zval zv_classes;
+		ZVAL_NULL( &zv_classes );
+		MF2_TRY_ZVAL_XMLATTR( zv_classes, xml_node, MF2_STR( str_class ) );
+
+		while( search_class ) {
+			ZVAL_STRING( &zv_search_class, search_class );
+
+			mf2parse_referenced_node_id( object, &zv_search_class, 0 );
+
+			search_class = php_strtok_r( NULL, " ", &last );
+			zval_dtor( &zv_search_class );
+		}
+
+		zval_dtor( &zv_classes );
+	}
+
+	zval_dtor( &zv_itemref );
+}
+
+/**
+ * @since 0.1.0
+ */
+void mf2parse_xml_node( zval *object, xmlNodePtr xml_node, zend_bool no_siblings )
 {
 	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
 	xmlNodePtr current_node;
@@ -2899,12 +2947,22 @@ void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 				// Rel and Rel-URL parsing
 				mf2parse_get_rels( object, current_node );
 
-				// Recurse
+				// "Time for bed," said Zebedee.
 				previous_context = mf2parse->context;
+
+				// "Already?" asked Florence.
 				if ( IS_NULL != Z_TYPE( zv_mf ) ) {
+
+					// "It is nearly time for the news, and ..."
 					mf2parse->context = &zv_mf;
+
+					mf2parse_microdata( object, current_node );
 				}
-				mf2parse_xml_node( object, current_node->children );
+
+				// "... there has been enough magic for one day," said Zebedee.
+				if ( current_node->children ) {
+					mf2parse_xml_node( object, current_node->children, 0 );
+				}
 
 				// Good morning!
 				mf2parse->context = previous_context;
@@ -2926,6 +2984,10 @@ void mf2parse_xml_node( zval *object, xmlNodePtr xml_node )
 
 			default:
 				// Here to cover all the set in the ENUM and keep the compiler happy.
+			break;
+		}
+
+		if ( no_siblings ) {
 			break;
 		}
 	}
@@ -2976,7 +3038,7 @@ void mf2parse_new( zval *object, char *data, size_t data_length, zend_bool data_
 
 	mf2parse_resolve_base( object );
 
-	mf2parse_xml_node( object, xmlDocGetRootElement( mf2parse->document ) );
+	mf2parse_xml_node( object, xmlDocGetRootElement( mf2parse->document ), 0 );
 }
 
 #endif /* HAVE_MF2 */

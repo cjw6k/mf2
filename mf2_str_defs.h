@@ -99,5 +99,6 @@
 	X(author) \
 	X(reviewed) \
 	X(include) \
+	X(itemref) \
 
 #endif /* MF2_STR_DEFS_H */
