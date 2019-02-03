@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
-- TEST: mf-test-suite/mixed/h-card/mixedroots
+- TEST: mf-test-suite/mixed/h-card/tworoots
+- TEST: mf-test-suite/mixed/h-entry/mixedroots
 - TEST: mf-test-suite/mixed/h-resume/mixedroots
 - TEST: mf-test-suite/v1/includes/table
 - TEST: mf-test-suite/v1/includes/heventitemref
