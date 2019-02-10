@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Builds as a shared extension
 - Compatible PHP-7.3
 - Compatible PHP-7.2
 - Compatible PHP-7.1

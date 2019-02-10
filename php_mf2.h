@@ -20,8 +20,8 @@
 
 #define PHP_MF2_VERSION "0.1.0"
 
-extern zend_module_entry php_mf2_module_entry;
-#define phpext_mf2_ptr &php_mf2_module_entry
+extern zend_module_entry mf2_module_entry;
+#define phpext_mf2_ptr &mf2_module_entry
 
 /* MF2Parse() options */
 #define PHP_MF2_NOWARNING       0x01 // 1 << 1

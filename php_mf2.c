@@ -107,7 +107,7 @@ static const zend_function_entry php_mf2_functions[] = {
 	PHP_FE_END
 };
 
-zend_module_entry php_mf2_module_entry = {
+zend_module_entry mf2_module_entry = {
 	STANDARD_MODULE_HEADER_EX, NULL,
 	php_mf2_deps,
 	"mf2",
