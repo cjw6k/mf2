@@ -3,7 +3,14 @@
 mf2 is an extension for PHP providing microformats2 parsing.
 
 ## Installation
-T.B.D.
+Requires installation of the php-dev package (for phpize).
+```unix
+phpize
+./configure
+make
+sudo make install
+```
+Additionally, configure php to load the mf2.so by editing your .ini files.
 
 ## Usage
 * To parse microformats from HTML, use `$parse = mf2_parse($html, $url)`, where `$url` is the URL from which the `$html` was loaded, if any. This parameter is required for correct relative URL parsing and must not be left out unless parsing HTML which contains no relative URLs.
