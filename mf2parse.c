@@ -164,7 +164,7 @@ static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_va
 	}
 
 	if ( relative_url_parts->path ) {
-#if PHP_VERSION_ID >= 70303
+#if PHP_VERSION_ID >= 70300
 		if ( *ZSTR_VAL(relative_url_parts->path) != *path_separator ) {
 #else
 		if ( *relative_url_parts->path != *path_separator ) {
