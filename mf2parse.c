@@ -128,7 +128,7 @@ static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_va
 		return 0;
 	}
 
-#if PHP_VERSION_ID >= 70303
+#if PHP_VERSION_ID >= 70300
 #define SS_APPEND_URL_PART( _ss, _zstr ) smart_str_appends( _ss, ZSTR_VAL( _zstr ) )
 #else
 #define SS_APPEND_URL_PART( _ss, _cstr ) smart_str_appends( _ss, _cstr )
