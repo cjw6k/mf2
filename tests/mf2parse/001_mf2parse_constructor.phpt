@@ -99,18 +99,18 @@ unlink($filename);
 //var_dump($parse instanceof MF2Parse);
 
 ?>
---EXPECT--
+--EXPECTF--
 Exception: Data parameter is required
-TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string, null given
-TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string, array given
-TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string, object given
+TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string%s
+TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string%s
+TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string%s
 bool(true)
 bool(true)
-TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string, array given
-TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string, object given
+TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string%s
+TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string%s
 Exception: Invalid base URL
 Exception: Base URL must be absolute
 bool(true)
-TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type boolean, array given
-TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type boolean, object given
+TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type bool%s
+TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type bool%s
 bool(true)

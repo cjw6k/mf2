@@ -128,20 +128,26 @@ static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_va
 		return 0;
 	}
 
-	smart_str_appends( &smart_uri_str, !relative_url_parts->scheme ? mf2parse->php_base_url->scheme : relative_url_parts->scheme );
+#if PHP_VERSION_ID >= 70303
+#define SS_APPEND_URL_PART( _ss, _zstr ) smart_str_appends( _ss, ZSTR_VAL( _zstr ) )
+#else
+#define SS_APPEND_URL_PART( _ss, _cstr ) smart_str_appends( _ss, _cstr )
+#endif
+
+	SS_APPEND_URL_PART( &smart_uri_str, !relative_url_parts->scheme ? mf2parse->php_base_url->scheme : relative_url_parts->scheme );
 	smart_str_appends( &smart_uri_str, scheme_separator );
 
 	if ( !relative_url_parts->host ) {
 		zend_bool has_user_or_pass = 0;
 
 		if ( mf2parse->php_base_url->user ) {
-			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->user );
+			SS_APPEND_URL_PART( &smart_uri_str, mf2parse->php_base_url->user );
 			has_user_or_pass = 1;
 		}
 
 		if ( mf2parse->php_base_url->pass ) {
 			smart_str_appends( &smart_uri_str, user_or_host_separator );
-			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->pass );
+			SS_APPEND_URL_PART( &smart_uri_str, mf2parse->php_base_url->pass );
 			has_user_or_pass = 1;
 		}
 
@@ -149,7 +155,7 @@ static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_va
 			smart_str_appends( &smart_uri_str, user_pass_separator );
 		}
 
-		smart_str_appends( &smart_uri_str, mf2parse->php_base_url->host );
+		SS_APPEND_URL_PART( &smart_uri_str, mf2parse->php_base_url->host );
 
 		if ( mf2parse->php_base_url->port ) {
 			smart_str_appends( &smart_uri_str, user_or_host_separator );
@@ -158,47 +164,51 @@ static zend_bool mf2parse_resolve_relative_uri( zval *object, zval *zv_return_va
 	}
 
 	if ( relative_url_parts->path ) {
+#if PHP_VERSION_ID >= 70303
+		if ( *ZSTR_VAL(relative_url_parts->path) != *path_separator ) {
+#else
 		if ( *relative_url_parts->path != *path_separator ) {
+#endif
 			if ( mf2parse->php_base_url->path ) {
-				smart_str_appends( &smart_uri_str, mf2parse->php_base_url->path );
+				SS_APPEND_URL_PART( &smart_uri_str, mf2parse->php_base_url->path );
 			} else {
 				smart_str_appends( &smart_uri_str, path_separator );
 			}
-			smart_str_appends( &smart_uri_str, relative_url_parts->path );
+			SS_APPEND_URL_PART( &smart_uri_str, relative_url_parts->path );
 		} else {
-			smart_str_appends( &smart_uri_str, relative_url_parts->path );
+			SS_APPEND_URL_PART( &smart_uri_str, relative_url_parts->path );
 		}
 
 		if ( relative_url_parts->query ) {
 			smart_str_appends( &smart_uri_str, query_separator );
-			smart_str_appends( &smart_uri_str, relative_url_parts->query );
+			SS_APPEND_URL_PART( &smart_uri_str, relative_url_parts->query );
 		}
 
 		if ( relative_url_parts->fragment ) {
 			smart_str_appends( &smart_uri_str, fragment_separator );
-			smart_str_appends( &smart_uri_str, relative_url_parts->fragment );
+			SS_APPEND_URL_PART( &smart_uri_str, relative_url_parts->fragment );
 		}
 	} else {
 		if ( mf2parse->php_base_url->path ) {
-			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->path );
+			SS_APPEND_URL_PART( &smart_uri_str, mf2parse->php_base_url->path );
 		} else {
 			smart_str_appends( &smart_uri_str, path_separator );
 		}
 
 		if ( relative_url_parts->query ) {
 			smart_str_appends( &smart_uri_str, query_separator );
-			smart_str_appends( &smart_uri_str, relative_url_parts->query );
+			SS_APPEND_URL_PART( &smart_uri_str, relative_url_parts->query );
 		} else if ( mf2parse->php_base_url->query ) {
 			smart_str_appends( &smart_uri_str, query_separator );
-			smart_str_appends( &smart_uri_str, mf2parse->php_base_url->query );
+			SS_APPEND_URL_PART( &smart_uri_str, mf2parse->php_base_url->query );
 		}
 
 		if ( relative_url_parts->fragment ) {
 			smart_str_appends( &smart_uri_str, fragment_separator );
-			smart_str_appends( &smart_uri_str, relative_url_parts->fragment );
+			SS_APPEND_URL_PART( &smart_uri_str, relative_url_parts->fragment );
 		} else if ( mf2parse->php_base_url->fragment ) {
 			smart_str_appends( &smart_uri_str, fragment_separator );
-			smart_str_appends( &smart_uri_str,  mf2parse->php_base_url->fragment );
+			SS_APPEND_URL_PART( &smart_uri_str,  mf2parse->php_base_url->fragment );
 		}
 	}
 
