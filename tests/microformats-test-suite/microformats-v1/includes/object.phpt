@@ -22,16 +22,7 @@ array(3) {
       ["start"]=>
       array(1) {
         [0]=>
-        object(DateTime)#3 (4) {
-          ["value"]=>
-          string(25) "2012-10-30T11:45:00-08:00"
-          ["date"]=>
-          string(26) "2012-10-30 11:45:00.000000"
-          ["timezone_type"]=>
-          int(1)
-          ["timezone"]=>
-          string(6) "-08:00"
-        }
+        string(25) "2012-10-30T11:45:00-08:00"
       }
       ["name"]=>
       array(1) {
@@ -41,7 +32,7 @@ array(3) {
       ["location"]=>
       array(1) {
         [0]=>
-        object(MF2Microformat)#4 (3) {
+        object(MF2Microformat)#3 (3) {
           ["type"]=>
           array(1) {
             [0]=>
@@ -74,7 +65,7 @@ array(3) {
     }
   }
   [1]=>
-  object(MF2Microformat)#5 (2) {
+  object(MF2Microformat)#4 (2) {
     ["type"]=>
     array(1) {
       [0]=>
@@ -85,16 +76,7 @@ array(3) {
       ["start"]=>
       array(1) {
         [0]=>
-        object(DateTime)#6 (4) {
-          ["value"]=>
-          string(25) "2012-10-31T11:15:00-08:00"
-          ["date"]=>
-          string(26) "2012-10-31 11:15:00.000000"
-          ["timezone_type"]=>
-          int(1)
-          ["timezone"]=>
-          string(6) "-08:00"
-        }
+        string(25) "2012-10-31T11:15:00-08:00"
       }
       ["name"]=>
       array(1) {
@@ -104,7 +86,7 @@ array(3) {
       ["location"]=>
       array(1) {
         [0]=>
-        object(MF2Microformat)#7 (3) {
+        object(MF2Microformat)#5 (3) {
           ["type"]=>
           array(1) {
             [0]=>
@@ -137,7 +119,7 @@ array(3) {
     }
   }
   [2]=>
-  object(MF2Microformat)#8 (2) {
+  object(MF2Microformat)#6 (2) {
     ["type"]=>
     array(1) {
       [0]=>

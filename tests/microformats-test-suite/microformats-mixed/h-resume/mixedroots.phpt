@@ -86,16 +86,7 @@ array(1) {
             ["start"]=>
             array(1) {
               [0]=>
-              object(DateTime)#5 (4) {
-                ["value"]=>
-                string(10) "2009-01-18"
-                ["date"]=>
-                string(26) "2009-01-18 00:00:00.000000"
-                ["timezone_type"]=>
-                int(3)
-                ["timezone"]=>
-                string(3) "UTC"
-              }
+              string(10) "2009-01-18"
             }
             ["duration"]=>
             array(1) {

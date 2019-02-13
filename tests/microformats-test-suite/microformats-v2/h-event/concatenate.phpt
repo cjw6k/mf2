@@ -27,30 +27,12 @@ array(1) {
       ["start"]=>
       array(1) {
         [0]=>
-        object(DateTime)#3 (4) {
-          ["value"]=>
-          string(22) "2009-06-26 19:00-06:00"
-          ["date"]=>
-          string(26) "2009-06-26 19:00:00.000000"
-          ["timezone_type"]=>
-          int(1)
-          ["timezone"]=>
-          string(6) "-06:00"
-        }
+        string(22) "2009-06-26 19:00-06:00"
       }
       ["end"]=>
       array(1) {
         [0]=>
-        object(DateTime)#4 (4) {
-          ["value"]=>
-          string(22) "2009-06-26 22:00-06:00"
-          ["date"]=>
-          string(26) "2009-06-26 22:00:00.000000"
-          ["timezone_type"]=>
-          int(1)
-          ["timezone"]=>
-          string(6) "-06:00"
-        }
+        string(22) "2009-06-26 22:00-06:00"
       }
     }
   }

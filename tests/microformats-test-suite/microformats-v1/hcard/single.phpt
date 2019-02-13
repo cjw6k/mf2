@@ -37,16 +37,7 @@ array(1) {
       ["bday"]=>
       array(1) {
         [0]=>
-        object(DateTime)#3 (4) {
-          ["value"]=>
-          string(25) "2000-01-01T00:00:00-08:00"
-          ["date"]=>
-          string(26) "2000-01-01 00:00:00.000000"
-          ["timezone_type"]=>
-          int(1)
-          ["timezone"]=>
-          string(6) "-08:00"
-        }
+        string(25) "2000-01-01T00:00:00-08:00"
       }
       ["role"]=>
       array(1) {
@@ -56,7 +47,7 @@ array(1) {
       ["geo"]=>
       array(1) {
         [0]=>
-        object(MF2Microformat)#4 (3) {
+        object(MF2Microformat)#3 (3) {
           ["type"]=>
           array(1) {
             [0]=>
@@ -87,16 +78,7 @@ array(1) {
       ["rev"]=>
       array(1) {
         [0]=>
-        object(DateTime)#5 (4) {
-          ["value"]=>
-          string(19) "2008-01-01T13:45:00"
-          ["date"]=>
-          string(26) "2008-01-01 13:45:00.000000"
-          ["timezone_type"]=>
-          int(3)
-          ["timezone"]=>
-          string(3) "UTC"
-        }
+        string(19) "2008-01-01T13:45:00"
       }
     }
   }

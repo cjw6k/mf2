@@ -55,16 +55,7 @@ object(MF2Parse)#1 (3) {
         ["reviewed"]=>
         array(1) {
           [0]=>
-          object(DateTime)#4 (4) {
-            ["value"]=>
-            string(10) "2005-04-18"
-            ["date"]=>
-            string(26) "2005-04-18 00:00:00.000000"
-            ["timezone_type"]=>
-            int(3)
-            ["timezone"]=>
-            string(3) "UTC"
-          }
+          string(10) "2005-04-18"
         }
         ["description"]=>
         array(1) {
@@ -93,7 +84,7 @@ object(MF2Parse)#1 (3) {
         ["item"]=>
         array(1) {
           [0]=>
-          object(MF2Microformat)#5 (3) {
+          object(MF2Microformat)#4 (3) {
             ["type"]=>
             array(1) {
               [0]=>
@@ -114,7 +105,7 @@ object(MF2Parse)#1 (3) {
               ["adr"]=>
               array(1) {
                 [0]=>
-                object(MF2Microformat)#6 (3) {
+                object(MF2Microformat)#5 (3) {
                   ["type"]=>
                   array(1) {
                     [0]=>

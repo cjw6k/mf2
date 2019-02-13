@@ -27,16 +27,7 @@ array(1) {
       ["start"]=>
       array(1) {
         [0]=>
-        object(DateTime)#3 (4) {
-          ["value"]=>
-          string(10) "2012-10-10"
-          ["date"]=>
-          string(26) "2012-10-10 00:00:00.000000"
-          ["timezone_type"]=>
-          int(3)
-          ["timezone"]=>
-          string(3) "UTC"
-        }
+        string(10) "2012-10-10"
       }
       ["location"]=>
       array(1) {
@@ -46,7 +37,7 @@ array(1) {
       ["attendee"]=>
       array(4) {
         [0]=>
-        object(MF2Microformat)#4 (3) {
+        object(MF2Microformat)#3 (3) {
           ["type"]=>
           array(1) {
             [0]=>
@@ -64,7 +55,7 @@ array(1) {
           string(12) "Brian Warner"
         }
         [1]=>
-        object(MF2Microformat)#5 (3) {
+        object(MF2Microformat)#4 (3) {
           ["type"]=>
           array(1) {
             [0]=>
@@ -82,7 +73,7 @@ array(1) {
           string(13) "Kyle Machulis"
         }
         [2]=>
-        object(MF2Microformat)#6 (3) {
+        object(MF2Microformat)#5 (3) {
           ["type"]=>
           array(1) {
             [0]=>
@@ -100,7 +91,7 @@ array(1) {
           string(13) "Tantek Çelik"
         }
         [3]=>
-        object(MF2Microformat)#7 (3) {
+        object(MF2Microformat)#6 (3) {
           ["type"]=>
           array(1) {
             [0]=>

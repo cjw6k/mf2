@@ -43,16 +43,7 @@ array(1) {
             ["start"]=>
             array(1) {
               [0]=>
-              object(DateTime)#4 (4) {
-                ["value"]=>
-                string(10) "2012-11-09"
-                ["date"]=>
-                string(26) "2012-11-09 00:00:00.000000"
-                ["timezone_type"]=>
-                int(3)
-                ["timezone"]=>
-                string(3) "UTC"
-              }
+              string(10) "2012-11-09"
             }
           }
           ["value"]=>

@@ -121,16 +121,7 @@ array(1) {
           ["updated"]=>
           array(1) {
             [0]=>
-            object(DateTime)#5 (4) {
-              ["value"]=>
-              string(19) "2012-06-25T17:08:26"
-              ["date"]=>
-              string(26) "2012-06-25 17:08:26.000000"
-              ["timezone_type"]=>
-              int(3)
-              ["timezone"]=>
-              string(3) "UTC"
-            }
+            string(19) "2012-06-25T17:08:26"
           }
         }
       }

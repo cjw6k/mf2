@@ -32,35 +32,17 @@ array(1) {
       ["start"]=>
       array(1) {
         [0]=>
-        object(DateTime)#3 (4) {
-          ["value"]=>
-          string(10) "2012-06-30"
-          ["date"]=>
-          string(26) "2012-06-30 00:00:00.000000"
-          ["timezone_type"]=>
-          int(3)
-          ["timezone"]=>
-          string(3) "UTC"
-        }
+        string(10) "2012-06-30"
       }
       ["end"]=>
       array(1) {
         [0]=>
-        object(DateTime)#4 (4) {
-          ["value"]=>
-          string(10) "2012-07-01"
-          ["date"]=>
-          string(26) "2012-07-01 00:00:00.000000"
-          ["timezone_type"]=>
-          int(3)
-          ["timezone"]=>
-          string(3) "UTC"
-        }
+        string(10) "2012-07-01"
       }
       ["location"]=>
       array(1) {
         [0]=>
-        object(MF2Microformat)#5 (3) {
+        object(MF2Microformat)#3 (3) {
           ["type"]=>
           array(1) {
             [0]=>

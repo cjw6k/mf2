@@ -149,21 +149,12 @@ array(1) {
       ["published"]=>
       array(1) {
         [0]=>
-        object(DateTime)#4 (4) {
-          ["value"]=>
-          string(10) "2011-10-27"
-          ["date"]=>
-          string(26) "2011-10-27 00:00:00.000000"
-          ["timezone_type"]=>
-          int(3)
-          ["timezone"]=>
-          string(3) "UTC"
-        }
+        string(10) "2011-10-27"
       }
       ["author"]=>
       array(1) {
         [0]=>
-        object(MF2Microformat)#5 (3) {
+        object(MF2Microformat)#4 (3) {
           ["type"]=>
           array(1) {
             [0]=>

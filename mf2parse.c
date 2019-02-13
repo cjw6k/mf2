@@ -1369,6 +1369,11 @@ static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlN
 		return;
 	}
 
+	/*
+	 * This section breaks with the spec. Is it _really_ necessary?
+	 * Was done because it was possible, not strictly because necessary.
+	 * Easily undone isn't it?
+	 *
 	zval zv_datetime;
 	php_date_instantiate( php_date_get_date_ce(), &zv_datetime );
 
@@ -1381,6 +1386,9 @@ static void mf2parse_dt_property( zval *object, zval *zv_mf, zval *zv_name, xmlN
 
 	zval_dtor( &zv_value );
 	zval_ptr_dtor( &zv_datetime );
+	*/
+	mf2microformat_add_property( zv_mf, zv_name, &zv_value );
+	zval_dtor( &zv_value );
 }
 
 /**

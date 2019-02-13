@@ -81,30 +81,12 @@ array(1) {
             ["start"]=>
             array(1) {
               [0]=>
-              object(DateTime)#5 (4) {
-                ["value"]=>
-                string(7) "1973-09"
-                ["date"]=>
-                string(26) "1973-09-01 00:00:00.000000"
-                ["timezone_type"]=>
-                int(3)
-                ["timezone"]=>
-                string(3) "UTC"
-              }
+              string(7) "1973-09"
             }
             ["end"]=>
             array(1) {
               [0]=>
-              object(DateTime)#6 (4) {
-                ["value"]=>
-                string(7) "1976-06"
-                ["date"]=>
-                string(26) "1976-06-01 00:00:00.000000"
-                ["timezone_type"]=>
-                int(3)
-                ["timezone"]=>
-                string(3) "UTC"
-              }
+              string(7) "1976-06"
             }
           }
           ["value"]=>

@@ -81,21 +81,12 @@ object(MF2Parse)#1 (3) {
               ["updated"]=>
               array(1) {
                 [0]=>
-                object(DateTime)#4 (4) {
-                  ["value"]=>
-                  string(19) "2012-06-25T17:08:26"
-                  ["date"]=>
-                  string(26) "2012-06-25 17:08:26.000000"
-                  ["timezone_type"]=>
-                  int(3)
-                  ["timezone"]=>
-                  string(3) "UTC"
-                }
+                string(19) "2012-06-25T17:08:26"
               }
               ["author"]=>
               array(1) {
                 [0]=>
-                object(MF2Microformat)#5 (3) {
+                object(MF2Microformat)#4 (3) {
                   ["type"]=>
                   array(1) {
                     [0]=>
@@ -126,7 +117,7 @@ object(MF2Parse)#1 (3) {
         ["dateline"]=>
         array(1) {
           [0]=>
-          object(MF2Microformat)#6 (3) {
+          object(MF2Microformat)#5 (3) {
             ["type"]=>
             array(1) {
               [0]=>
@@ -137,7 +128,7 @@ object(MF2Parse)#1 (3) {
               ["adr"]=>
               array(1) {
                 [0]=>
-                object(MF2Microformat)#7 (3) {
+                object(MF2Microformat)#6 (3) {
                   ["type"]=>
                   array(1) {
                     [0]=>
@@ -170,7 +161,7 @@ object(MF2Parse)#1 (3) {
         ["geo"]=>
         array(1) {
           [0]=>
-          object(MF2Microformat)#8 (3) {
+          object(MF2Microformat)#7 (3) {
             ["type"]=>
             array(1) {
               [0]=>
@@ -186,7 +177,7 @@ object(MF2Parse)#1 (3) {
         ["source-org"]=>
         array(1) {
           [0]=>
-          object(MF2Microformat)#9 (3) {
+          object(MF2Microformat)#8 (3) {
             ["type"]=>
             array(1) {
               [0]=>
