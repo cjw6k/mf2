@@ -32,6 +32,9 @@ mf2_str_globals str_globals_mf2;
 	"/(?<=\\s|^)h-((?:[a-z0-9]+-)?[a-z]+(?:-[a-z]+)*)(?=\\s|$)/"
 
 #define MF2_REGEX_BACKCOMPAT_ROOTS \
+	"/(?<=\\s|^)(adr|geo|vevent|vcard|hentry|hfeed|hnews|hproduct|hreview|hreview-aggregate|hresume)(?=\\s|$)/"
+
+#define MF2_REGEX_BACKCOMPAT_ROOTS_WITH_ITEM \
 	"/(?<=\\s|^)(adr|geo|vevent|vcard|hentry|hfeed|hnews|hproduct|hreview|item|hreview-aggregate|hresume)(?=\\s|$)/"
 
 #define MF2_REGEX_PROPERTIES \

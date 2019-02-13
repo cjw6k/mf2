@@ -26,6 +26,7 @@ typedef struct _php_mf2parse_object {
 	xmlDocPtr document;
 	pcre_cache_entry *regex_roots;
 	pcre_cache_entry *regex_backcompat_roots;
+	pcre_cache_entry *regex_backcompat_roots_with_item;
 	pcre_cache_entry *regex_properties;
 	pcre_cache_entry *regex_backcompat_adr_properties;
 	pcre_cache_entry *regex_backcompat_geo_properties;

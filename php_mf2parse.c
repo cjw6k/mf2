@@ -73,6 +73,10 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 	mf2parse->regex_backcompat_roots = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );
 
+	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_ROOTS_WITH_ITEM, strlen( MF2_REGEX_BACKCOMPAT_ROOTS_WITH_ITEM ), 0 );
+	mf2parse->regex_backcompat_roots_with_item = pcre_get_compiled_regex_cache( tmp );
+	zend_string_free( tmp );
+
 	tmp = zend_string_init( MF2_REGEX_PROPERTIES, strlen( MF2_REGEX_PROPERTIES ), 0 );
 	mf2parse->regex_properties = pcre_get_compiled_regex_cache( tmp );
 	zend_string_free( tmp );

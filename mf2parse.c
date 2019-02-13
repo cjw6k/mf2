@@ -587,8 +587,17 @@ static zend_bool mf2parse_find_backcompat_roots( zval *object, zval *zv_mf, xmlN
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	// Classic Microformats (Backcompat) Roots
-	php_pcre_match_impl( mf2parse->regex_backcompat_roots, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	if (
+		( NULL != mf2parse->context )
+		&&
+		Z_MF2MFOBJ_P( mf2parse->context )->may_have_backcompat_item_root
+	) {
+		// Classic Microformats (Backcompat) Roots (includes item)
+		php_pcre_match_impl( mf2parse->regex_backcompat_roots_with_item, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	} else {
+		// Classic Microformats (Backcompat) Roots (excludes item)
+		php_pcre_match_impl( mf2parse->regex_backcompat_roots, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	}
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );

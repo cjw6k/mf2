@@ -20,6 +20,7 @@ typedef struct _php_mf2microformat_object {
 	zend_bool has_p_prop, has_u_prop, has_dt_prop, has_e_prop, has_nested_roots;
 	zval contexts;
 	zval date_context;
+	zend_bool may_have_backcompat_item_root;
 	zend_object zo;
 } php_mf2microformat_object;
 

@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Fixed
+- False positive: finding backcompat item roots out-of-context; TEST: issues/xxx_item_backcompat_roots_are_valid_only...
+
 ### Added
 - Builds as a shared extension
 - Compatible PHP-7.3

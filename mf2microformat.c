@@ -156,6 +156,7 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	 * @link http://microformats.org/wiki/hReview */
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_hreview ) ) ) {
 		smart_str_appends( &ss_type, "review" );
+		Z_MF2MFOBJ_P( object )->may_have_backcompat_item_root = 1;
 	} else if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_item ) ) ) {
 		smart_str_appends( &ss_type, "item" );
 
@@ -163,6 +164,7 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 	 * @link http://microformats.org/wiki/hreview-aggregate */
 	} else if ( 0 == strcasecmp( Z_STRVAL_P( zv_type ), "hreview-aggregate" ) ) {
 		smart_str_appends( &ss_type, "review-aggregate" );
+		Z_MF2MFOBJ_P( object )->may_have_backcompat_item_root = 1;
 
 	/** hResume.
 	 * @link http://microformats.org/wiki/hResume */
@@ -276,6 +278,8 @@ void mf2microformat_new( zval *object, xmlNodePtr xml_node )
 	php_mf2microformat_object *mf2mf = Z_MF2MFOBJ_P( object );
 	mf2mf->has_p_prop = mf2mf->has_u_prop = mf2mf->has_dt_prop = mf2mf->has_e_prop = 0;
 	mf2mf->has_nested_roots = 0;
+
+	mf2mf->may_have_backcompat_item_root = 0;
 }
 
 /**
