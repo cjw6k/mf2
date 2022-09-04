@@ -117,7 +117,7 @@ zend_bool mf2_string_in_array( zval *haystack, zend_string *needle )
  *
  * @return  int  Indicating which string is earlier in the order.
  */
-int mf2_strcasecmp( const struct _Bucket *first, const struct _Bucket *second )
+int mf2_strcasecmp( struct _Bucket *first, struct _Bucket *second )
 {
 	return strcasecmp( Z_STRVAL( first->val ), Z_STRVAL( second->val ) );
 }

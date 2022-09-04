@@ -91,7 +91,7 @@ mf2_str_globals str_globals_mf2;
 
 zend_bool mf2_in_array( zval *haystack, zval *needle );
 zend_bool mf2_string_in_array( zval *haystack, zend_string *needle );
-int mf2_strcasecmp( const struct _Bucket *first, const struct _Bucket *second );
+int mf2_strcasecmp( struct _Bucket *first, struct _Bucket *second );
 void mf2_trim_html_space_chars( zval *trimmed_string, char *string );
 zend_bool mf2_is_relative_url( php_url *url_parts );
 
