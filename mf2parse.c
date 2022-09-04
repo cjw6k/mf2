@@ -66,15 +66,15 @@ php_mf2parse_object *mf2parse_fetch_object( zend_object *object )
  *
  * @since 0.1.0
  *
- * @param  zval * object  The subject MF2Parse instance.
+ * @param  zend_object *  The subject MF2Parse instance.
  * @param  int * is_temp  Indicates if the return value should be a copy or a
  *                        reference to the memory.
  *
  * @return  HashTable *  The properties of the object.
  */
-HashTable *mf2parse_get_properties_ht( zval *object, int is_temp )
+HashTable *mf2parse_get_properties_ht(zend_object *object, int is_temp )
 {
-	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	php_mf2parse_object *mf2parse = mf2parse_fetch_object( object );
 	HashTable *ht;
 	zval items, rels, rel_urls;
 
