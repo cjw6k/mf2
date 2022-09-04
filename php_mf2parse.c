@@ -307,7 +307,7 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 			} else if ( 0 == strcmp( Z_STRVAL_P( member ), "rel-urls" ) ) { // TODO: make that a zend_string
 				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
 			} else {
-				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
+				result = zend_get_std_object_handlers()->has_property( Z_OBJ_P(object), Z_STR_P(member), has_set_exists, cache_slot );
 			}
 		break;
 
@@ -329,7 +329,7 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 			){
 				result = 1;
 			} else {
-				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
+				result = zend_get_std_object_handlers()->has_property(Z_OBJ_P(object), Z_STR_P(member), has_set_exists, cache_slot );
 			}
 		break;
 	}
@@ -371,7 +371,7 @@ zval *php_mf2parse_read_property_handler( zval *object, zval *zv_member, int typ
 	){
 		ZVAL_ARR( zv_return, mf2parse->rel_urls );
 	} else {
-		zv_result = zend_get_std_object_handlers()->read_property( object, zv_member, type, cache_slot, zv_return );
+		zv_result = zend_get_std_object_handlers()->read_property( Z_OBJ_P(object), Z_STR_P(zv_member), type, cache_slot, zv_return );
 		if ( zv_member == &zv_safe_member ) {
 			zval_dtor( zv_member );
 		}
