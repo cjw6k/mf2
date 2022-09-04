@@ -112,16 +112,13 @@ zend_bool mf2_string_in_array( zval *haystack, zend_string *needle )
  *
  * @since 0.1.0
  *
- * @param  const void * ida  A pointer to a hash bucket.
- * @param  const void * idb  A pointer to a hash bucket.
+ * @param  const struct _Bucket * first   A pointer to a bucket.
+ * @param  const struct _Bucket * second  A pointer to a bucket.
  *
  * @return  int  Indicating which string is earlier in the order.
  */
-int mf2_strcasecmp( const void *ida, const void *idb )
+int mf2_strcasecmp( const struct _Bucket *first, const struct _Bucket *second )
 {
-	Bucket *first = ( Bucket * ) ida;
-	Bucket *second = ( Bucket * ) idb;
-
 	return strcasecmp( Z_STRVAL( first->val ), Z_STRVAL( second->val ) );
 }
 
