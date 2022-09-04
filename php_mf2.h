@@ -35,4 +35,4 @@ extern zend_module_entry mf2_module_entry;
 /* Combined convenience option, it's the default if no options are specified */
 #define PHP_MF2_PARSE_HAPPY     0x1F // PHP_MF2_NOWARNING | PHP_MF2_NONOTICE | PHP_MF2_PARSE_RECOVER | PHP_MF2_PARSE_NOERROR | PHP_MF2_PARSE_NOWARNING
 
-#endif /* PHP_MF2 */
+#endif /* PHP_MF2_H */
