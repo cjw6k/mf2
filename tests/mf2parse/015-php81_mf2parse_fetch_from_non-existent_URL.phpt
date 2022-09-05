@@ -4,7 +4,7 @@ mf2: MF2Parse fetch and parse from a non-existent URL
 <?php
     if (!extension_loaded("mf2")) die("skip");
     if (getenv("SKIP_ONLINE_TESTS")) { die('skip online test'); }
-    if (PHP_VERSION_ID >= 80100) die("skip PHP < 8.1 only");
+    if (PHP_VERSION_ID < 80100) die("skip PHP >= 8.1 only");
 ?>
 --FILE--
 <?php
@@ -17,9 +17,9 @@ var_dump($parse);
 
 ?>
 --EXPECTF--
-Warning: MF2Parse::__construct(): php_network_getaddresses: getaddrinfo failed: Name or service not known in %s on line %d
+Warning: MF2Parse::__construct(): php_network_getaddresses: getaddrinfo for %s failed: Name or service not known in %s on line %d
 
-Warning: MF2Parse::__construct(%s): Failed to open stream: php_network_getaddresses: getaddrinfo failed: Name or service not known in %s on line %d
+Warning: MF2Parse::__construct(%s): Failed to open stream: php_network_getaddresses: getaddrinfo for %s failed: Name or service not known in %s on line %d
 
 Warning: MF2Parse::__construct(): I/O warning : failed to load external entity %s in %s on line %d
 bool(true)
