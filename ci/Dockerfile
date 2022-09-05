@@ -2,33 +2,6 @@ ARG PHP_VERSION="8.1-buster"
 
 
 ###
-### check-build-context
-###
-FROM php:${PHP_VERSION} as check-build-context
-
-ARG EXA_VERSION=0.10.1
-
-RUN apt-get update && apt-get install -y \
-    unzip \
- && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /usr/share/exa
-RUN curl -sLO https://github.com/ogham/exa/releases/download/v${EXA_VERSION}/exa-linux-x86_64-v${EXA_VERSION}.zip \
- && unzip exa-linux-x86_64-v${EXA_VERSION}.zip \
- && cp bin/exa /usr/local/bin/ \
- && cd .. \
- && rm exa -r
-
-WORKDIR /usr/share/check-build-context
-
-# TODO: is the required-for-good-ux-in-windows-10 chmod problematic?
-COPY --chmod=0644 . .
-
-ENTRYPOINT ["/usr/local/bin/exa"]
-CMD ["--tree", "--level=10", "--icons", "--colour=always"]
-
-
-###
 ### build
 ###
 FROM php:${PHP_VERSION} as build
@@ -110,3 +83,30 @@ ENV USE_ZEND_ALLOC=0
 
 ENTRYPOINT ["gdb"]
 CMD ["--args", "php", "-r", "echo PHP_EOL, ' -=-=-= hello, world! =-=-=-', PHP_EOL, PHP_EOL;"]
+
+
+###
+### check-build-context
+###
+FROM php:${PHP_VERSION} as check-build-context
+
+ARG EXA_VERSION=0.10.1
+
+RUN apt-get update && apt-get install -y \
+    unzip \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/share/exa
+RUN curl -sLO https://github.com/ogham/exa/releases/download/v${EXA_VERSION}/exa-linux-x86_64-v${EXA_VERSION}.zip \
+ && unzip exa-linux-x86_64-v${EXA_VERSION}.zip \
+ && cp bin/exa /usr/local/bin/ \
+ && cd .. \
+ && rm exa -r
+
+WORKDIR /usr/share/check-build-context
+
+# TODO: is the required-for-good-ux-in-windows-10 chmod problematic?
+COPY --chmod=0644 . .
+
+ENTRYPOINT ["/usr/local/bin/exa"]
+CMD ["--tree", "--level=10", "--icons", "--colour=always"]
