@@ -17,7 +17,6 @@ COPY . .
 RUN phpize \
  && EXTRA_CFLAGS='-Wall -Wextra -Wno-unused-parameter' \
     ./configure \
-      --with-libxml \
  && make -j2 \
  && make install
 

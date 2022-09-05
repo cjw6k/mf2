@@ -1,8 +1,27 @@
 name: CI
-on: push
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - "7.4"
+          - "8.0"
+          - "8.1"
+          - "8.2.0RC1"
     steps:
       - name: checkout
         uses: actions/checkout@v3
+      - name: build
+        run: docker build -t local -f ci/Dockerfile . --build-arg PHP_VERSION=${{ matrix.version }}
+      - name: test
+        run: docker run local
