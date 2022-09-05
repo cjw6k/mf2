@@ -1,4 +1,8 @@
 .dockerignore
 .git
+.github
 .gitignore
 ci/
+*.dep
+*.lo
+*.o
