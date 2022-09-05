@@ -378,9 +378,9 @@ ZEND_END_ARG_INFO()
 
 static const zend_function_entry php_mf2parse_functions[] = {
 	PHP_ME( MF2Parse, __construct, arginfo_mf2parse_construct, ZEND_ACC_PUBLIC )
-    #if HAVE_JSON
-        PHP_ME( MF2Parse, jsonSerialize, arginfo_mf2parse_jsonSerialize, ZEND_ACC_PUBLIC )
-    #endif
+#if HAVE_JSON
+    PHP_ME( MF2Parse, jsonSerialize, arginfo_mf2parse_jsonSerialize, ZEND_ACC_PUBLIC )
+#endif
 	PHP_FE_END
 };
 
