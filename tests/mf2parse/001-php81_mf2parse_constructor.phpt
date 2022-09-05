@@ -3,7 +3,7 @@ mf2: MF2Parse has a __construct method
 --SKIPIF--
 <?php
     if (!extension_loaded("mf2")) die("skip");
-    if (PHP_VERSION_ID >= 80100) die("skip PHP < 8.1 only");
+    if (PHP_VERSION_ID < 80100) die("skip PHP >= 8.1 only");
 ?>
 --FILE--
 <?php
@@ -104,6 +104,8 @@ unlink($filename);
 ?>
 --EXPECTF--
 Exception: Data parameter is required
+
+Deprecated: MF2Parse::__construct(): Passing null to parameter #1 ($data) of type string is deprecated%s
 TypeError: MF2Parse::__construct(): Argument #1 ($data) must be of type string%s
 TypeError: MF2Parse::__construct(): Argument #1 ($data) must be of type string%s
 bool(true)
