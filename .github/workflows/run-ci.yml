@@ -20,6 +20,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
       - name: build
-        run: docker build -t local -f ci/Dockerfile . --build-arg PHP_VERSION={{ matrix.version }}
+        run: docker build -t local -f ci/Dockerfile . --build-arg PHP_VERSION=${{ matrix.version }}
       - name: test
         run: docker run local
