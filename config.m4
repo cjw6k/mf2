@@ -16,7 +16,7 @@ fi
 if test "$PHP_MF2" != "no"; then
 
 	if test "$PHP_LIBXML" = "no"; then
-		AC_MSG_ERROR([mf2 extension requires LIBXML extension, add --enable-libxml])
+		AC_MSG_ERROR([mf2 extension requires LIBXML extension, add --with-libxml])
 	fi
 
 	PHP_SETUP_LIBXML(MF2_SHARED_LIBADD, [

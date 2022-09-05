@@ -91,7 +91,11 @@ extern mf2_str_globals str_globals_mf2;
 
 zend_bool mf2_in_array( zval *haystack, zval *needle );
 zend_bool mf2_string_in_array( zval *haystack, zend_string *needle );
+#if PHP_VERSION_ID < 80000
+int mf2_strcasecmp( const void *ida, const void *idb );
+#else
 int mf2_strcasecmp( struct _Bucket *first, struct _Bucket *second );
+#endif
 void mf2_trim_html_space_chars( zval *trimmed_string, char *string );
 zend_bool mf2_is_relative_url( php_url *url_parts );
 

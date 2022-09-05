@@ -3,7 +3,7 @@ mf2: MF2Parse has a __construct method
 --SKIPIF--
 <?php
     if (!extension_loaded("mf2")) die("skip");
-    if (PHP_VERSION_ID >= 80000) die("skip PHP < 8.0 only");
+    if (PHP_VERSION_ID < 80000 || PHP_VERSION_ID >= 80100) die("skip PHP 8.0 only");
 ?>
 --FILE--
 <?php
@@ -104,16 +104,15 @@ unlink($filename);
 ?>
 --EXPECTF--
 Exception: Data parameter is required
-TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string%s
-TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string%s
-TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string%s
+TypeError: MF2Parse::__construct(): Argument #1 ($data) must be of type string%s
+TypeError: MF2Parse::__construct(): Argument #1 ($data) must be of type string%s
 bool(true)
 bool(true)
-TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string%s
-TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string%s
+TypeError: MF2Parse::__construct(): Argument #2 ($base_url) must be of type ?string%s
+TypeError: MF2Parse::__construct(): Argument #2 ($base_url) must be of type ?string%s
 Exception: Invalid base URL
 Exception: Base URL must be absolute
 bool(true)
-TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type bool%s
-TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type bool%s
+TypeError: MF2Parse::__construct(): Argument #3 ($data_is_uri) must be of type ?bool%s
+TypeError: MF2Parse::__construct(): Argument #3 ($data_is_uri) must be of type ?bool%s
 bool(true)
