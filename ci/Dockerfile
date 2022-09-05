@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/share/microformats
-COPY *.* .
+COPY *.* ./
 
 RUN phpize \
  && EXTRA_CFLAGS='-Wall -Wextra -Wno-unused-parameter' \
@@ -22,7 +22,7 @@ RUN phpize \
 
 RUN docker-php-ext-enable mf2
 
-COPY tests tests
+COPY tests tests/
 
 ENV REPORT_EXIT_STATUS=1
 CMD ["php", "./run-tests.php", "-P", "-q", "--show-diff"]
