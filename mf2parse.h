@@ -19,7 +19,11 @@
 php_mf2parse_object *mf2parse_fetch_object( zend_object *object );
 #define Z_MF2PARSEOBJ_P( zv_object ) mf2parse_fetch_object( Z_OBJ_P( ( zv_object ) ) )
 
+#if PHP_VERSION_ID < 80000
+HashTable *mf2parse_get_properties_ht(zval *object, int is_temp );
+#else
 HashTable *mf2parse_get_properties_ht(zend_object *object, int is_temp );
+#endif
 
 void mf2parse_new( zval *object, char *data, size_t data_length, zend_bool data_is_uri );
 #define mf2parse_new_from_uri( object, uri, uri_length ) mf2parse_new( object, uri, uri_length, 1 )
