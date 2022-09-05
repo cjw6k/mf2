@@ -1,6 +1,11 @@
 ARG PHP_VERSION="8.1-buster"
 
-FROM php:${PHP_VERSION} as phpize
+FROM php:${PHP_VERSION} as check-build-context
+WORKDIR /usr/share/check-build-context
+COPY . .
+ENTRYPOINT ["/bin/bash"]
+
+FROM php:${PHP_VERSION}
 
 RUN apt-get update && apt-get install -y \
     libxml2-dev \
