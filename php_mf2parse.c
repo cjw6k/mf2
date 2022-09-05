@@ -67,83 +67,83 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 
 	tmp = zend_string_init( MF2_REGEX_ROOTS, strlen( MF2_REGEX_ROOTS ), 0 );
 	mf2parse->regex_roots = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_ROOTS, strlen( MF2_REGEX_BACKCOMPAT_ROOTS ), 0 );
 	mf2parse->regex_backcompat_roots = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_ROOTS_WITH_ITEM, strlen( MF2_REGEX_BACKCOMPAT_ROOTS_WITH_ITEM ), 0 );
 	mf2parse->regex_backcompat_roots_with_item = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_PROPERTIES, strlen( MF2_REGEX_PROPERTIES ), 0 );
 	mf2parse->regex_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_ADR_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_ADR_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_adr_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_GEO_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_GEO_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_geo_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HCALENDAR_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HCALENDAR_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hcalendar_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HCARD_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HCARD_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hcard_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HENTRY_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HENTRY_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hentry_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HFEED_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HFEED_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hfeed_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HNEWS_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HNEWS_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hnews_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HPRODUCT_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HPRODUCT_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hproduct_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HREVIEW_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HREVIEW_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hreview_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HITEM_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HITEM_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hitem_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HRESUME_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HRESUME_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hresume_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hreview_aggregate_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_DT_ISO8601, strlen( MF2_REGEX_DT_ISO8601 ), 0 );
 	mf2parse->regex_dt_iso8601 = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_DT_TIME, strlen( MF2_REGEX_DT_TIME ), 0 );
 	mf2parse->regex_dt_time = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_DT_DAY, strlen( MF2_REGEX_DT_DAY ), 0 );
 	mf2parse->regex_dt_day = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_DT_TIMEZONE, strlen( MF2_REGEX_DT_TIMEZONE ), 0 );
 	mf2parse->regex_dt_timezone = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	mf2parse->context = NULL;
 
@@ -297,7 +297,7 @@ int php_mf2parse_has_property_handler( zend_object *object, zend_string *member,
 				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
 			} else if ( zend_string_equals( member, MF2_STR( str_relurls ) ) ) {
 				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
-			} else if ( 0 == strcmp( member->val, "rel-urls" ) ) {
+			} else if ( 0 == strcmp( ZSTR_VAL(member), "rel-urls" ) ) {
 				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
 			} else {
 				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
@@ -318,7 +318,7 @@ int php_mf2parse_has_property_handler( zend_object *object, zend_string *member,
 				||
 				zend_string_equals( member, MF2_STR( str_relurls ) )
 				||
-				0 == strcmp( member->val, "rel-urls" )
+				0 == strcmp( ZSTR_VAL( member ), "rel-urls" )
 			){
 				result = 1;
 			} else {
@@ -364,7 +364,8 @@ zval *php_mf2parse_read_property_handler(zend_object *object, zend_string *membe
 }
 
 #if HAVE_JSON
-ZEND_BEGIN_ARG_INFO( arginfo_mf2parse_jsonSerialize, 0 )
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_mf2parse_jsonSerialize, 0, 0, IS_ARRAY, 0)
+//ZEND_BEGIN_ARG_INFO( arginfo_mf2parse_jsonSerialize, 0 )
 ZEND_END_ARG_INFO()
 #endif
 
@@ -377,9 +378,9 @@ ZEND_END_ARG_INFO()
 
 static const zend_function_entry php_mf2parse_functions[] = {
 	PHP_ME( MF2Parse, __construct, arginfo_mf2parse_construct, ZEND_ACC_PUBLIC )
-#if HAVE_JSON
-	PHP_ME( MF2Parse, jsonSerialize, arginfo_mf2parse_jsonSerialize, ZEND_ACC_PUBLIC )
-#endif
+    #if HAVE_JSON
+        PHP_ME( MF2Parse, jsonSerialize, arginfo_mf2parse_jsonSerialize, ZEND_ACC_PUBLIC )
+    #endif
 	PHP_FE_END
 };
 
