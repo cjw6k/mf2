@@ -66,15 +66,15 @@ php_mf2parse_object *mf2parse_fetch_object( zend_object *object )
  *
  * @since 0.1.0
  *
- * @param  zval * object  The subject MF2Parse instance.
+ * @param  zend_object *  The subject MF2Parse instance.
  * @param  int * is_temp  Indicates if the return value should be a copy or a
  *                        reference to the memory.
  *
  * @return  HashTable *  The properties of the object.
  */
-HashTable *mf2parse_get_properties_ht( zval *object, int is_temp )
+HashTable *mf2parse_get_properties_ht(zend_object *object, int is_temp )
 {
-	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	php_mf2parse_object *mf2parse = mf2parse_fetch_object( object );
 	HashTable *ht;
 	zval items, rels, rel_urls;
 
@@ -550,7 +550,7 @@ static zend_bool mf2parse_find_v2_roots( zval *object, zval *zv_mf, xmlNodePtr x
 	ZVAL_NULL( &matches );
 
 	// Microformats2 Roots
-	php_pcre_match_impl( mf2parse->regex_roots, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( mf2parse->regex_roots, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -593,10 +593,10 @@ static zend_bool mf2parse_find_backcompat_roots( zval *object, zval *zv_mf, xmlN
 		Z_MF2MFOBJ_P( mf2parse->context )->may_have_backcompat_item_root
 	) {
 		// Classic Microformats (Backcompat) Roots (includes item)
-		php_pcre_match_impl( mf2parse->regex_backcompat_roots_with_item, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+		php_pcre_match_impl( mf2parse->regex_backcompat_roots_with_item, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 	} else {
 		// Classic Microformats (Backcompat) Roots (excludes item)
-		php_pcre_match_impl( mf2parse->regex_backcompat_roots, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+		php_pcre_match_impl( mf2parse->regex_backcompat_roots, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 	}
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
@@ -921,7 +921,7 @@ static zend_bool mf2parse_value_class_dt( zval *object, xmlNodePtr xml_node, zva
 						ZVAL_NULL( &matched );
 						ZVAL_NULL( &matches );
 
-						php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_dt_iso8601, Z_STRVAL( zv_value ), Z_STRLEN( zv_value ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+						php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_dt_iso8601, Z_STR( zv_value ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 						if ( ( Z_LVAL( matched ) > 0 ) && IS_ARRAY == Z_TYPE( matches ) ) {
 							found_date = 1;
@@ -948,7 +948,7 @@ static zend_bool mf2parse_value_class_dt( zval *object, xmlNodePtr xml_node, zva
 						ZVAL_NULL( &matched );
 						ZVAL_NULL( &matches );
 
-						php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_dt_time, Z_STRVAL( zv_value ), Z_STRLEN( zv_value ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+						php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_dt_time, Z_STR( zv_value ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 						if ( ( Z_LVAL( matched ) > 0 ) && IS_ARRAY == Z_TYPE( matches ) ) {
 							found_time = 1;
@@ -968,7 +968,7 @@ static zend_bool mf2parse_value_class_dt( zval *object, xmlNodePtr xml_node, zva
 						ZVAL_NULL( &matched );
 						ZVAL_NULL( &matches );
 
-						php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_dt_timezone, Z_STRVAL( zv_value ), Z_STRLEN( zv_value ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+						php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_dt_timezone, Z_STR( zv_value ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 						if ( ( Z_LVAL( matched ) > 0 ) && IS_ARRAY == Z_TYPE( matches ) ) {
 							found_timezone = 1;
@@ -1449,7 +1449,7 @@ static void mf2parse_find_v2_properties( zval *object, zval *zv_mf_embedded, xml
 	ZVAL_NULL( &matches );
 
 	// Microformats2 Properties
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -1504,7 +1504,7 @@ static void mf2parse_find_backcompat_adr_properties( zval *object, zval *zv_mf_e
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_adr_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_adr_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -1553,7 +1553,7 @@ static void mf2parse_find_backcompat_geo_properties( zval *object, zval *zv_mf_e
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_geo_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_geo_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -1602,7 +1602,7 @@ static void mf2parse_find_backcompat_hcalendar_properties( zval *object, zval *z
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hcalendar_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hcalendar_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -1707,7 +1707,7 @@ static void mf2parse_find_backcompat_hcard_properties( zval *object, zval *zv_mf
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hcard_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hcard_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -1831,7 +1831,7 @@ static void mf2parse_find_backcompat_hfeed_properties( zval *object, zval *zv_mf
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hfeed_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hfeed_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -1917,7 +1917,7 @@ static void mf2parse_find_backcompat_hentry_properties( zval *object, zval *zv_m
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hentry_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hentry_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -2016,7 +2016,7 @@ static void mf2parse_find_backcompat_hnews_properties( zval *object, zval *zv_mf
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hnews_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hnews_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -2065,7 +2065,7 @@ static void mf2parse_find_backcompat_hproduct_properties( zval *object, zval *zv
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hproduct_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hproduct_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -2155,7 +2155,7 @@ static void mf2parse_find_backcompat_hreview_properties( zval *object, zval *zv_
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hreview_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hreview_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -2268,7 +2268,7 @@ static void mf2parse_find_backcompat_hitem_properties( zval *object, zval *zv_mf
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hitem_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hitem_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -2358,7 +2358,7 @@ static void mf2parse_find_backcompat_hreview_aggregate_properties( zval *object,
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hreview_aggregate_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hreview_aggregate_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );
@@ -2407,7 +2407,7 @@ static void mf2parse_find_backcompat_hresume_properties( zval *object, zval *zv_
 	ZVAL_NULL( &matched );
 	ZVAL_NULL( &matches );
 
-	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hresume_properties, Z_STRVAL_P( zv_classes ), Z_STRLEN_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
+	php_pcre_match_impl( Z_MF2PARSEOBJ_P( object )->regex_backcompat_hresume_properties, Z_STR_P( zv_classes ), &matched, &matches, 1, 1, Z_L( 2 ), Z_L( 0 ) );
 
 	if ( ! ( Z_LVAL( matched ) > 0 ) || IS_ARRAY != Z_TYPE( matches ) ) {
 		zval_ptr_dtor( &matched );

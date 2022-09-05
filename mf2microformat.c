@@ -63,7 +63,7 @@ php_mf2microformat_object *mf2microformat_fetch_object( zend_object *object )
  */
 void mf2microformat_add_type( zval *object, zval *zv_type)
 {
-	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
+	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, Z_OBJ_P( object ), ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
 	add_next_index_string( zv_current_types, Z_STRVAL_P( zv_type ) );
 	zend_hash_sort( Z_ARRVAL_P( zv_current_types ), mf2_strcasecmp, 1 );
 }
@@ -86,7 +86,7 @@ void mf2microformat_add_backcompat_type( zval *object, zval *zv_type)
 {
 	add_next_index_string( &Z_MF2MFOBJ_P( object )->backcompat_types, Z_STRVAL_P( zv_type ) );
 
-	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
+	zval *zv_current_types = zend_read_property( php_mf2microformat_ce, Z_OBJ_P( object ), ZSTR_VAL( MF2_STR( str_type ) ), ZSTR_LEN( MF2_STR( str_type ) ), 0, NULL );
 
 	if ( zend_string_equals( Z_STR_P( zv_type ), MF2_STR( str_item ) ) ) {
 		zval zv_h;
@@ -204,7 +204,7 @@ zval *mf2microformat_get_backcompat_types( zval *object )
  */
 void mf2microformat_add_property( zval *object, zval *zv_key, zval *zv_value )
 {
-	zval *zv_current_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 0, NULL );
+	zval *zv_current_properties = zend_read_property( php_mf2microformat_ce, Z_OBJ_P( object ), ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 0, NULL );
 	zval *zv_current_value = zend_hash_find( Z_ARRVAL_P( zv_current_properties ), Z_STR_P( zv_key ) );
 
 	if( NULL == zv_current_value ) {
@@ -224,7 +224,7 @@ void mf2microformat_add_property( zval *object, zval *zv_key, zval *zv_value )
  */
 void mf2microformat_add_property_no_duplicate_values( zval *object, zval *zv_key, zval *zv_value )
 {
-	zval *zv_current_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 0, NULL );
+	zval *zv_current_properties = zend_read_property( php_mf2microformat_ce, Z_OBJ_P( object ), ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 0, NULL );
 	zval *zv_current_value = zend_hash_find( Z_ARRVAL_P( zv_current_properties ), Z_STR_P( zv_key ) );
 
 	if( NULL == zv_current_value ) {
@@ -267,11 +267,11 @@ void mf2microformat_new( zval *object, xmlNodePtr xml_node )
 
 	array_init( &zv_type );
 	Z_DELREF( zv_type );
-	zend_update_property_ex( php_mf2microformat_ce, object, MF2_STR( str_type ), &zv_type );
+	zend_update_property_ex( php_mf2microformat_ce, Z_OBJ_P( object ), MF2_STR( str_type ), &zv_type );
 
 	array_init( &zv_properties );
 	Z_DELREF( zv_properties );
-	zend_update_property_ex( php_mf2microformat_ce, object, MF2_STR( str_properties ), &zv_properties );
+	zend_update_property_ex( php_mf2microformat_ce, Z_OBJ_P( object ), MF2_STR( str_properties ), &zv_properties );
 
 	mf2microformat_set_id( object, xml_node );
 
@@ -287,7 +287,7 @@ void mf2microformat_new( zval *object, xmlNodePtr xml_node )
  */
 zend_bool mf2microformat_has_property( zval *object, zend_string *zv_key )
 {
-	zval *zv_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+	zval *zv_properties = zend_read_property( php_mf2microformat_ce, Z_OBJ_P( object ), ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
 	if ( IS_ARRAY != Z_TYPE_P( zv_properties ) ) {
 		return 0;
 	}
@@ -300,7 +300,7 @@ zend_bool mf2microformat_has_property( zval *object, zend_string *zv_key )
  */
 void mf2microformat_get_property( zval *object, zend_string *zv_key, zval *zv_return_value )
 {
-	zval *zv_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+	zval *zv_properties = zend_read_property( php_mf2microformat_ce, Z_OBJ_P( object ), ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
 	if ( IS_ARRAY != Z_TYPE_P( zv_properties ) ) {
 		ZVAL_NULL( zv_return_value );
 	}
@@ -316,7 +316,7 @@ zend_bool mf2microformat_has_children( zval *object )
 	return (
 		1 == Z_MF2MFOBJ_P( object )->has_nested_roots
 		||
-		IS_NULL != Z_TYPE_P( zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL ) )
+		IS_NULL != Z_TYPE_P( zend_read_property( php_mf2microformat_ce, Z_OBJ_P( object ), ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL ) )
 	);
 }
 
@@ -327,8 +327,8 @@ static void mf2microformat_add_nested_child( zval *object, zval *zv_child )
 {
 	Z_MF2MFOBJ_P( object )->has_nested_roots = 1;
 
-	zval *zv_parent_properties = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
-	zval *zv_child_properties = zend_read_property( php_mf2microformat_ce, zv_child, ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+	zval *zv_parent_properties = zend_read_property( php_mf2microformat_ce, Z_OBJ_P( object ), ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
+	zval *zv_child_properties = zend_read_property( php_mf2microformat_ce, Z_OBJ_P( zv_child ), ZSTR_VAL( MF2_STR( str_properties ) ), ZSTR_LEN( MF2_STR( str_properties ) ), 1, NULL );
 
 	zval *zv_prefix, *zv_name, *zv_parent_property, *context, *zv_source;
 	ZEND_HASH_FOREACH_VAL( Z_ARRVAL( Z_MF2MFOBJ_P( zv_child )->contexts ), context ) {
@@ -376,7 +376,7 @@ void mf2microformat_add_child( zval *object, zval *zv_child )
 		return;
 	}
 
-	zval *zv_current_children = zend_read_property( php_mf2microformat_ce, object, ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL );
+	zval *zv_current_children = zend_read_property( php_mf2microformat_ce, Z_OBJ_P( object ), ZSTR_VAL( MF2_STR( str_children ) ), ZSTR_LEN( MF2_STR( str_children ) ), 1, NULL );
 
 	if ( IS_NULL == Z_TYPE_P(zv_current_children) ) {
 		zval zv_children;

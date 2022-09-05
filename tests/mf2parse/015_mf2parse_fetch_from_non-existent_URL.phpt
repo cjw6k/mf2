@@ -13,9 +13,9 @@ var_dump($parse);
 
 ?>
 --EXPECTF--
-Warning: MF2Parse::__construct(): php_network_getaddresses: getaddrinfo failed: Name or service not known in %s on line %d
+Warning: MF2Parse::__construct(): php_network_getaddresses: getaddrinfo for %s failed: Name or service not known in %s on line %d
 
-Warning: MF2Parse::__construct(%s): failed to open stream: php_network_getaddresses: getaddrinfo failed: Name or service not known in %s on line %d
+Warning: MF2Parse::__construct(%s): Failed to open stream: php_network_getaddresses: getaddrinfo for %s failed: Name or service not known in %s on line %d
 
 Warning: MF2Parse::__construct(): I/O warning : failed to load external entity %s in %s on line %d
 bool(true)

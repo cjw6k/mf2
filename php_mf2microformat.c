@@ -110,8 +110,11 @@ void php_mf2microformat_free_object_handler( zend_object *object )
 	zend_object_std_dtor( &mf2mf->zo );
 }
 
+ZEND_BEGIN_ARG_INFO_EX( arginfo_mf2microformat_construct, 0, 0, 1 )
+ZEND_END_ARG_INFO()
+
 static const zend_function_entry php_mf2microformat_functions[] = {
-	PHP_ME( MF2Microformat, __construct, NULL, ZEND_ACC_PUBLIC )
+	PHP_ME( MF2Microformat, __construct, arginfo_mf2microformat_construct, ZEND_ACC_PUBLIC )
 	PHP_FE_END
 };
 

@@ -67,83 +67,83 @@ static zend_object *php_mf2parse_create_object_handler( zend_class_entry *class_
 
 	tmp = zend_string_init( MF2_REGEX_ROOTS, strlen( MF2_REGEX_ROOTS ), 0 );
 	mf2parse->regex_roots = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_ROOTS, strlen( MF2_REGEX_BACKCOMPAT_ROOTS ), 0 );
 	mf2parse->regex_backcompat_roots = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_ROOTS_WITH_ITEM, strlen( MF2_REGEX_BACKCOMPAT_ROOTS_WITH_ITEM ), 0 );
 	mf2parse->regex_backcompat_roots_with_item = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_PROPERTIES, strlen( MF2_REGEX_PROPERTIES ), 0 );
 	mf2parse->regex_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_ADR_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_ADR_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_adr_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_GEO_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_GEO_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_geo_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HCALENDAR_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HCALENDAR_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hcalendar_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HCARD_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HCARD_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hcard_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HENTRY_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HENTRY_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hentry_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HFEED_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HFEED_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hfeed_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HNEWS_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HNEWS_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hnews_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HPRODUCT_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HPRODUCT_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hproduct_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HREVIEW_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HREVIEW_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hreview_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HITEM_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HITEM_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hitem_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HRESUME_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HRESUME_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hresume_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES, strlen( MF2_REGEX_BACKCOMPAT_HREVIEW_AGGREGATE_PROPERTIES ), 0 );
 	mf2parse->regex_backcompat_hreview_aggregate_properties = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_DT_ISO8601, strlen( MF2_REGEX_DT_ISO8601 ), 0 );
 	mf2parse->regex_dt_iso8601 = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_DT_TIME, strlen( MF2_REGEX_DT_TIME ), 0 );
 	mf2parse->regex_dt_time = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_DT_DAY, strlen( MF2_REGEX_DT_DAY ), 0 );
 	mf2parse->regex_dt_day = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	tmp = zend_string_init( MF2_REGEX_DT_TIMEZONE, strlen( MF2_REGEX_DT_TIMEZONE ), 0 );
 	mf2parse->regex_dt_timezone = pcre_get_compiled_regex_cache( tmp );
-	zend_string_free( tmp );
+    zend_string_release( tmp );
 
 	mf2parse->context = NULL;
 
@@ -240,9 +240,9 @@ void php_mf2parse_free_object_handler( zend_object *object )
  *
  * @return  HashTable *  The properties of the object.
  */
-HashTable *php_mf2parse_get_properties_handler( zval *object )
+HashTable *php_mf2parse_get_properties_handler(zend_object *object )
 {
-	return mf2parse_get_properties_ht( object, 0 );
+	return mf2parse_get_properties_ht(object, 0 );
 }
 
 /**
@@ -250,13 +250,13 @@ HashTable *php_mf2parse_get_properties_handler( zval *object )
  *
  * @since 0.1.0
  *
- * @param  zval * object  The subject MF2Parse instance.
+ * @param  zend_object *  The subject MF2Parse instance.
  * @param  int * is_temp  Indicates if the return value should be a copy or a
  *                        reference to the memory.
  *
  * @return  HashTable *  The properties of the object.
  */
-HashTable *php_mf2parse_get_debug_info_handler( zval *object, int *is_temp )
+HashTable *php_mf2parse_get_debug_info_handler(zend_object *object, int *is_temp )
 {
 	*is_temp = 1;
 	return mf2parse_get_properties_ht( object, 1 );
@@ -267,8 +267,8 @@ HashTable *php_mf2parse_get_debug_info_handler( zval *object, int *is_temp )
  *
  * @since 0.1.0
  *
- * @param  zval * object       The subject MF2Parse instance.
- * @param  zval * member       The requested member to check.
+ * @param  zend_object * object  The subject MF2Parse instance.
+ * @param  zend_string * member  The requested member to check.
  * @param  int has_set_exists  0 Check whether the property exists and and is
  *                               not NULL (used by isset).
  *                             1 Check where the property exists and is truthy
@@ -279,32 +279,25 @@ HashTable *php_mf2parse_get_debug_info_handler( zval *object, int *is_temp )
  * @return  int  0 The requested member does not exist in the subject.
  *               1 The requested member does exist in the subject.
  */
-int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_exists, void **cache_slot )
+int php_mf2parse_has_property_handler( zend_object *object, zend_string *member, int has_set_exists, void **cache_slot )
 {
-	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
+	php_mf2parse_object *mf2parse = mf2parse_fetch_object( object );
 	int result;
-	zval tmp_member;
 
 	result = 0;
-
-	ZVAL_UNDEF( &tmp_member );
-	if ( UNEXPECTED( Z_TYPE_P( member ) != IS_STRING ) ) {
-		ZVAL_STR( &tmp_member, zval_get_string( member ) );
-		member = &tmp_member;
-		cache_slot = NULL;
-	}
+    cache_slot = NULL;
 
 	switch( has_set_exists ) {
 		case 1:
-			if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_items ) ) ) {
+			if ( zend_string_equals( member, MF2_STR( str_items ) ) ) {
 				result = zend_hash_num_elements( mf2parse->items ) > 0 ? 1 : 0;
-			} else if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_rels ) ) ) {
+			} else if ( zend_string_equals(  member, MF2_STR( str_rels ) ) ) {
 				result = zend_hash_num_elements( mf2parse->rels ) > 0 ? 1 : 0;
-			} else if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_rel_urls ) ) ) {
+			} else if ( zend_string_equals( member, MF2_STR( str_rel_urls ) ) ) {
 				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
-			} else if ( zend_string_equals( Z_STR_P( member ), MF2_STR( str_relurls ) ) ) {
+			} else if ( zend_string_equals( member, MF2_STR( str_relurls ) ) ) {
 				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
-			} else if ( 0 == strcmp( Z_STRVAL_P( member ), "rel-urls" ) ) { // TODO: make that a zend_string
+			} else if ( 0 == strcmp( ZSTR_VAL(member), "rel-urls" ) ) {
 				result = zend_hash_num_elements( mf2parse->rel_urls ) > 0 ? 1 : 0;
 			} else {
 				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
@@ -317,25 +310,21 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 			// Break skipped on purpose.
 		default:
 			if(
-				zend_string_equals( Z_STR_P( member ), MF2_STR( str_items ) )
+				zend_string_equals( member, MF2_STR( str_items ) )
 				||
-				zend_string_equals( Z_STR_P( member ), MF2_STR( str_rels ) )
+				zend_string_equals( member, MF2_STR( str_rels ) )
 				||
-				zend_string_equals( Z_STR_P( member ), MF2_STR( str_rel_urls ) )
+				zend_string_equals( member, MF2_STR( str_rel_urls ) )
 				||
-				zend_string_equals( Z_STR_P( member ), MF2_STR( str_relurls ) )
+				zend_string_equals( member, MF2_STR( str_relurls ) )
 				||
-				0 == strcmp( Z_STRVAL_P( member ), "rel-urls" )
+				0 == strcmp( ZSTR_VAL( member ), "rel-urls" )
 			){
 				result = 1;
 			} else {
-				result = zend_get_std_object_handlers()->has_property( object, member, has_set_exists, cache_slot );
+				result = zend_get_std_object_handlers()->has_property(object, member, has_set_exists, cache_slot );
 			}
 		break;
-	}
-
-	if ( member == &tmp_member ) {
-		zval_dtor( member );
 	}
 
 	return result;
@@ -344,52 +333,39 @@ int php_mf2parse_has_property_handler( zval *object, zval *member, int has_set_e
 /**
  * @since 0.1.0
  */
-zval *php_mf2parse_read_property_handler( zval *object, zval *zv_member, int type, void **cache_slot, zval *zv_return )
+zval *php_mf2parse_read_property_handler(zend_object *object, zend_string *member, int type, void **cache_slot, zval *zv_return )
 {
-	php_mf2parse_object *mf2parse = Z_MF2PARSEOBJ_P( object );
-	zval *zv_result, zv_safe_member;
+	php_mf2parse_object *mf2parse = mf2parse_fetch_object(object);
+	zval *zv_result;
 
 	zv_result = &EG( uninitialized_zval );
 
-	ZVAL_UNDEF( &zv_safe_member );
-	if ( UNEXPECTED( Z_TYPE_P( zv_member ) != IS_STRING ) ) {
-		ZVAL_STR( &zv_safe_member, zval_get_string( zv_member ) );
-		zv_member = &zv_safe_member;
-		cache_slot = NULL;
-	}
-
-	if ( zend_string_equals( Z_STR_P( zv_member ), MF2_STR( str_items ) ) ) {
+	if ( zend_string_equals(member, MF2_STR(str_items ) ) ) {
 		ZVAL_ARR( zv_return, mf2parse->items );
-	} else if ( zend_string_equals( Z_STR_P( zv_member ), MF2_STR( str_rels ) ) ) {
+	} else if ( zend_string_equals(member, MF2_STR(str_rels ) ) ) {
 		ZVAL_ARR( zv_return, mf2parse->rels );
 	} else if (
-		zend_string_equals( Z_STR_P( zv_member ), MF2_STR( str_rel_urls ) )
+		zend_string_equals(member, MF2_STR(str_rel_urls ) )
 		||
-		zend_string_equals( Z_STR_P( zv_member ), MF2_STR( str_relurls ) )
+		zend_string_equals(member, MF2_STR(str_relurls ) )
 		||
-		0 == strcmp( "rel-urls", ZSTR_VAL( Z_STR_P( zv_member ) ) )
+		0 == strcmp( "rel-urls", ZSTR_VAL( member ) )
 	){
 		ZVAL_ARR( zv_return, mf2parse->rel_urls );
 	} else {
-		zv_result = zend_get_std_object_handlers()->read_property( object, zv_member, type, cache_slot, zv_return );
-		if ( zv_member == &zv_safe_member ) {
-			zval_dtor( zv_member );
-		}
+		zv_result = zend_get_std_object_handlers()->read_property(object, member, type, cache_slot, zv_return );
 
 		return zv_result;
 	}
 
 	zval_copy_ctor( zv_return );
 
-	if ( zv_member == &zv_safe_member ) {
-		zval_dtor( zv_member );
-	}
-
 	return zv_return;
 }
 
 #if HAVE_JSON
-ZEND_BEGIN_ARG_INFO( arginfo_mf2parse_jsonSerialize, 0 )
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_mf2parse_jsonSerialize, 0, 0, IS_ARRAY, 0)
+//ZEND_BEGIN_ARG_INFO( arginfo_mf2parse_jsonSerialize, 0 )
 ZEND_END_ARG_INFO()
 #endif
 
@@ -403,7 +379,7 @@ ZEND_END_ARG_INFO()
 static const zend_function_entry php_mf2parse_functions[] = {
 	PHP_ME( MF2Parse, __construct, arginfo_mf2parse_construct, ZEND_ACC_PUBLIC )
 #if HAVE_JSON
-	PHP_ME( MF2Parse, jsonSerialize, arginfo_mf2parse_jsonSerialize, ZEND_ACC_PUBLIC )
+    PHP_ME( MF2Parse, jsonSerialize, arginfo_mf2parse_jsonSerialize, ZEND_ACC_PUBLIC )
 #endif
 	PHP_FE_END
 };

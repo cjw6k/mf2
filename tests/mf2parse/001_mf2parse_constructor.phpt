@@ -101,16 +101,17 @@ unlink($filename);
 ?>
 --EXPECTF--
 Exception: Data parameter is required
-TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string%s
-TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string%s
-TypeError: Argument 1 passed to MF2Parse::__construct() must be of the type string%s
+
+Deprecated: MF2Parse::__construct(): Passing null to parameter #1 ($data) of type string is deprecated%s
+TypeError: MF2Parse::__construct(): Argument #1 ($data) must be of type string%s
+TypeError: MF2Parse::__construct(): Argument #1 ($data) must be of type string%s
 bool(true)
 bool(true)
-TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string%s
-TypeError: Argument 2 passed to MF2Parse::__construct() must be of the type string%s
+TypeError: MF2Parse::__construct(): Argument #2 ($base_url) must be of type ?string%s
+TypeError: MF2Parse::__construct(): Argument #2 ($base_url) must be of type ?string%s
 Exception: Invalid base URL
 Exception: Base URL must be absolute
 bool(true)
-TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type bool%s
-TypeError: Argument 3 passed to MF2Parse::__construct() must be of the type bool%s
+TypeError: MF2Parse::__construct(): Argument #3 ($data_is_uri) must be of type ?bool%s
+TypeError: MF2Parse::__construct(): Argument #3 ($data_is_uri) must be of type ?bool%s
 bool(true)
