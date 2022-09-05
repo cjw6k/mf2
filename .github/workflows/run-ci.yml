@@ -1,23 +1,8 @@
 name: CI
-
-on:
-  workflow_dispatch:
-
-  push:
-    branches:
-      - main
-
-  pull_request:
-    branches:
-      - main
-
+on: push
 jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v3
-      - name: build
-        run: docker build -t local < ci/Dockerfile
-      - name: test
-        run: docker run local
