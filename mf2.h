@@ -24,7 +24,7 @@ typedef struct _mf2_str_globals {
 #undef X
 } mf2_str_globals;
 
-mf2_str_globals str_globals_mf2;
+extern mf2_str_globals str_globals_mf2;
 
 #define MF2_STR(str) str_globals_mf2.str
 
