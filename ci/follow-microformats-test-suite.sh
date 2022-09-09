@@ -17,7 +17,7 @@ set -euo pipefail
 || (echo "error: microformats test suite HEAD commit hash not found" && exit 1)
 
 testSuiteCommitSha="$(git ls-remote https://github.com/microformats/tests HEAD | cut -f1)"
-cmp \
+cmp -s \
   <(echo "$testSuiteCommitSha") \
   ./mf2/ci/microformats-test-suite-HEAD.sha \
 && echo "there are no new changes in the microformats test suite" && exit
