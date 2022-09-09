@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - contrib
   pull_request:
     branches:
       - main
+      - contrib
 jobs:
   test:
     runs-on: ubuntu-latest
